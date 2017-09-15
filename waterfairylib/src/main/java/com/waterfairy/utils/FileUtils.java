@@ -3,9 +3,15 @@ package com.waterfairy.utils;
 import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.RequiresPermission;
+import android.text.TextUtils;
+
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Created by water_fairy on 2016/12/5.
@@ -61,6 +67,34 @@ public class FileUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static boolean copyFile(String fromFile, String toFile) throws IOException {
+        File saveFile = new File(toFile);
+        File parentFile = new File(saveFile.getParent());
+        boolean canSave = false;
+        canSave = parentFile.exists() || parentFile.mkdirs();
+        if (canSave) {
+            canSave = saveFile.exists() || saveFile.createNewFile();
+            if (canSave) {
+                InputStream inputStream = new FileInputStream(fromFile);
+                OutputStream outputStream = new FileOutputStream(saveFile);
+                byte[] buf = new byte[1024 * 1024];
+                int len = 0;
+                while ((len = inputStream.read(buf)) > 0)
+                    outputStream.write(buf, 0, len);
+                inputStream.close();
+                outputStream.close();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String getAPPPath(Context context, String extra) {
+        String cachePath = context.getCacheDir().getAbsolutePath();
+        return cachePath.substring(0, cachePath.length() - 6) +
+                (TextUtils.isEmpty(extra) ? "" : "/" + extra);
     }
 
 }

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.waterfairy.tool3.Mp3Activity">
+    tools:context="com.waterfairy.tool3.activity.Mp3Activity">
 
     <Button
         android:id="@+id/play"

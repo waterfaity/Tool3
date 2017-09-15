@@ -1,4 +1,4 @@
-package com.waterfairy.tool3;
+package com.waterfairy.tool3.activity;
 
 import android.os.Handler;
 import android.os.Message;
@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.cloud.classroom.audiorecord.lame.RecMicToMp3;
+import com.waterfairy.tool3.R;
 
 import java.util.Date;
 

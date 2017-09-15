@@ -1,10 +1,11 @@
-package com.waterfairy.tool3;
+package com.waterfairy.tool3.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
 import com.waterfairy.media.Mp3Player;
+import com.waterfairy.tool3.R;
 import com.waterfairy.utils.ToastUtils;
 
 public class Mp3Activity extends AppCompatActivity implements Mp3Player.onMp3PlayListener {
