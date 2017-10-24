@@ -17,6 +17,8 @@ import java.util.HashMap;
 
 /**
  * Created by water_fairy on 2017/2/16.
+ * ver 1.1 2017-10-24
+ * 修改文件创建
  */
 
 public class PullHashMapParser {
@@ -104,23 +106,28 @@ public class PullHashMapParser {
     }
 
     public void writeXml(String root, HashMap<String, String> hashMap, File file) {
-        if (!file.exists()) {
+        boolean hasFile = file.exists();
+        if (!hasFile) {
             File parent = file.getParentFile();
-            OutputStream outputStream = null;
-            boolean hasPath = false;
-            hasPath = parent.exists() || parent.mkdirs();
-            if (hasPath) {
+            if (parent.exists() || parent.mkdirs()) {
                 try {
-                    if (file.createNewFile()) {
-                        outputStream = new FileOutputStream(file);
-                        writeXml(root, hashMap, outputStream);
-                    }
+                    hasFile = file.createNewFile();
                 } catch (IOException e) {
+                    hasFile = false;
                     e.printStackTrace();
-                    Log.i("xml parser", "writeXml: create parent  error");
+                    Log.i("xml parser", "writeXml: create file  error");
                 }
             } else {
+                hasFile = false;
                 Log.i("xml parser", "writeXml: create parent file error");
+            }
+        }
+        if (hasFile) {
+            try {
+                writeXml(root, hashMap, new FileOutputStream(file));
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.i("xml parser", "writeXml: getStream error");
             }
         }
     }

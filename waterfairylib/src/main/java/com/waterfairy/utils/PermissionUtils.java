@@ -2,6 +2,7 @@ package com.waterfairy.utils;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -38,8 +39,8 @@ public class PermissionUtils {
      * @param activity Activity
      * @param request  请求类型
      */
-    public static void requestPermission(Activity activity, int request) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
+    public static boolean requestPermission(Activity activity, int request) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true;
         String[] permissions = null;
         String permission = null;
         switch (request) {
@@ -61,9 +62,11 @@ public class PermissionUtils {
                 permission = Manifest.permission.RECORD_AUDIO;
                 break;
         }
+        boolean hasPermission = false;
         if (permissions != null) {
-            requestPermission(activity, permissions, permission, request);
+            hasPermission = requestPermission(activity, permissions, permission, request);
         }
+        return hasPermission;
     }
 
     /**
@@ -73,26 +76,27 @@ public class PermissionUtils {
      * @param request     requestCode  Activity中 会返回权限申请状态(类似startActivityForResult)
      */
 
-    public static void requestPermission(Activity activity,
-                                         @NonNull String[] permissions,
-                                         @NonNull String permission,
-                                         int request) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
+    public static boolean requestPermission(Activity activity,
+                                            @NonNull String[] permissions,
+                                            @NonNull String permission,
+                                            int request) {
         int permissionCode = checkPermission(activity, permission);
-        if (permissionCode != PackageManager.PERMISSION_GRANTED) {
+        boolean hasPermission = false;
+        if (!(hasPermission = (permissionCode == PackageManager.PERMISSION_GRANTED))) {
             ActivityCompat.requestPermissions(activity, permissions, request);
         }
+        return hasPermission;
     }
 
     /**
      * 检查权限
      *
-     * @param activity   activity
+     * @param context    activity
      * @param permission 某个权限
      * @return {
      */
-    public static int checkPermission(Activity activity, String permission) {
-        return ActivityCompat.checkSelfPermission(activity, permission);
+    public static int checkPermission(Context context, String permission) {
+        return ActivityCompat.checkSelfPermission(context, permission);
     }
 
 }

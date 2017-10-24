@@ -76,6 +76,7 @@ public class DownloadControl extends IBaseControl implements OnBaseProgressSucce
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    throwable.printStackTrace();
                     baseProgressState = BaseManager.ERROR_NET;
                     returnError(BaseManager.ERROR_NET);
                 }

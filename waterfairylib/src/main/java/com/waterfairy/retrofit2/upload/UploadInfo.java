@@ -15,6 +15,11 @@ public class UploadInfo extends BaseProgressInfo {
     private String fileName;
 
 
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+
     public UploadInfo(String basePath, String url, String filePath, String fileName) {
         this.basePath = basePath;
         this.url = url;

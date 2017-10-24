@@ -18,7 +18,7 @@ public abstract class BaseManager extends IBaseManager {
     public static final int START = 1;//开始
     public static final int PAUSE = 2;//暂停
     public static final int STOP = 3;//停止
-    public static final int CONTINUE = 4;//继续下载中
+    public static final int CONTINUE = 4;//继续
     public static final int FINISHED = 5;//完成
 
     public static final int ERROR_NET = 6;//网络错误
@@ -47,13 +47,13 @@ public abstract class BaseManager extends IBaseManager {
      * @return
      */
     @Override
-    public IBaseControl add(BaseProgressInfo downloadInfo) {
+    public IBaseControl add(BaseProgressInfo downloadInfo, String tag) {
         if (downloadInfo == null) return null;
         IBaseControl baseControl = get(downloadInfo.getUrl());
         if (baseControl == null) {
             baseControl = newDownloadControl(downloadInfo);
             if (baseControl == null) baseControl = newUploadControl(downloadInfo);
-            controlHashMap.put(downloadInfo.getUrl(), baseControl);
+            controlHashMap.put(tag, baseControl);
         }
         return baseControl;
     }

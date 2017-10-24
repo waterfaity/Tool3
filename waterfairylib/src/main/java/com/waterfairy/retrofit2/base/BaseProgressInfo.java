@@ -7,12 +7,12 @@ package com.waterfairy.retrofit2.base;
 
 public class BaseProgressInfo {
 
-    public static final int START = 1;
-    public static final int DOWNLOADING = 2;
-    public static final int PAUSE = 3;
-    public static final int STOP = 4;
-    public static final int FINISH = 5;
-    public static final int ERROR = 6;
+//    public static final int START = 1;
+//    public static final int DOWNLOADING = 2;
+//    public static final int PAUSE = 3;
+//    public static final int STOP = 4;
+//    public static final int FINISH = 5;
+//    public static final int ERROR = 6;
 
     protected String url;//下载路径
     protected String basePath;//基础路径
@@ -21,6 +21,24 @@ public class BaseProgressInfo {
     protected long totalLen;//总长度
     protected int timeOut = 5;//超时 s
     protected int state;//下载状态
+    protected String extraInfo2;
+    protected String extraInfo;
+
+    public String getExtraInfo2() {
+        return extraInfo2;
+    }
+
+    public void setExtraInfo2(String extraInfo2) {
+        this.extraInfo2 = extraInfo2;
+    }
+
+    public String getExtraInfo() {
+        return extraInfo;
+    }
+
+    public void setExtraInfo(String extraInfo) {
+        this.extraInfo = extraInfo;
+    }
 
     public String getUrl() {
         return url;

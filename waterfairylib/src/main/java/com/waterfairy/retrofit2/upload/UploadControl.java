@@ -66,7 +66,9 @@ public class UploadControl extends IBaseControl implements OnBaseProgressSuccess
                 returnError(BaseManager.ERROR_FILE_NOT_FOUND);
             } else {
                 if (baseProgressState == BaseManager.START || baseProgressState == BaseManager.CONTINUE) {
-
+                    returnError(BaseManager.ERROR_IS_DOWNLOADING);
+                } else if (baseProgressState == BaseManager.FINISHED) {
+                    returnError(BaseManager.ERROR_HAS_FINISHED);
                 } else {
                     returnChange(BaseManager.CONTINUE);
                     RequestBody sourceBody = RequestBody.create(MediaType.parse("application/otcet-stream"), file);
@@ -78,6 +80,7 @@ public class UploadControl extends IBaseControl implements OnBaseProgressSuccess
                     uploadService.upload(baseProgressInfo.getUrl(), filePart).enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                            baseProgressInfo.setState(BaseManager.FINISHED);
                             returnChange(BaseManager.FINISHED);
                             OnProgressListener loadListener = getLoadListener();
                             if (loadListener != null) {
@@ -87,6 +90,7 @@ public class UploadControl extends IBaseControl implements OnBaseProgressSuccess
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            t.printStackTrace();
                             baseProgressState = BaseManager.ERROR_FILE_NOT_FOUND;
                             returnError(BaseManager.ERROR_NET);
                             OnProgressListener loadListener = getLoadListener();

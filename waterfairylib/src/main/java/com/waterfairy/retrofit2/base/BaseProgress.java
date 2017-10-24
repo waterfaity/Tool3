@@ -30,7 +30,7 @@ public class BaseProgress implements OnBaseProgressListener {
         current = downloadInfo.getLastLen() + current;
         downloadInfo.setCurrentLen(current);
         if (done) {
-            downloadInfo.setState(BaseProgressInfo.FINISH);
+            downloadInfo.setState(BaseManager.FINISHED);
             onBaseProgressSuccessListener.onProgressSuccess(downloadInfo.getUrl());
         }
         if (onProgressListener != null)

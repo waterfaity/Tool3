@@ -9,9 +9,10 @@ public abstract class IBaseManager {
      * 添加下载
      *
      * @param downloadInfo
+     * @param tag
      * @return
      */
-   abstract IBaseControl add(BaseProgressInfo downloadInfo);
+   abstract IBaseControl add(BaseProgressInfo downloadInfo, String tag);
 
     /**
      * 获取下载
