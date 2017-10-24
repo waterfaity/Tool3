@@ -1,5 +1,8 @@
 package com.waterfairy.retrofit2.base;
 
+import android.app.Application;
+import android.content.Context;
+
 import com.waterfairy.retrofit2.download.DownloadControl;
 import com.waterfairy.retrofit2.upload.UploadControl;
 
@@ -14,11 +17,13 @@ import java.util.Set;
 
 public abstract class BaseManager extends IBaseManager {
 
+    private Context context;
+
     //    针对每个control
     public static final int START = 1;//开始
     public static final int PAUSE = 2;//暂停
     public static final int STOP = 3;//停止
-    public static final int CONTINUE = 4;//继续
+    public static final int CONTINUE = 4;//继续下载中
     public static final int FINISHED = 5;//完成
 
     public static final int ERROR_NET = 6;//网络错误
@@ -28,6 +33,8 @@ public abstract class BaseManager extends IBaseManager {
     public static final int ERROR_HAS_FINISHED = 10;//文件已经下载完成
     public static final int ERROR_HAS_STOP = 11;//文件下载已停止
     public static final int ERROR_FILE_NOT_FOUND = 12;//文件不存在
+    public static final int ERROR_STOP = 13;//被停止
+
     //    针对所有
     public static final int ERROR_NO_DOWNLOAD = 100;//没有下载任务
     public static final int REMOVE = 101;//移除
@@ -39,6 +46,15 @@ public abstract class BaseManager extends IBaseManager {
     public HashMap<String, IBaseControl> controlHashMap;
     private OnAllHandleListener onAllHandleListener;
 
+    public void initContext(Application application) {
+        if (application != null) {
+            context = application.getApplicationContext();
+        }
+    }
+
+    public Context getContext() {
+        return context;
+    }
 
     /**
      * 添加下载
@@ -47,13 +63,13 @@ public abstract class BaseManager extends IBaseManager {
      * @return
      */
     @Override
-    public IBaseControl add(BaseProgressInfo downloadInfo, String tag) {
+    public IBaseControl add(BaseProgressInfo downloadInfo) {
         if (downloadInfo == null) return null;
         IBaseControl baseControl = get(downloadInfo.getUrl());
         if (baseControl == null) {
             baseControl = newDownloadControl(downloadInfo);
             if (baseControl == null) baseControl = newUploadControl(downloadInfo);
-            controlHashMap.put(tag, baseControl);
+            controlHashMap.put(downloadInfo.getUrl(), baseControl);
         }
         return baseControl;
     }

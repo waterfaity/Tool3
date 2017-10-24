@@ -44,6 +44,8 @@ public abstract class IBaseControl {
     }
 
     protected void returnError(int code) {
+        baseProgressState = code;
+        baseProgressInfo.setState(code);
         OnProgressListener downloadListener = getLoadListener();
         if (downloadListener != null) downloadListener.onError(code);
     }

@@ -1,6 +1,7 @@
 package com.waterfairy.retrofit2.base;
 
 import com.waterfairy.retrofit2.download.DownloadInfo;
+import com.waterfairy.retrofit2.download.DownloadManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +52,12 @@ public class FileWriter {
                     }
                     responseBody.byteStream().close();
                 } catch (IOException | NullPointerException e) {
-                    onDownloadListener.onError(BaseManager.PAUSE);
+                    boolean net = NetUtils.checkNet(DownloadManager.getInstance().getContext());
+                    if (!net) {
+                        onDownloadListener.onError(BaseManager.ERROR_STOP);
+                    } else if (info.getState() != BaseManager.PAUSE) {
+                        onDownloadListener.onChange(BaseManager.STOP);
+                    }
                 }
                 channelOut.close();
                 randomAccessFile.close();
@@ -59,7 +65,6 @@ public class FileWriter {
                 e.printStackTrace();
                 onDownloadListener.onError(BaseManager.ERROR_FILE_SAVE);
             }
-
         } else {
             onDownloadListener.onError(BaseManager.ERROR_FILE_CREATE);
         }

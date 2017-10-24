@@ -9,8 +9,7 @@ import com.waterfairy.retrofit2.upload.UploadControl;
  * 995637517@qq.com
  */
 
-public class
-DownloadManager extends BaseManager {
+public class DownloadManager extends BaseManager {
     public static DownloadManager DOWNLOAD_MANGER;
 
     private DownloadManager() {

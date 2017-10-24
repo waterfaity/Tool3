@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.text.TextUtils;
 
 /**
  * Created by water_fairy on 2016/7/29.
@@ -99,4 +100,16 @@ public class PermissionUtils {
         return ActivityCompat.checkSelfPermission(context, permission);
     }
 
+    public static boolean onRequestPermissionsResultForSDCard(String permissions[], int grantResults[]) {
+        if (permissions.length > 0) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (TextUtils.equals(permissions[i], Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (grantResults.length > i) {
+                        return grantResults[i] == PackageManager.PERMISSION_GRANTED;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
