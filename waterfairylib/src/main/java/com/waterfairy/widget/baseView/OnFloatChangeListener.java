@@ -7,4 +7,6 @@ package com.waterfairy.widget.baseView;
 
 public interface OnFloatChangeListener {
     void onChange(float value);
+
+    void onFinish();
 }

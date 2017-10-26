@@ -2,9 +2,12 @@ package com.waterfairy.widget.baseView;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+import android.util.Log;
 
 /**
  * Created by water_fairy on 2017/6/13.
@@ -22,6 +25,8 @@ public class BaseSelfView extends AppCompatImageView {
     private boolean hasDrawFinish;
     protected boolean canDraw;
     private boolean needDraw = true;
+    private final int WHAT_DRAW = 0;
+    private final int WHAT_FINISH = 1;
 
     public BaseSelfView(Context context) {
         this(context, null);
@@ -90,6 +95,17 @@ public class BaseSelfView extends AppCompatImageView {
         onInitData();
     }
 
+    /**
+     * 取消绘制
+     */
+    public void cancelDraw() {
+        if (handler != null) {
+            handler.removeMessages(WHAT_DRAW);
+            handler.removeMessages(WHAT_FINISH);
+            isDrawing=false;
+        }
+    }
+
     private class ViewDrawObserver implements ViewCreateObserver {
         private boolean viewState;
         private boolean dataState;
@@ -118,32 +134,67 @@ public class BaseSelfView extends AppCompatImageView {
         return isDrawing;
     }
 
-    protected void setClock(OnFloatChangeListener onFloatChangeListener) {
+    private Handler handler;//延时时钟
+
+    protected void setClock(final OnFloatChangeListener onFloatChangeListener) {
         this.onFloatChangeListener = onFloatChangeListener;
         if (isDrawing) return;
+        Log.i(TAG, "setClock: " + isDrawing);
         isDrawing = true;
-        while (isDrawing) {
-            float ratio = currentTimes / (float) times;//绘画过的比例
-            if (onFloatChangeListener != null) {
-                onFloatChangeListener.onChange(ratio);
-                startDraw();
-            }
-            try {
-                Thread.sleep(sleepTime);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (currentTimes >= times) isDrawing = false;
-            currentTimes++;
+        currentTimes = 0;
+        if (handler == null) {
+            handler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    if (msg.what == WHAT_DRAW) {
+                        if (onFloatChangeListener != null && isDrawing) {
+                            float ratio = currentTimes / (float) times;//绘画过的比例
+                            startDraw();
+                            onFloatChangeListener.onChange(ratio);
+                            if (ratio >= 1) {
+                                isDrawing = false;
+                                removeMessages(WHAT_DRAW);
+                                sendEmptyMessageDelayed(WHAT_FINISH, 100);
+                            } else if (ratio < 1) {
+                                currentTimes++;
+                                sendEmptyMessageDelayed(WHAT_DRAW, sleepTime);
+                            }
+                        }
+                    } else if (msg.what == WHAT_FINISH) {
+                        onFloatChangeListener.onFinish();
+                        isDrawing=false;
+                    }
+                }
+            };
+        } else {
+            handler.removeMessages(0);
         }
+        handler.sendEmptyMessage(0);
     }
 
     private void startDraw() {
         if (needDraw)
-            postInvalidate();
+            invalidate();
     }
 
     protected void beforeDraw() {
 
+    }
+
+    public int getTimes() {
+        return times;
+    }
+
+    public void setTimes(int times) {
+        this.times = times;
+    }
+
+    public int getSleepTime() {
+        return sleepTime;
+    }
+
+    public void setSleepTime(int sleepTime) {
+        this.sleepTime = sleepTime;
     }
 }

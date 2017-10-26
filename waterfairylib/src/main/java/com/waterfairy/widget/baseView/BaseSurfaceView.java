@@ -7,9 +7,10 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-//import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+//import android.util.Log;
 
 /**
  * Created by water_fairy on 2017/5/25.

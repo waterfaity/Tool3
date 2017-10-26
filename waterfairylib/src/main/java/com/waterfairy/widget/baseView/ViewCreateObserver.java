@@ -10,5 +10,4 @@ public interface ViewCreateObserver {
     int TYPE_VIEW = 2;
 
     void onUpdate(int type, boolean state);
-
 }
