@@ -1,19 +1,12 @@
 package com.waterfairy.widget.colorSeclect;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.util.AttributeSet;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.waterfairy.utils.AssetsUtils;
 import com.waterfairy.widget.baseView.BaseSelfViewGroup;
-
-import java.io.IOException;
 
 import static android.widget.LinearLayout.VERTICAL;
 
@@ -53,7 +46,7 @@ public class ColorSelectView extends BaseSelfViewGroup implements ColorTransitio
 
     @Override
     protected void onGetDimen() {
-        RelativeLayout.LayoutParams layoutParams = (LayoutParams) contentView.getLayoutParams();
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) contentView.getLayoutParams();
         layoutParams.height = mHeight;
         layoutParams.width = mWidth - 2 * padding;
         contentView.setLayoutParams(layoutParams);

@@ -17,10 +17,6 @@ import android.view.View;
 
 import com.waterfairy.utils.AlphaBgImgCreator;
 import com.waterfairy.utils.AssetsUtils;
-import com.waterfairy.utils.ColorUtils;
-import com.waterfairy.utils.ImageUtils;
-import com.waterfairy.utils.NumberChange;
-import com.waterfairy.utils.RGBColorBitmapCreator;
 import com.waterfairy.widget.baseView.BaseSelfView;
 
 import java.io.IOException;
@@ -52,7 +48,7 @@ public class ColorCircleView extends BaseSelfView implements View.OnTouchListene
         setOnTouchListener(this);
         cellWidth = (int) (context.getResources().getDisplayMetrics().density * 6);
         try {
-            colorBitmap = BitmapFactory.decodeStream(AssetsUtils.getIS(context, "circle_2.png"));
+            colorBitmap = BitmapFactory.decodeStream(AssetsUtils.getIS(context, "img/circle_1.png"));
             colorWidth = colorBitmap.getWidth();
             colorHeight = colorBitmap.getHeight();
         } catch (IOException e) {

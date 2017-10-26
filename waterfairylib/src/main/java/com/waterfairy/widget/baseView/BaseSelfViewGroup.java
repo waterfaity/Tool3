@@ -1,37 +1,47 @@
 package com.waterfairy.widget.baseView;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+import android.widget.RelativeLayout;
 
 /**
- * Created by water_fairy on 2017/6/13.
+ * Created by water_fairy on 2017/7/26.
  * 995637517@qq.com
  */
 
-public class BaseSelfViewGroup extends AppCompatImageView {
-    private static final String TAG = "MenuImageView";
+public class BaseSelfViewGroup extends RelativeLayout {
+
     protected int mWidth, mHeight;
-    private ViewDrawObserver viewDrawObserver;
     private int left, right, top, bottom;
-    protected boolean initOk;
-//    private int currentTimes = 0;
-//    private int times = 100;//绘画频率
-//    private int sleepTime = 1;
-//    private boolean hasDrawFinish;
+    private ViewDrawObserver viewDrawObserver;
+
 
     public BaseSelfViewGroup(Context context) {
-        this(context, null);
+        super(context);
     }
 
-    public BaseSelfViewGroup(Context context, @Nullable AttributeSet attrs) {
+    public BaseSelfViewGroup(Context context, AttributeSet attrs) {
         super(context, attrs);
         viewDrawObserver = new ViewDrawObserver();
     }
 
+    /**
+     * 数据初始化后调用这个
+     */
+    public void onInitData() {
+        viewDrawObserver.onUpdate(ViewCreateObserver.TYPE_DATA, true);
+    }
+
+    /**
+     * 数据初始化后 调用super.initData();
+     */
+    protected void onInitDataOk() {
+        onInitData();
+    }
+
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
         left = l;
         right = r;
         top = t;
@@ -54,19 +64,6 @@ public class BaseSelfViewGroup extends AppCompatImageView {
         }
     }
 
-    /**
-     * 数据初始化后调用这个
-     */
-    public void onInitData() {
-        viewDrawObserver.onUpdate(ViewCreateObserver.TYPE_DATA, true);
-    }
-
-    /**
-     * 数据初始化后 调用super.initData();
-     */
-    protected void initData() {
-        onInitData();
-    }
 
     private class ViewDrawObserver implements ViewCreateObserver {
         private boolean viewState;
@@ -80,49 +77,12 @@ public class BaseSelfViewGroup extends AppCompatImageView {
                 dataState = state;
             }
             if (viewState && dataState) {
-                initOk = true;
-                beforeDraw();
-                startDraw();
+                onGetDimen();
             }
         }
     }
 
-
-//    private OnFloatChangeListener onFloatChangeListener;
-//    protected boolean isDrawing;
-//
-//    protected boolean isDrawing() {
-//        return isDrawing;
-//    }
-//
-//    protected void setClock(OnFloatChangeListener onFloatChangeListener) {
-//        this.onFloatChangeListener = onFloatChangeListener;
-//        if (isDrawing) return;
-//        isDrawing = true;
-//        while (isDrawing) {
-//            float ratio = currentTimes / (float) times;//绘画过的比例
-//            if (onFloatChangeListener != null) {
-//                onFloatChangeListener.onChange(ratio);
-//                startDraw();
-//            }
-//            try {
-//                Thread.sleep(sleepTime);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            if (currentTimes >= times) isDrawing = false;
-//            currentTimes++;
-//        }
-//    }
-
-    private void startDraw() {
-        postInvalidate();
-    }
-
-    /**
-     * 有用到长宽度时 调用
-     */
-    protected void beforeDraw() {
+    protected void onGetDimen() {
 
     }
 }
