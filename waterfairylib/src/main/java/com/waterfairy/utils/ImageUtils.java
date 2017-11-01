@@ -801,7 +801,7 @@ public class ImageUtils {
      * @param style  方式  x,y,xy
      * @param length 宽度或长度
      * @param bitmap 平铺的图片
-     * @param extra STYLE_XY时  (length 作为宽 extra作为高)
+     * @param extra  STYLE_XY时  (length 作为宽 extra作为高)
      * @return
      */
     public static Bitmap repeat(int style, int length, Bitmap bitmap, int extra) {
@@ -836,4 +836,28 @@ public class ImageUtils {
         return bitmapTemp;
     }
 
+    public static Bitmap colorToTrans(Bitmap source, int color, int trans) {
+        Bitmap bitmap = null;
+        if (source != null && !source.isRecycled()) {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    int pixel = source.getPixel(i, j);
+                    if (color >= 0) {
+                        if (pixel == color) {
+                            bitmap.setPixel(i, j, Color.TRANSPARENT);
+                        } else {
+                            bitmap.setPixel(i, j, pixel);
+                        }
+                    } else {
+                        int argb = Color.argb(trans, Color.red(pixel), Color.green(pixel), Color.blue(pixel));
+                        bitmap.setPixel(i, j, argb);
+                    }
+                }
+            }
+        }
+        return bitmap;
+    }
 }

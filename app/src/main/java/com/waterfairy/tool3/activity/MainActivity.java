@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.screen_shot:
                 startActivity(new Intent(this, ScreenShotActivity.class));
                 break;
+            case R.id.img_tool:
+                startActivity(new Intent(this, ImgToolActivity.class));
+                break;
         }
     }
 }
