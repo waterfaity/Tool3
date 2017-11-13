@@ -8,6 +8,8 @@ package com.waterfairy.widget.flipView;
  */
 
 public interface OnFlipListener {
+    void onFlipping(boolean flipping);
+
     //选中页
     void onFlipPageSelect(int pos);
 

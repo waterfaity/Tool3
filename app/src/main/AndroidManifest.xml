@@ -45,6 +45,8 @@
         <activity android:name=".activity.ScreenShotActivity"/>
         <activity android:name=".activity.ImgToolActivity">
         </activity>
+        <activity android:name=".activity.FlipViewActivity">
+        </activity>
     </application>
 
 </manifest>

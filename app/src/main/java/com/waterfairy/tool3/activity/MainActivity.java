@@ -25,17 +25,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void test() {
-        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 0);
-        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 30);
-        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 45);
-        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 60);
-        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 90);
-        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 120);
-        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 135);
-        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 180);
-        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 225);
-        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 315);
-        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 360);
+//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 0);
+//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 30);
+//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 45);
+//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 60);
+//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 90);
+//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 120);
+//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 135);
+//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 180);
+//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 225);
+//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 315);
+//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 360);
     }
 
     public void onClick(View view) {

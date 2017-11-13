@@ -11,7 +11,6 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.support.v4.util.LruCache;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -59,21 +58,22 @@ public class FlipView extends BaseSelfView {
      * 缓存处理
      */
     private void initLruCache() {
-        long maxMemory = Runtime.getRuntime().maxMemory();
-        int cacheSize = (int) (maxMemory / 8);
-        lruCache = new LruCache<Integer, Bitmap>(cacheSize) {
-            //必须重写此方法，来测量Bitmap的大小
-            @Override
-            protected int sizeOf(Integer key, Bitmap value) {
-                return value.getRowBytes() * value.getHeight();
-            }
-        };
+        lruCache = new LruCache<>(4);
+//        long maxMemory = Runtime.getRuntime().maxMemory();
+//        int cacheSize = (int) (maxMemory / 16);
+//        lruCache = new LruCache<Integer, Bitmap>(cacheSize) {
+//            //必须重写此方法，来测量Bitmap的大小
+//            @Override
+//            protected int sizeOf(Integer key, Bitmap value) {
+//                return value.getRowBytes() * value.getHeight();
+//            }
+//        };
     }
 
     @Override
     protected void beforeDraw() {
-        setSleepTime(15);
-        setTimes(15);
+        setSleepTime(10);
+        setTimes(40);
         viewHeight = mHeight;
         viewWidth = mWidth;
         leftEnd = viewWidth / 2;
@@ -85,12 +85,15 @@ public class FlipView extends BaseSelfView {
             lruCache.evictAll();
         }
         currentPos = 0;
-        calcViewSide(cacheBitmap(0));
-        cacheBitmap(1);
+        cacheBitmap(0);
+        calcViewSide(cacheBitmap(1));
 
         shadowPaint = new Paint();
         shadowPaint.setAntiAlias(true);
         invalidate();
+        if (flipListener != null) {
+            flipListener.onFlipPageSelect(currentPos);
+        }
     }
 
 
@@ -106,13 +109,17 @@ public class FlipView extends BaseSelfView {
         if (lruCache == null) return null;
         Bitmap bitmap = lruCache.get(pos);
         if (bitmap == null || bitmap.isRecycled()) {
+            long sart = System.currentTimeMillis();
             bitmap = adapter.getBitmap(pos);
+//            Log.i(TAG, "getBitmap:结束 " + (System.currentTimeMillis() - sart));
             try {
                 lruCache.put(pos, bitmap);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+
         return bitmap;
     }
 
@@ -147,6 +154,8 @@ public class FlipView extends BaseSelfView {
         setClock(new OnFloatChangeListener() {
             @Override
             public void onChange(float value) {
+                if (value == 0)
+                    if (flipListener != null) flipListener.onFlipping(true);
                 radio = sign * (float) ((Math.sin((value - 0.5f) * Math.PI) + 1) / 2f);
             }
 
@@ -154,6 +163,8 @@ public class FlipView extends BaseSelfView {
             public void onFinish() {
                 calcCurrentPos(sign == 1);
                 cacheBitmapSide();
+                if (flipListener != null) flipListener.onFlipping(false);
+                radio = 0;
             }
         });
 
@@ -289,6 +300,7 @@ public class FlipView extends BaseSelfView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (viewHeight != 0 && adapter != null) {
+            long start = System.currentTimeMillis();
             if (radio > 0) {
                 //右滑 -> 当前右侧不动 pre左侧改变
                 Bitmap currentBitmap = getBitmap(currentPos);
@@ -296,7 +308,7 @@ public class FlipView extends BaseSelfView {
                 int viewCenterX = (int) ((rightViewRect.right - leftViewRect.left) * radio);
                 if (Math.abs(radio) < 0.5f) {
                     int bitmapCenterX = (int) (preBitmap.getWidth() * radio);
-                    //左侧:
+                    //左侧:(1.srcBitmap 2.bitmap 区域  3.view的区域)
                     canvas.drawBitmap(preBitmap,
                             getBitmapLeftRect(preBitmap, bitmapCenterX),
                             new RectF(leftViewRect.left, leftViewRect.top, leftViewRect.left + viewCenterX, leftViewRect.bottom), bitmapPaint);//左侧
@@ -305,7 +317,7 @@ public class FlipView extends BaseSelfView {
                     canvas.drawBitmap(currentBitmap, getBitmapLeftRect(currentBitmap,
                             currentBitmap.getWidth() / 2),
                             centerRect, bitmapPaint);//中
-                    //画阴影
+//                    画阴影
                     canvas.drawRect(centerRect, getPaint(radio, centerRect.left, centerRect.right));
                     //右侧:
                     canvas.drawBitmap(currentBitmap,
@@ -321,7 +333,7 @@ public class FlipView extends BaseSelfView {
                     RectF centerRectF = new RectF(rightViewRect.left, leftViewRect.top, leftViewRect.left + viewCenterX, rightViewRect.bottom);
                     canvas.drawBitmap(preBitmap, getBitmapRightRect(preBitmap, preBitmap.getWidth() / 2),
                             centerRectF, bitmapPaint);//中
-                    //画阴影
+//                    画阴影
                     canvas.drawRect(centerRectF, getPaint(radio, centerRectF.left, centerRectF.right));
 
                     //右侧:
@@ -347,7 +359,7 @@ public class FlipView extends BaseSelfView {
                     canvas.drawBitmap(currentBitmap,
                             getBitmapRightRect(currentBitmap, currentBitmap.getWidth() - currentBitmap.getWidth() / 2),
                             centerRectF, null);//中
-                    //画阴影
+//                    画阴影
                     canvas.drawRect(centerRectF, getPaint(radio, centerRectF.left, centerRectF.right));
                     //右侧:
                     canvas.drawBitmap(nextBitmap,
@@ -364,7 +376,7 @@ public class FlipView extends BaseSelfView {
                     canvas.drawBitmap(nextBitmap,
                             getBitmapLeftRect(nextBitmap, nextBitmap.getWidth() - nextBitmap.getWidth() / 2),
                             centerRectF, null);//中
-                    //画阴影
+//                    画阴影
                     canvas.drawRect(centerRectF, getPaint(radio, centerRectF.left, centerRectF.right));
                     //右侧:
                     canvas.drawBitmap(nextBitmap,
@@ -376,6 +388,7 @@ public class FlipView extends BaseSelfView {
                 canvas.drawBitmap(bitmap, new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()),
                         new Rect(leftViewRect.left, leftViewRect.top, rightViewRect.right, rightViewRect.bottom), null);//静止
             }
+//            Log.i(TAG, "onDraw: 结束 :" + (System.currentTimeMillis() - start));
         }
     }
 
@@ -435,7 +448,7 @@ public class FlipView extends BaseSelfView {
         if (cacheBitmap == null || cacheBitmap.isRecycled()) {
             cacheBitmap = adapter.getBitmap(pos);
             lruCache.put(pos, cacheBitmap);
-            Log.i(TAG, "cacheBitmap: -缓存大小:" + lruCache.size() / (1024 * 1024) + "M  -当前:" + pos + "  -宽:" + cacheBitmap.getWidth() + "  -高:" + cacheBitmap.getHeight());
+//            Log.i(TAG, "cacheBitmap: -缓存大小:" + lruCache.size() / (1024 * 1024) + "M  -当前:" + pos + "  -宽:" + cacheBitmap.getWidth() + "  -高:" + cacheBitmap.getHeight());
         }
         return cacheBitmap;
     }
@@ -525,7 +538,7 @@ public class FlipView extends BaseSelfView {
         super.cancelDraw();
         radio = 0;
         if (adapter == null || totalNum == 0 || totalNum - 1 < currentPos) {
-            Log.i(TAG, "setCurrentPage: error  ");
+//            Log.i(TAG, "setCurrentPage: error  ");
             this.currentPos = 0;
         } else {
             cacheBitmap(currentPos);
