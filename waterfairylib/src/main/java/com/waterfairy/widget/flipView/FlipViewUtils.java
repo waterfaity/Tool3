@@ -4,6 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.waterfairy.utils.ImageUtils;
+import com.waterfairy.utils.MD5Utils;
+
 import java.io.File;
 
 /**
@@ -16,48 +19,71 @@ import java.io.File;
 public class FlipViewUtils {
 
     private static final String TAG = "FlipViewUtils";
+    private static String defaultCachePath;
+    private static boolean canCache;
 
-    public static Bitmap getBitmap(String imgFile, int maxWidth, int maxHeight) {
-        if (new File(imgFile).exists()) {
-            try {
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-                long l = System.currentTimeMillis();
-                BitmapFactory.decodeFile(imgFile, options);
-                long l1 = System.currentTimeMillis();
-                int outWidth = options.outWidth;
-                int outHeight = options.outHeight;
-                options.inJustDecodeBounds = false;
-                int inSampleSizeWidth = outWidth / maxWidth;
-                int inSampleSizeHeight = outHeight / maxHeight;
-                if (outWidth % maxWidth != 0) {
-                    inSampleSizeWidth++;
-                }
-                if (outWidth % maxHeight != 0) {
-                    inSampleSizeHeight++;
-                }
-                if (inSampleSizeHeight == 0) inSampleSizeHeight = 1;
-                if (inSampleSizeWidth == 0) inSampleSizeWidth = 1;
+    /**
+     * 缓存路径
+     *
+     * @param path
+     */
+    public static void initCachePath(String path) {
+        defaultCachePath = path;
+        File file = new File(path);
+        canCache = file.exists() || file.mkdirs();
+    }
 
-
-                options.inSampleSize = Math.max(inSampleSizeHeight, inSampleSizeWidth);
-                options.inDither = false;    /*不进行图片抖动处理*/
-                options.inPreferredConfig = null;  /*设置让解码器以最佳方式解码*/
-                options.inPurgeable = true;  /* 下面两个字段需要组合使用 */
-                options.inInputShareable = true;
-                Bitmap bitmap = BitmapFactory.decodeFile(imgFile, options);
-                long l2 = System.currentTimeMillis();
-                if (bitmap != null) {
-                    Log.i(TAG, "获取图像宽时间:" + (l1 - l) + " * 获取bitmap时间:" + (l2 - l1)
-                            + " * 原图片宽:" + outWidth + " * 处理后宽:"
-                            + bitmap.getWidth() + " * 最大宽:" + maxWidth
-                            + " * 缩放倍数:" + inSampleSizeWidth);
-                    return bitmap;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public static String getCachePath(String imgFilePath) {
+        if (canCache) {
+            return new File(defaultCachePath, MD5Utils.getMD5Code(imgFilePath)).getAbsolutePath();
+        } else {
+            File file = new File(imgFilePath);
+            return new File(file.getParent(), file.getName() + "-cache").getAbsolutePath();
         }
-        return Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
+    }
+
+    /**
+     * 获取 本地图片 缓存图片
+     *
+     * @param imgFilePath 本地路径
+     * @param maxWidth    最大宽
+     * @param maxHeight   最大高
+     * @return 返回bitmap
+     */
+    public static Bitmap getBitmap(String imgFilePath, int maxWidth, int maxHeight) {
+        long l = System.currentTimeMillis();
+        String cacheFilePath = getCachePath(imgFilePath);
+        Bitmap showBitmap = null;
+        if (new File(cacheFilePath).exists()) {
+            //获取缓存
+            showBitmap = BitmapFactory.decodeFile(cacheFilePath);
+        }
+        if (showBitmap == null && new File(imgFilePath).exists()) {
+            //获取非缓存-并生成缓存
+            showBitmap = BitmapFactory.decodeFile(imgFilePath);
+            showBitmap = ImageUtils.matrix(showBitmap, maxWidth, maxHeight, false);
+            saveImg(showBitmap, cacheFilePath);
+        }
+        if (showBitmap != null) {
+//            Log.i(TAG, "getBitmap:获取图片用时: " + (System.currentTimeMillis() - l));
+            return showBitmap;
+        } else {
+//            Log.i(TAG, "获取图片失败:" + imgFilePath);
+        }
+        return Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+    }
+
+    private static void saveImg(final Bitmap showBitmap, final String cacheFilePath) {
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                if (showBitmap != null) {
+//                    long l = System.currentTimeMillis();
+                    ImageUtils.saveBitmap(cacheFilePath, showBitmap);
+//                    Log.i(TAG, "run: 保存图片 " + showBitmap.getWidth() + "*" + showBitmap.getHeight() + "  用时:" + (System.currentTimeMillis() - l));
+                }
+            }
+        }.start();
     }
 }

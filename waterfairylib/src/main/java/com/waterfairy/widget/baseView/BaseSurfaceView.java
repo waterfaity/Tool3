@@ -108,7 +108,7 @@ public abstract class BaseSurfaceView extends SurfaceView implements SurfaceHold
                             drawOne(canvas);
                         } else {
                             if (BaseSurfaceView.this.onFloatChangeListener != null)
-                                BaseSurfaceView.this.onFloatChangeListener.onChange(canvas, ratio);
+                                BaseSurfaceView.this.onFloatChangeListener.onDrawChange(canvas, ratio);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -156,6 +156,10 @@ public abstract class BaseSurfaceView extends SurfaceView implements SurfaceHold
         viewDrawObserver.onUpdate(ViewCreateObserver.TYPE_VIEW, false);
     }
 
+    public void cancelDraw() {
+
+    }
+
 
     private class ViewDrawObserver implements ViewCreateObserver {
         private boolean viewState;
@@ -166,6 +170,9 @@ public abstract class BaseSurfaceView extends SurfaceView implements SurfaceHold
             if (type == TYPE_VIEW) {
                 hasCreate = state;
                 viewState = state;
+                if (state) {
+                    onViewInitOk();
+                }
             } else if (type == TYPE_DATA) {
                 currentTimes = -1;//防止0的时候刚好加1   没有0的情况
                 hasInitData = state;
@@ -181,6 +188,10 @@ public abstract class BaseSurfaceView extends SurfaceView implements SurfaceHold
                 }
             }
         }
+    }
+
+    protected void onViewInitOk() {
+
     }
 
     private void drawFinishView() {
@@ -224,4 +235,7 @@ public abstract class BaseSurfaceView extends SurfaceView implements SurfaceHold
         viewDrawObserver.onUpdate(ViewCreateObserver.TYPE_VIEW, true);
     }
 
+    public int getCurrentTimes() {
+        return currentTimes;
+    }
 }

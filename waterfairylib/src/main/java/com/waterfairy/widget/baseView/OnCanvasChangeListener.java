@@ -8,5 +8,5 @@ import android.graphics.Canvas;
  */
 
 public interface OnCanvasChangeListener {
-    void onChange(Canvas canvas, float value) throws Exception;
+    void onDrawChange(Canvas canvas, float value) throws Exception;
 }

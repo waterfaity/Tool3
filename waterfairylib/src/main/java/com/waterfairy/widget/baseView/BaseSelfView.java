@@ -102,7 +102,7 @@ public class BaseSelfView extends AppCompatImageView {
         if (handler != null) {
             handler.removeMessages(WHAT_DRAW);
             handler.removeMessages(WHAT_FINISH);
-            isDrawing=false;
+            isDrawing = false;
         }
     }
 
@@ -114,6 +114,9 @@ public class BaseSelfView extends AppCompatImageView {
         public void onUpdate(int type, boolean state) {
             if (type == TYPE_VIEW) {
                 viewState = state;
+                if (viewState) {
+                    onViewInitOk();
+                }
             } else if (type == TYPE_DATA) {
                 dataState = state;
             }
@@ -163,7 +166,7 @@ public class BaseSelfView extends AppCompatImageView {
                         }
                     } else if (msg.what == WHAT_FINISH) {
                         onFloatChangeListener.onFinish();
-                        isDrawing=false;
+                        isDrawing = false;
                     }
                 }
             };
@@ -173,9 +176,16 @@ public class BaseSelfView extends AppCompatImageView {
         handler.sendEmptyMessage(0);
     }
 
+    /**
+     * 界面初始化ok  width,height
+     */
+    protected void onViewInitOk() {
+
+    }
+
     private void startDraw() {
         if (needDraw)
-            invalidate();
+            postInvalidate();
     }
 
     protected void beforeDraw() {
