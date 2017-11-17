@@ -1,4 +1,4 @@
-package com.waterfairy.widget.recyclerView.expand;
+package com.waterfairy.widget.recyclerview.expand;
 
 import java.util.ArrayList;
 import java.util.List;

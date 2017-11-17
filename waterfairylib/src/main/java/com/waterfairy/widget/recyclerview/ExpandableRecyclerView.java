@@ -1,4 +1,4 @@
-package com.waterfairy.widget.recyclerView;
+package com.waterfairy.widget.recyclerview;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;

@@ -1,6 +1,6 @@
 package com.waterfairy.tool3.activity;
 
-import com.waterfairy.widget.recyclerView.expand.ExpandBean;
+import com.waterfairy.widget.recyclerview.expand.ExpandBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +32,18 @@ public class Test {
                     ExpandBean expandBean2 = new ExpandBean();
                     expandBean2.setLevel(2);
                     expandBean2.setObject("*" + i + "--" + j + "--" + k);
+                    if (k == 0) {
+                        expandBean2.setExpand(true);
+                    }
                     expandBean1.addChild(expandBean2);
                 }
+                if (j == 0) {
+                    expandBean1.setExpand(true);
+                }
                 expandBean.addChild(expandBean1);
+            }
+            if (i == 0) {
+                expandBean.setExpand(true);
             }
             mData.add(expandBean);
         }

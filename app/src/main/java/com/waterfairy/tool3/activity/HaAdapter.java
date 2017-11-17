@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.waterfairy.tool3.R;
-import com.waterfairy.widget.recyclerView.expand.ExpandBaseAdapter;
-import com.waterfairy.widget.recyclerView.expand.ExpandBean;
+import com.waterfairy.widget.recyclerview.expand.ExpandBaseAdapter;
+import com.waterfairy.widget.recyclerview.expand.ExpandBean;
 
 import java.util.List;
 

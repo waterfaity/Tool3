@@ -1,4 +1,4 @@
-package com.waterfairy.widget.recyclerView.expand;
+package com.waterfairy.widget.recyclerview.expand;
 
 import android.content.Context;
 import android.os.Handler;
@@ -35,13 +35,18 @@ public abstract class ExpandBaseAdapter<VH extends RecyclerView.ViewHolder> exte
         this.mData = mData;
         this.mContext = mContext;
         mShowData = new ArrayList<>();
-        initTempPos(mData);
+        addTempPos(mData);
     }
 
-    private void initTempPos(List<ExpandBean> mData) {
-        for (int i = 0; i < mData.size(); i++) {
-            mShowData.add(mData.get(i).setShowPos(i));
-        }
+    private void addTempPos(List<ExpandBean> mData) {
+        if (mData != null)
+            for (int i = 0; i < mData.size(); i++) {
+                ExpandBean expandBean = mData.get(i).setShowPos(mShowData.size());
+                mShowData.add(expandBean);
+                if (expandBean.isExpand()) {
+                    addTempPos(expandBean.getChildExpandBean());
+                }
+            }
     }
 
     @Override
@@ -93,7 +98,7 @@ public abstract class ExpandBaseAdapter<VH extends RecyclerView.ViewHolder> exte
                 if (canClick) {
                     canClick = false;
                     clickDelay.removeMessages(0);
-                    clickDelay.sendEmptyMessageDelayed(0, 500);
+                    clickDelay.sendEmptyMessageDelayed(0, 600);
                     int position = (Integer) v.getTag();
                     showData(position);
                     if (onItemClickListener != null)
@@ -140,7 +145,6 @@ public abstract class ExpandBaseAdapter<VH extends RecyclerView.ViewHolder> exte
     private void unExpand(ExpandBean expandBean, int position) {
         List<ExpandBean> expandBeans = expandBean.unExpand();
         notifyItemChanged(position);
-        Log.i(TAG, "expand:处理数据个数: " + expandBeans.size());
         if (expandBeans.size() == 0) return;//没有展开的子类
         mShowData.removeAll(expandBeans);
         final int from = position + 1;
@@ -148,22 +152,14 @@ public abstract class ExpandBaseAdapter<VH extends RecyclerView.ViewHolder> exte
         for (int j = from; j < mShowData.size(); j++) {
             mShowData.get(j).setShowPos(j);
         }
-        new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                notifyItemRangeChanged(from, mShowData.size() - from);
-            }
-        }.sendEmptyMessageDelayed(0, 450);
+        notifyItemRangeChanged(from, mShowData.size() - from);
     }
 
     private void expand(ExpandBean expandBean, final int position) {
         //去显示\
         List<ExpandBean> expandBeans = expandBean.expand();
         notifyItemChanged(position);
-        Log.i(TAG, "expand:处理数据个数: " + expandBeans.size());
         if (expandBeans.size() == 0) return;//没有展开的子类
-        mShowData.removeAll(expandBeans);
         //添加最新
         for (int i = 0; i < expandBeans.size(); i++) {
             ExpandBean expandBeanTemp = expandBeans.get(i);
@@ -177,13 +173,7 @@ public abstract class ExpandBaseAdapter<VH extends RecyclerView.ViewHolder> exte
         for (int j = from; j < mShowData.size(); j++) {
             mShowData.get(j).setShowPos(j);
         }
-        new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                notifyItemRangeChanged(from, mShowData.size() - from);
-            }
-        }.sendEmptyMessageDelayed(0, 400);
+        notifyItemRangeChanged(from, mShowData.size() - from);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {

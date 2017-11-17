@@ -8,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.waterfairy.tool3.R;
+import com.waterfairy.widget.recyclerview.animotion.SlideInDownAnimator;
+
 
 public class RecyclerViewActivity extends AppCompatActivity {
 
@@ -19,7 +21,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recycler_view2);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setItemAnimator(new SlideInDownAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         HaAdapter myAdapter = new HaAdapter(this, Test.getData());
         myAdapter.setResIds(new int[]{R.layout.item_1, R.layout.item2, R.layout.item3, R.layout.item4, R.layout.item5, R.layout.item6});
