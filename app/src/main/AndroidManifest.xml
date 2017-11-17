@@ -43,7 +43,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:screenOrientation="landscape" android:name=".activity.FlipViewActivity" android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".activity.FlipViewActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
 
                 <!-- wifiManger -->
@@ -54,7 +56,14 @@
         <activity android:name=".activity.ScreenShotActivity"/>
         <activity android:name=".activity.ImgToolActivity">
         </activity>
+        <activity android:name=".activity.RecyclerViewActivity">
+            <intent-filter>
 
+                <!-- wifiManger -->
+                <!-- <action android:name="android.net.wifi.WIFI_STATE_CHANGED" /> -->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -139,7 +139,7 @@ public abstract class BasePopupWindow implements BasePopup {
         try {
             tryToShowPopup(0, null);
         } catch (Exception e) {
-            Log.e(TAG, "show error");
+            Log.e(TAG, "expand error");
             e.printStackTrace();
         }
     }
@@ -148,7 +148,7 @@ public abstract class BasePopupWindow implements BasePopup {
         try {
             tryToShowPopup(res, null);
         } catch (Exception e) {
-            Log.e(TAG, "show error");
+            Log.e(TAG, "expand error");
             e.printStackTrace();
         }
     }
@@ -157,7 +157,7 @@ public abstract class BasePopupWindow implements BasePopup {
         try {
             tryToShowPopup(0, v);
         } catch (Exception e) {
-            Log.e(TAG, "show error");
+            Log.e(TAG, "expand error");
             e.printStackTrace();
         }
     }

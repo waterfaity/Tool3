@@ -1,4 +1,4 @@
-package com.waterfairy.widget.recyclerview;
+package com.waterfairy.widget.recyclerView;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

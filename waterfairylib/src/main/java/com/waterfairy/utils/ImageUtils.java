@@ -22,7 +22,6 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,37 +34,48 @@ import java.io.IOException;
  */
 
 public class ImageUtils {
-    private static final String TAG = "imgUtils";
-
     public static boolean saveBitmap(String imgPath, Bitmap source) {
         return saveBitmap(imgPath, source, Bitmap.CompressFormat.JPEG, 90);
     }
 
+    /**
+     * 图片保存
+     *
+     * @param imgPath        保存路径
+     * @param source         需要保存的img
+     * @param compressFormat 格式
+     * @param quality        质量 1-100
+     * @return
+     */
     public static boolean saveBitmap(String imgPath, Bitmap source, Bitmap.CompressFormat compressFormat, int quality) {
-        Log.i(TAG, "saveBitmap: " + imgPath);
         File file = new File(imgPath);
+        boolean canSave = true;
         if (!file.exists()) {
-            File parentFile = file.getParentFile();
-            if (!parentFile.exists()) {
-                parentFile.mkdirs();
+            File parent = file.getParentFile();
+            canSave = parent.exists() || parent.mkdirs();
+            if (canSave) {
+                try {
+                    canSave = file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    canSave = false;
+                }
             }
+        }
+        if (canSave) {
             try {
-                file.createNewFile();
+                FileOutputStream fos = new FileOutputStream(file);
+                source.compress(compressFormat, quality, fos);
+                fos.flush();
+                fos.close();
+                canSave = true;
             } catch (IOException e) {
                 e.printStackTrace();
-                return false;
+                file.delete();
+                canSave = false;
             }
         }
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            source.compress(compressFormat, quality, fos);
-            fos.flush();
-            fos.close();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return canSave;
     }
 
     public static Bitmap compress(Bitmap source, Bitmap.CompressFormat compressFormat, int quality) {
@@ -97,6 +107,11 @@ public class ImageUtils {
                 }
                 if (bitmapHeight > height) {
                     yScale = height / (float) bitmapHeight;
+                }
+                if (xScale == 0 || yScale == 0) {
+                    float scale = Math.max(xScale, yScale);
+                    xScale = scale;
+                    yScale = scale;
                 }
             } else {
                 boolean isWidthBig = false;
@@ -137,9 +152,9 @@ public class ImageUtils {
      * 高斯图片 (系统)(0-25)
      *
      * @param context
-     * @param source
-     * @param radius
-     * @param recycle
+     * @param source  资源图片
+     * @param radius  高斯指数 (0-25)
+     * @param recycle 是否回收图片
      * @return
      */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -801,7 +816,7 @@ public class ImageUtils {
      * @param style  方式  x,y,xy
      * @param length 宽度或长度
      * @param bitmap 平铺的图片
-     * @param extra  STYLE_XY时  (length 作为宽 extra作为高)
+     * @param extra  xy时  (length 作为宽 extra作为高)
      * @return
      */
     public static Bitmap repeat(int style, int length, Bitmap bitmap, int extra) {
@@ -857,6 +872,37 @@ public class ImageUtils {
                     }
                 }
             }
+        }
+        return bitmap;
+    }
+
+    public static Bitmap txtToImg(String content, int textSize, int maxLen, int padding, Paint paint) {
+        float textLen = TxtUtils.getTextLen(content, textSize);
+        float perWidth = textLen / content.length();//每字宽
+        int textTimes = content.length();//字体个数
+        int row = textTimes / maxLen;
+        if (textTimes % maxLen != 0) {
+            row++;
+        }
+        int width = (int) (maxLen * perWidth) + 2 * padding;
+        int height = (int) (row * perWidth) + 2 * padding;
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.WHITE);
+        if (paint == null) {
+            paint = new Paint();
+            paint.setAntiAlias(true);
+            paint.setTextSize(textSize);
+        }
+        for (int i = 0; i < row; i++) {
+            int start = i * maxLen;
+            int end = (i + 1) * maxLen;
+            if (start >= textTimes) break;
+            if (end >= textTimes) {
+                end = content.length();
+            }
+            canvas.drawText(content.substring(start, end),
+                    padding, padding + (i + 1) * textSize, paint);
         }
         return bitmap;
     }

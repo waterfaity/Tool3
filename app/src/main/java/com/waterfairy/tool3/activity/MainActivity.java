@@ -3,16 +3,18 @@ package com.waterfairy.tool3.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.waterfairy.tool3.R;
 import com.waterfairy.tool3.recyclerview.RecyclerViewActivity;
-import com.waterfairy.utils.MathTools;
+import com.waterfairy.utils.PathUtils;
 import com.waterfairy.utils.PermissionUtils;
 import com.waterfairy.utils.ToastUtils;
-import com.waterfairy.widget.baseView.Coordinate;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "main";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void test() {
+        String nameFromUrl = PathUtils.getNameFromUrl("http://www.baidu.com/hhfdsa/jj.jpg.png.jpg");
+        String pathFromUrl = PathUtils.getPathFromUrl("http://www.baidu.com/hhfdsa/jj.jpg.png.jpg");
+        Log.i(TAG, "test: "+nameFromUrl);
+        Log.i(TAG, "test: "+pathFromUrl);
+
 //        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 0);
 //        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 30);
 //        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 45);
