@@ -1,10 +1,12 @@
 package com.waterfairy.utils;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.annotation.RequiresPermission;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
-
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +20,9 @@ import java.io.OutputStream;
  */
 
 public class FileUtils {
+
+    private static final String TAG = "fileUtils";
+
     /**
      * @param context
      * @param filePath img/jpg(前面不需要/)
@@ -54,6 +59,16 @@ public class FileUtils {
                 if (!tempFile.exists()) {
                     try {
                         tempFile.createNewFile();
+                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return null;
+                        }
                         return tempFile;
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -69,11 +84,76 @@ public class FileUtils {
         return null;
     }
 
-    public static boolean copyFile(String fromFile, String toFile) throws IOException {
+    /**
+     * @param fromPath
+     * @param toPath       /sdcard/test
+     * @param createToPath 是否创建根目录
+     * @param deleteFrom   copy后删除
+     * @throws Exception
+     */
+    public static void copyPath(String fromPath, String toPath, boolean createToPath, boolean deleteFrom) throws Exception {
+        File fromFile = new File(fromPath);
+        if (!fromFile.exists()) {
+            throw new Exception("源文件夹不存在");
+        }
+        if (!fromFile.isDirectory()) {
+            throw new Exception("源地址非文件夹路径地址");
+        }
+        File file = new File(toPath);
+        boolean canCopy = true;
+        if (!file.isDirectory()) {
+            throw new Exception("目标地址非文件夹地址");
+        } else if (!file.exists()) {
+            canCopy = createToPath && file.mkdirs();
+        }
+        if (!canCopy) {
+            throw new Exception("拷贝失败");
+        } else {
+            copyPath(fromFile.getAbsolutePath(), toPath, deleteFrom);
+        }
+    }
+
+    private static void copyPath(String fromPath, String toPath, boolean deleteFrom) throws Exception {
+        File fromFile = new File(fromPath);
+        if (fromFile.exists()) {
+            File[] files = fromFile.listFiles();
+            if (files.length > 0) {
+                for (File childFile : files) {
+                    String copyFilePath = new File(toPath, childFile.getName()).getAbsolutePath();
+                    if (childFile.isDirectory()) {
+                        //路径
+                        //copy 文件夹
+                        File file = new File(toPath, childFile.getName());
+                        if (!file.exists()) {
+                            if (!file.mkdirs()) {
+                                throw new Exception("拷贝文件夹失败:" + file.getAbsolutePath());
+                            }
+                        }
+                        //copy文件夹下的文件
+                        copyPath(childFile.getAbsolutePath(), copyFilePath, deleteFrom);
+                    } else {
+                        //文件
+                        try {
+                            copyFile(childFile.getAbsolutePath(), copyFilePath);
+                            //删除文件
+                            if (deleteFrom)
+                                childFile.delete();
+                        } catch (Exception e) {
+                            throw new Exception("拷贝文件失败:" + childFile.getAbsolutePath());
+                        }
+                    }
+                }
+            }
+            //删除文件夹
+            if (deleteFrom) fromFile.delete();
+        }
+
+    }
+
+    public static void copyFile(String fromFile, String toFile) throws IOException {
         File saveFile = new File(toFile);
         File parentFile = new File(saveFile.getParent());
-        boolean canSave = false;
-        canSave = parentFile.exists() || parentFile.mkdirs();
+        boolean canSave = parentFile.exists() || parentFile.mkdirs();
         if (canSave) {
             canSave = saveFile.exists() || saveFile.createNewFile();
             if (canSave) {
@@ -85,16 +165,52 @@ public class FileUtils {
                     outputStream.write(buf, 0, len);
                 inputStream.close();
                 outputStream.close();
-                return true;
             }
         }
-        return false;
     }
 
     public static String getAPPPath(Context context, String extra) {
         String cachePath = context.getCacheDir().getAbsolutePath();
         return cachePath.substring(0, cachePath.length() - 6) +
                 (TextUtils.isEmpty(extra) ? "" : "/" + extra);
+    }
+
+    /**
+     * @param delFile
+     */
+    public static void deleteFile(File delFile) throws Exception {
+        if (delFile.exists()) {
+            if (delFile.isDirectory()) {
+                File[] files = delFile.listFiles();
+                if (files.length > 0) {
+                    for (File childFile : files) {
+                        deleteFile(childFile);
+                    }
+                }
+            }
+            boolean delete = delFile.delete();
+            if (!delete) throw new Exception("删除异常" + delFile.getAbsolutePath());
+        }
+    }
+    public static boolean createFile(String filePath) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            if (createPath(file.getParentFile().getAbsolutePath())) {
+                try {
+                    return file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean createPath(String path) {
+        File parentFile = new File(path);
+        return (parentFile.exists() || parentFile.mkdirs());
     }
 
 }
