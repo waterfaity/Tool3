@@ -1,5 +1,8 @@
 package com.waterfairy.retrofit2.interceptor;
 
+import android.text.TextUtils;
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
@@ -19,6 +22,7 @@ import okhttp3.Response;
 
 public abstract class RequestInterceptor implements Interceptor {
     HashMap<String, String> params;
+    protected boolean showUrl;
 
     public RequestInterceptor(HashMap<String, String> hashMap) {
         this.params = hashMap;
@@ -26,6 +30,10 @@ public abstract class RequestInterceptor implements Interceptor {
 
     public RequestInterceptor() {
 
+    }
+
+    public RequestInterceptor(boolean showUrl) {
+        this.showUrl = showUrl;
     }
 
     @Override
@@ -46,6 +54,9 @@ public abstract class RequestInterceptor implements Interceptor {
             } else {
                 url = addParamsToUrl(url);
             }
+            if (showUrl) {
+                showUrl(url, body);
+            }
             newRequest = request.newBuilder()
                     .url(url)
                     .method(request.method(), body)
@@ -53,6 +64,23 @@ public abstract class RequestInterceptor implements Interceptor {
             return chain.proceed(newRequest);
         }
         return chain.proceed(request);
+    }
+
+    private void showUrl(HttpUrl url, RequestBody body) {
+        String urlTemp = url.url().toString();
+        if (body instanceof FormBody) {
+            FormBody formBody = (FormBody) body;
+            int size = formBody.size();
+            StringBuilder buffer = new StringBuilder();
+            for (int i = 0; i < size; i++) {
+                if (i > 0) buffer.append('&');
+                buffer.append(formBody.name(i));
+                buffer.append('=');
+                buffer.append(formBody.value(i));
+            }
+            urlTemp += ("?" + buffer.toString());
+        }
+        Log.i("RequestInterceptor", "url: " + urlTemp);
     }
 
     /**
@@ -116,14 +144,18 @@ public abstract class RequestInterceptor implements Interceptor {
         Set<String> strings = params.keySet();
         for (String key : strings) {
             String value = params.get(key);
-            builder.add(key, value);
-            tempParams.put(key, value);
+            if (!TextUtils.isEmpty(value)) {
+                builder.add(key, value);
+                tempParams.put(key, value);
+            }
         }
         for (int i = 0; i < formBody.size(); i++) {
-            String key = formBody.name(i);
             String value = formBody.value(i);
-            builder.add(key, value);
-            tempParams.put(key, value);
+            if (!TextUtils.isEmpty(value)) {
+                String key = formBody.name(i);
+                builder.add(key, value);
+                tempParams.put(key, value);
+            }
         }
         putExtraParamsToFromBody(builder, tempParams);
         return builder.build();
