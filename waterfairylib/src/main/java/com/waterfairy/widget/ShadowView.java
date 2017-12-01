@@ -1,6 +1,7 @@
 package com.waterfairy.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
@@ -11,6 +12,7 @@ import android.graphics.Shader;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
+import com.waterfairy.library.R;
 import com.waterfairy.widget.baseView.BaseSelfView;
 
 /**
@@ -25,8 +27,8 @@ public class ShadowView extends BaseSelfView {
     private int radiusx2;//直径长度
     private Paint paint;//画笔
     private RectF ltRectFArc, lbRectFArc, rtRectFArc, rbRectFArc;//1/4圆区域
-    private RadialGradient ltRadial, lbRadial, rtRadial, rbRadial;//1/4圆过度
-    private LinearGradient topLinear, rightLinear, bottomLinear, leftLinear;//线性过度 4个方向
+    RadialGradient ltRadial, lbRadial, rtRadial, rbRadial;//1/4圆过度
+    LinearGradient topLinear, rightLinear, bottomLinear, leftLinear;//线性过度 4个方向
     private RectF topRectF, rightRectF, bottomRectF, leftRectF;//线性过度区域
     private RectF centerRect;//中心方块区域
     private int centerColor = Color.parseColor("#666666");//中心颜色
@@ -39,14 +41,18 @@ public class ShadowView extends BaseSelfView {
 
     public ShadowView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        radius = (int) (context.getResources().getDisplayMetrics().density * 20);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ShadowView);
+        radius = typedArray.getDimensionPixelSize(R.styleable.ShadowView_shadowRadius, 0);
+        typedArray.recycle();
+        if (radius == 0) {
+            radius = (int) (context.getResources().getDisplayMetrics().density * 20);
+        }
         radiusx2 = 2 * radius;
         onInitDataOk();
     }
 
     @Override
     protected void beforeDraw() {
-        super.beforeDraw();
         if (mWidth < radiusx2 || mHeight < radiusx2) {
             radius = Math.min(mWidth / 2, mHeight / 2);
             radiusx2 = 2 * radius;
@@ -111,6 +117,7 @@ public class ShadowView extends BaseSelfView {
 
     public void initRadius(int radius) {
         this.radius = radius;
+        this.radiusx2 = 2 * radius;
     }
 
     public void initOk() {

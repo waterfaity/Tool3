@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ScaleImageView">
+        <attr name="widthRatio" format="integer"/>
+        <attr name="heightRatio" format="integer"/>
+        <attr name="heightStandard" format="boolean"/>
+        <attr name="setFilter" format="boolean"/>
+        <attr name="setFilterAlpha" format="boolean"/>
+        <attr name="checkNoSrc" format="reference"/>
+        <attr name="checkSrc" format="reference"/>
+        <attr name="index" format="integer"/>
+        <attr name="checkType" format="enum">
+            <enum name="radio" value="1"/>
+            <enum name="checkBox" value="2"/>
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="RadioGroup">
+        <attr name="checkIndex" format="integer"/>
+    </declare-styleable>
+    <declare-styleable name="ShadowView">
+        <attr name="shadowRadius" format="dimension"/>
+    </declare-styleable>
+</resources>
