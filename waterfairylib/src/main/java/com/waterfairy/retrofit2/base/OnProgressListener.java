@@ -21,4 +21,6 @@ public abstract class OnProgressListener {
     public abstract void onError(int code);
 
     public abstract void onChange(int code);
+
+    public abstract void onWarm(int code);
 }

@@ -66,9 +66,9 @@ public class UploadControl extends IBaseControl implements OnBaseProgressSuccess
                 returnError(BaseManager.ERROR_FILE_NOT_FOUND);
             } else {
                 if (baseProgressState == BaseManager.START || baseProgressState == BaseManager.CONTINUE) {
-                    returnError(BaseManager.ERROR_IS_DOWNLOADING);
+                    returnError(BaseManager.WARM_IS_DOWNLOADING);
                 } else if (baseProgressState == BaseManager.FINISHED) {
-                    returnError(BaseManager.ERROR_HAS_FINISHED);
+                    returnError(BaseManager.WARM_HAS_FINISHED);
                 } else {
                     returnChange(BaseManager.CONTINUE);
                     RequestBody sourceBody = RequestBody.create(MediaType.parse("application/otcet-stream"), file);

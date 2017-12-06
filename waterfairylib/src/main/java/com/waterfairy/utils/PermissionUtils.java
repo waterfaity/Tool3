@@ -100,10 +100,26 @@ public class PermissionUtils {
         return ActivityCompat.checkSelfPermission(context, permission);
     }
 
-    public static boolean onRequestPermissionsResultForSDCard(String permissions[], int grantResults[]) {
-        if (permissions.length > 0) {
-            for (int i = 0; i < permissions.length; i++) {
-                if (TextUtils.equals(permissions[i], Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+    public static boolean onRequestPermissionsResultForCamera(String resultPermissions[], int grantResults[]) {
+        return onRequestPermissionsResult(Manifest.permission.CAMERA, resultPermissions, grantResults);
+    }
+
+    public static boolean onRequestPermissionsResultForLocation(String resultPermissions[], int grantResults[]) {
+        return onRequestPermissionsResult(Manifest.permission.ACCESS_COARSE_LOCATION, resultPermissions, grantResults);
+    }
+
+    public static boolean onRequestPermissionsResultForRecord(String resultPermissions[], int grantResults[]) {
+        return onRequestPermissionsResult(Manifest.permission.RECORD_AUDIO, resultPermissions, grantResults);
+    }
+
+    public static boolean onRequestPermissionsResultForSDCard(String resultPermissions[], int grantResults[]) {
+        return onRequestPermissionsResult(Manifest.permission.WRITE_EXTERNAL_STORAGE, resultPermissions, grantResults);
+    }
+
+    public static boolean onRequestPermissionsResult(String requestPermission, String resultPermissions[], int grantResults[]) {
+        if (resultPermissions.length > 0) {
+            for (int i = 0; i < resultPermissions.length; i++) {
+                if (TextUtils.equals(resultPermissions[i], requestPermission)) {
                     if (grantResults.length > i) {
                         return grantResults[i] == PackageManager.PERMISSION_GRANTED;
                     }

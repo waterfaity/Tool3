@@ -39,13 +39,13 @@ public class MessageUtils {
             case BaseManager.ERROR_FILE_SAVE:
                 msg = "文件保存错误";
                 break;
-            case BaseManager.ERROR_IS_DOWNLOADING:
+            case BaseManager.WARM_IS_DOWNLOADING:
                 msg = "文件已在下载中";
                 break;
-            case BaseManager.ERROR_HAS_FINISHED:
+            case BaseManager.WARM_HAS_FINISHED:
                 msg = "文件已经下载完成";
                 break;
-            case BaseManager.ERROR_HAS_STOP:
+            case BaseManager.WARM_HAS_STOP:
                 msg = "文件下载已停止";
                 break;
             case BaseManager.ERROR_FILE_NOT_FOUND:

@@ -1,5 +1,7 @@
 package com.waterfairy.retrofit2.download;
 
+import android.util.Log;
+
 import com.waterfairy.retrofit2.base.BaseManager;
 import com.waterfairy.retrofit2.base.BaseProgress;
 import com.waterfairy.retrofit2.base.BaseProgressInfo;
@@ -55,20 +57,22 @@ public class DownloadControl extends IBaseControl implements OnBaseProgressSucce
 
     public void start() {
         if (baseProgressState == BaseManager.CONTINUE || baseProgressState == BaseManager.START) {
-            returnError(BaseManager.ERROR_IS_DOWNLOADING);
+            returnWarm(BaseManager.WARM_IS_DOWNLOADING);
         } else if (baseProgressState == BaseManager.FINISHED) {
-            returnError(BaseManager.ERROR_HAS_FINISHED);
+            returnWarm(BaseManager.WARM_HAS_FINISHED);
 //        }
 //        else  if (baseProgressState == BaseManager.STOP) {
-//            returnError(BaseManager.ERROR_HAS_STOP);
+//            returnError(BaseManager.WARM_HAS_STOP);
         } else {
             returnChange(BaseManager.START);
             call = downloadService.download("bytes=" + baseProgressInfo.getCurrentLen() + "-", url);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                    Log.i("test", "onResponse: 1");
                     returnChange(BaseManager.CONTINUE);
                     new FileWriter().writeFile(
+                            DownloadControl.this,
                             getLoadListener(),
                             response.body(),
                             (DownloadInfo) baseProgressInfo);
@@ -76,9 +80,10 @@ public class DownloadControl extends IBaseControl implements OnBaseProgressSucce
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    Log.i("test", "onFailure: 1");
                     throwable.printStackTrace();
-                    baseProgressState = BaseManager.ERROR_NET;
                     returnError(BaseManager.ERROR_NET);
+                    baseProgressState = BaseManager.ERROR_NET;
                 }
             });
         }
