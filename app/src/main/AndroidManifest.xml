@@ -67,7 +67,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:theme="@style/AppTheme" android:name=".activity.VideoRecordActivity">
+            android:name=".activity.VideoRecordActivity"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+
+                <!-- wifiManger -->
+                <!-- <action android:name="android.net.wifi.WIFI_STATE_CHANGED" /> -->
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.ZoomActivity">
             <intent-filter>
 
                 <!-- wifiManger -->
