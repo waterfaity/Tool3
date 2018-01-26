@@ -1,16 +1,22 @@
 package com.waterfairy.tool3.activity;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.waterfairy.tool3.MD5Utils;
 import com.waterfairy.tool3.R;
 import com.waterfairy.tool3.recyclerview.RecyclerViewActivity;
 import com.waterfairy.utils.PathUtils;
 import com.waterfairy.utils.PermissionUtils;
 import com.waterfairy.utils.ToastUtils;
+
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.ByteSource;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,23 +32,20 @@ public class MainActivity extends AppCompatActivity {
         test();
     }
 
+    /**
+     * 1.算法名字
+     * 2.内容
+     */
     private void test() {
-        String nameFromUrl = PathUtils.getNameFromUrl("http://www.baidu.com/hhfdsa/jj.jpg.png.jpg");
-        String pathFromUrl = PathUtils.getPathFromUrl("http://www.baidu.com/hhfdsa/jj.jpg.png.jpg");
-        Log.i(TAG, "test: "+nameFromUrl);
-        Log.i(TAG, "test: "+pathFromUrl);
 
-//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 0);
-//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 30);
-//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 45);
-//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 60);
-//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 90);
-//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 120);
-//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 135);
-//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 180);
-//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 225);
-//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 315);
-//        MathTools.transPoint2(new Coordinate(200, 0), new Coordinate(0, 0), 360);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentTitle("hhhh");
+        builder.setContentText("fdsa");
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        Notification build = builder.build();
+        notificationManager.notify(890, build);
+
     }
 
     public void onClick(View view) {

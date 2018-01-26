@@ -19,5 +19,8 @@
     </declare-styleable>
     <declare-styleable name="ShadowView">
         <attr name="shadowRadius" format="dimension"/>
+        <attr name="shadowStartColor" format="color"/>
+        <attr name="shadowEndColor" format="color"/>
+        <attr name="hasCorner" format="boolean"/>
     </declare-styleable>
 </resources>
