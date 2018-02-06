@@ -13,6 +13,8 @@
             <enum name="radio" value="1"/>
             <enum name="checkBox" value="2"/>
         </attr>
+        <attr name="mark" format="string"/>
+        <attr name="filterAlphaValue" format="float"/>
     </declare-styleable>
     <declare-styleable name="RadioGroup">
         <attr name="checkIndex" format="integer"/>
@@ -22,5 +24,17 @@
         <attr name="shadowStartColor" format="color"/>
         <attr name="shadowEndColor" format="color"/>
         <attr name="hasCorner" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="FlipViewController">
+        <attr name="orientation" format="enum">
+            <enum name="vertical" value="0"/>
+            <enum name="horizontal" value="1"/>
+        </attr>
+
+        <attr name="animationBitmapFormat" format="enum">
+            <enum name="ARGB_8888" value="0"/>
+            <enum name="ARGB_4444" value="1"/>
+            <enum name="RGB_565" value="2"/>
+        </attr>
     </declare-styleable>
 </resources>

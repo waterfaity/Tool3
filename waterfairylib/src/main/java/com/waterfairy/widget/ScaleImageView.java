@@ -9,9 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 
 import com.waterfairy.library.R;
 
@@ -24,6 +22,7 @@ import com.waterfairy.library.R;
  */
 
 public class ScaleImageView extends AppCompatImageView {
+    private OnLongClickListener onLongClickListener;
     private static final String TAG = "scaleImageView";
     private int widthRatio, heightRatio;//宽比例/高比例
     private boolean heightStandard = true;//高度为标准
@@ -31,7 +30,7 @@ public class ScaleImageView extends AppCompatImageView {
     private boolean hasFilterAlpha;//滤镜 透明度
     private int checkResId;//选中图片的资源id
     private int checkNoResId;//未选中图片的资源id
-    private View.OnClickListener onClickListener;
+    private OnClickListener onClickListener;
     private OnScaleViewClickListener onScaleViewClickListener;
     private boolean isChecked;//是否旋选中
     public static final int TYPE_NO = 0;
@@ -47,8 +46,11 @@ public class ScaleImageView extends AppCompatImageView {
 //    private XfermodeHolder xfermodeHolder;
     private int index;//下标,作为radio/checkbox
     private boolean canClick = true;//是否可以点击
-    private float alpha = 1f;//透明度
+    private float alpha = 1f;//
+    private float filterAlphaValue = 0.4f;
     private int width, height;
+    private String mMark;//标记
+    private int startX;
 
     public ScaleImageView(Context context) {
         this(context, null);
@@ -63,12 +65,15 @@ public class ScaleImageView extends AppCompatImageView {
             heightStandard = typedArray.getBoolean(R.styleable.ScaleImageView_heightStandard, true);
             hasFilter = typedArray.getBoolean(R.styleable.ScaleImageView_setFilter, false);
             hasFilterAlpha = typedArray.getBoolean(R.styleable.ScaleImageView_setFilterAlpha, false);
+            mMark = typedArray.getString(R.styleable.ScaleImageView_mark);
             if (hasFilter) requestTouch = true;
             checkResId = typedArray.getResourceId(R.styleable.ScaleImageView_checkSrc, 0);
             checkNoResId = typedArray.getResourceId(R.styleable.ScaleImageView_checkNoSrc, 0);
             index = typedArray.getInt(R.styleable.ScaleImageView_index, -1);
             type = typedArray.getInt(R.styleable.ScaleImageView_checkType, 0);
-            if (type == TYPE_RADIO || type == TYPE_CHECKBOX) requestTouch = true;
+            filterAlphaValue = typedArray.getFloat(R.styleable.ScaleImageView_filterAlphaValue, filterAlphaValue);
+            if (type == TYPE_RADIO || type == TYPE_CHECKBOX || hasFilter || hasFilterAlpha)
+                requestTouch = true;
             typedArray.recycle();
         }
     }
@@ -88,9 +93,11 @@ public class ScaleImageView extends AppCompatImageView {
 //                height = (int) (heightRatio / (float) widthRatio * width);
 //            }
 //            setMeasuredDimension(width, height);
+////            Log.i(TAG, "onMeasure: " + width + "--" + height);
 //        } else {
 //            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 //        }
+//
 //    }
 
     @Override
@@ -104,29 +111,13 @@ public class ScaleImageView extends AppCompatImageView {
             this.height = height;
         } else if (height != 0 && heightStandard) {
             width = (int) (widthRatio / (float) heightRatio * height);
+            setMeasuredDimension(width, height);
             this.width = width;
             this.height = height;
         }
+//        Log.i(TAG, "onLayout: " + width + "--" + height + "--" + heightStandard + "--" + widthRatio + "--" + heightRatio + "--" + mMark);
     }
 
-    //
-//
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY && !heightStandard) {
-//            width = MeasureSpec.getSize(widthMeasureSpec);
-//            height = (int) (heightRatio / (float) widthRatio * this.width);
-//        } else if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY && heightStandard) {
-//            height = MeasureSpec.getSize(heightMeasureSpec);
-//            width = (int) (widthRatio / (float) heightRatio * height);
-//        }
-//        if (this.width != 0 && this.height != 0) {
-//            setMeasuredDimension(width, height);
-//        } else {
-//            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-//        }
-//        Log.i(TAG, "onMeasure: " + width + "--" + height);
-//    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -139,41 +130,55 @@ public class ScaleImageView extends AppCompatImageView {
         }
         if (this.width != 0 && this.height != 0) {
             setMeasuredDimension(width, height);
+
+//            Log.i(TAG, "onMeasure: " + width + "--" + height);
         } else {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
+//        Log.i(TAG, "onMeasure: " + width + "--" + height + "--" + heightStandard + "--" + widthRatio + "--" + heightRatio + "--" + mMark);
+
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (requestTouch && canClick)
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    startX = (int) event.getX();
                     if (hasFilter) {
 //                        setColorFilter2(new XfermodeHolder(DEFAULT_MODE, shadowColor));
                         setColorFilter(shadowColor);
                     }
                     if (hasFilterAlpha) {
-                        super.setAlpha(0.4f);
+                        super.setAlpha(filterAlphaValue);
                     }
                     return true;
                 case MotionEvent.ACTION_UP:
-                    if (onClickListener != null)
-                        onClickListener.onClick(this);
-                    if (onScaleViewClickListener != null)
-                        onScaleViewClickListener.onScaleViewClick(this);
-                    //radio / checkBox
-                    if (type == TYPE_RADIO || type == TYPE_CHECKBOX) {
-                        if (!isChecked || type == TYPE_CHECKBOX) {
-                            setCheckedNoListener(!isChecked);
-                            if (onScaleViewCheckListener != null) {
-                                onScaleViewCheckListener.onScaleViewChecked(this, isChecked);
+                    float upX = event.getX();
+                    float upY = event.getY();
+                    if (upX >= 0 && upY >= 0 && upX <= width && upY <= height
+                            || (upX >= 0 && upY >= 0 && width == 0 && upY <= height)
+                            || (upX >= 0 && upY >= 0 && upX <= width && height == 0)) {
+                        if (onClickListener != null)
+                            onClickListener.onClick(this);
+                        if (onScaleViewClickListener != null)
+                            onScaleViewClickListener.onScaleViewClick(this);
+                        //radio / checkBox
+                        if (type == TYPE_RADIO || type == TYPE_CHECKBOX) {
+                            if (!isChecked || type == TYPE_CHECKBOX) {
+                                setCheckedNoListener(!isChecked);
+                                if (onScaleViewCheckListener != null) {
+                                    onScaleViewCheckListener.onScaleViewChecked(this, isChecked);
+                                }
                             }
                         }
                     }
                     setAlpha(alpha);
 //                    setColorFilter2(null);
                     setColorFilter(null);
+
+
                     break;
                 case MotionEvent.ACTION_CANCEL:
                     setAlpha(alpha);
@@ -245,7 +250,7 @@ public class ScaleImageView extends AppCompatImageView {
      *
      * @param onClickListener
      */
-    public void setOnClickListener(View.OnClickListener onClickListener) {
+    public void setOnClickListener(OnClickListener onClickListener) {
         requestTouch = true;
         this.onClickListener = onClickListener;
     }
@@ -339,5 +344,16 @@ public class ScaleImageView extends AppCompatImageView {
         this.alpha = alpha;
         super.setAlpha(alpha);
     }
+
+    private Object object;
+
+    public void setObject(Object object) {
+        this.object = object;
+    }
+
+    public Object getObject() {
+        return object;
+    }
+
 
 }

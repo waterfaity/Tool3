@@ -2,10 +2,12 @@ package com.waterfairy.widget.baseView;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -206,5 +208,12 @@ public class BaseSelfView extends AppCompatImageView {
 
     public void setSleepTime(int sleepTime) {
         this.sleepTime = sleepTime;
+    }
+
+    public float getTextLen(String content, float textSize) {
+        if (TextUtils.isEmpty(content) || textSize <= 0) return 0;
+        Paint paint = new Paint();
+        paint.setTextSize(textSize);
+        return paint.measureText(content);
     }
 }

@@ -62,8 +62,8 @@ public class ShadowView extends BaseSelfView {
     @Override
     protected void beforeDraw() {
         paint = new Paint();
-        paint.setAntiAlias(true);
         if (hasCorner) {
+            paint.setAntiAlias(true);
             if (mWidth < radiusx2 || mHeight < radiusx2) {
                 radius = Math.min(mWidth / 2, mHeight / 2);
                 radiusx2 = 2 * radius;
@@ -110,29 +110,35 @@ public class ShadowView extends BaseSelfView {
             }
             centerRect = new RectF(hasCornerLeft ? radius : 0, hasCornerTop ? radius : 0, hasCornerRight ? mWidth - radius : mWidth, hasCornerBottom ? mHeight - radius : mHeight);
         } else {
-            //没有边角(4个三角形区域)
+
+//            paint.setAntiAlias(true);
+            //没有边角(4个三角形区域)-> 梯形区域
             //左
             leftPath = new Path();
             leftPath.moveTo(0, 0);
-            leftPath.lineTo(mWidth / 2, mHeight / 2);
+            leftPath.lineTo(radius, radius);
+            leftPath.lineTo(radius, mHeight - radius);
             leftPath.lineTo(0, mHeight);
             leftPath.lineTo(0, 0);
             //上
             topPath = new Path();
             topPath.moveTo(0, 0);
             topPath.lineTo(mWidth, 0);
-            topPath.lineTo(mWidth / 2, mHeight / 2);
+            topPath.lineTo(mWidth - radius, radius);
+            topPath.lineTo(radius, radius);
             topPath.lineTo(0, 0);
             //右
             rightPath = new Path();
             rightPath.moveTo(mWidth, 0);
-            rightPath.lineTo(mWidth / 2, mHeight / 2);
+            rightPath.lineTo(mWidth - radius, radius);
+            rightPath.lineTo(mWidth - radius, mHeight - radius);
             rightPath.lineTo(mWidth, mHeight);
             rightPath.lineTo(mWidth, 0);
             //下
             bottomPath = new Path();
             bottomPath.moveTo(0, mHeight);
-            bottomPath.lineTo(mWidth / 2, mHeight / 2);
+            bottomPath.lineTo(radius, mHeight - radius);
+            bottomPath.lineTo(mWidth - radius, mHeight - radius);
             bottomPath.lineTo(mWidth, mHeight);
             bottomPath.lineTo(0, mHeight);
 
@@ -140,6 +146,8 @@ public class ShadowView extends BaseSelfView {
             topLinear = new LinearGradient(0, 0, 0, radius, endColor, centerColor, Shader.TileMode.CLAMP);
             rightLinear = new LinearGradient(mWidth - radius, 0, mWidth, 0, centerColor, endColor, Shader.TileMode.CLAMP);
             bottomLinear = new LinearGradient(0, mHeight - radius, 0, mHeight, centerColor, endColor, Shader.TileMode.CLAMP);
+
+            centerRect = new RectF(radius, radius, mWidth - radius, mHeight - radius);
         }
     }
 
@@ -207,9 +215,6 @@ public class ShadowView extends BaseSelfView {
                 canvas.drawRect(leftRectF, paint);
             }
 
-            paint.setShader(null);
-            paint.setColor(centerColor);
-            canvas.drawRect(centerRect, paint);
         } else {
             paint.setShader(leftLinear);
             canvas.drawPath(leftPath, paint);
@@ -223,6 +228,9 @@ public class ShadowView extends BaseSelfView {
             paint.setShader(bottomLinear);
             canvas.drawPath(bottomPath, paint);
         }
-
+        //画中心
+        paint.setShader(null);
+        paint.setColor(centerColor);
+        canvas.drawRect(centerRect, paint);
     }
 }
