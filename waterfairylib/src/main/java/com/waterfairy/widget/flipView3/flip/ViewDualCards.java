@@ -15,20 +15,20 @@ limitations under the License.
 
  */
 
-package com.waterfairy.widget.flipView2.flip;
+package com.waterfairy.widget.flipView3.flip;
 
 import android.graphics.Bitmap;
 import android.view.View;
 
 
-import com.waterfairy.widget.flipView2.utils.TextureUtils;
-import com.waterfairy.widget.flipView2.utils.UI;
+import com.waterfairy.widget.flipView3.utils.TextureUtils;
+import com.waterfairy.widget.flipView3.utils.UI;
 
 import java.lang.ref.WeakReference;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import static com.waterfairy.widget.flipView2.flip.FlipRenderer.checkError;
+import static com.waterfairy.widget.flipView3.flip.FlipRenderer.checkError;
 
 
 public class ViewDualCards {

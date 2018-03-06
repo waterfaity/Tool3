@@ -1,10 +1,10 @@
-package com.waterfairy.widget.flipView2.flip;
+package com.waterfairy.widget.flipView3.flip;
 
 import android.graphics.Bitmap;
 import android.opengl.GLUtils;
 
 
-import com.waterfairy.widget.flipView2.utils.AphidLog;
+import com.waterfairy.widget.flipView3.utils.AphidLog;
 
 import junit.framework.Assert;
 

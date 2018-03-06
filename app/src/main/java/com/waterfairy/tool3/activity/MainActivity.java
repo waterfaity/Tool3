@@ -68,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.img_tool:
                 startActivity(new Intent(this, ImgToolActivity.class));
                 break;
+            case R.id.flip_view_2:
+                startActivity(new Intent(this, FlipView2Activity.class));
+                break;
         }
     }
 }

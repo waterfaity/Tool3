@@ -14,14 +14,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by water_fairy on 2016/12/5.
+ * ver_1.0_2018-03-06
  */
 
 public class FileUtils {
 
     private static final String TAG = "fileUtils";
+    public static final int FILE_TYPE_AUDIO = 1;
+    public static final int FILE_TYPE_IMG = 2;
+    public static final int FILE_TYPE_VIDEO = 3;
+    public static final int FILE_TYPE_DB = 4;
+    public static final int FILE_TYPE_THUMB = 5;
+
+    public static final int CACHE_TYPE_ROM = 1;
+    public static final int CACHE_TYPE_SD = 2;
+
 
     /**
      * @param context
@@ -192,6 +204,7 @@ public class FileUtils {
             if (!delete) throw new Exception("删除异常" + delFile.getAbsolutePath());
         }
     }
+
     public static boolean createFile(String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {
@@ -213,4 +226,50 @@ public class FileUtils {
         return (parentFile.exists() || parentFile.mkdirs());
     }
 
+
+    public static String getCache(Context context, int mediaType, int memoryType) {
+        String temp = "other";
+        switch (mediaType) {
+            case FILE_TYPE_AUDIO:
+                temp = "audio";
+                break;
+            case FILE_TYPE_IMG:
+                temp = "img";
+                break;
+            case FILE_TYPE_VIDEO:
+                temp = "video";
+                break;
+            case FILE_TYPE_DB:
+                temp = "database";
+                break;
+            case FILE_TYPE_THUMB:
+                temp = "thumb";
+                break;
+        }
+        return getCache(context, temp, memoryType);
+
+    }
+
+    public static String getCache(Context context, String fileFolder, int memoryType) {
+        if (CACHE_TYPE_SD == memoryType) {
+            if (!TextUtils.equals(Environment.getExternalStorageState(), Environment.MEDIA_MOUNTED)) {
+                //没有内存卡
+                memoryType = CACHE_TYPE_ROM;
+            }
+        }
+        File cacheDir = null;
+        if (memoryType == CACHE_TYPE_ROM) cacheDir = context.getCacheDir();
+        else cacheDir = context.getExternalCacheDir();
+        File audioCacheFile = new File(cacheDir.getAbsolutePath() + File.separator + fileFolder);
+        if (!audioCacheFile.exists()) {
+            audioCacheFile.mkdirs();
+        }
+        return audioCacheFile.getAbsolutePath();
+    }
+
+    public static String createFileName(String fileSuffix) {
+        String md5Code = MD5Utils.getMD5Code(new Date().getTime() + "-" + new Random().nextLong());
+        return md5Code + fileSuffix;// 照片命名
+
+    }
 }

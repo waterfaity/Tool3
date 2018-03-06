@@ -15,7 +15,7 @@ limitations under the License.
 
  */
 
-package com.waterfairy.widget.flipView2.flip;
+package com.waterfairy.widget.flipView3.flip;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -27,6 +27,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -35,9 +36,8 @@ import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 
-
 import com.waterfairy.library.R;
-import com.waterfairy.widget.flipView2.utils.AphidLog;
+import com.waterfairy.widget.flipView3.utils.AphidLog;
 
 import junit.framework.Assert;
 
@@ -47,6 +47,9 @@ public class FlipViewController extends AdapterView<Adapter> {
 
     public static final int VERTICAL = 0;
     public static final int HORIZONTAL = 1;
+    private static final String TAG = "FlipViewController";
+    private int start = -1;
+    private int end = -1;
 
     public static interface ViewFlipListener {
 
@@ -73,14 +76,14 @@ public class FlipViewController extends AdapterView<Adapter> {
     });
 
     private GLSurfaceView surfaceView;
-    private FlipRenderer renderer;
+    private FlipRenderer renderer;//SurfaceView 渲染器
     private FlipCards cards;
 
     private int contentWidth;
     private int contentHeight;
 
     @ViewDebug.ExportedProperty
-    private int flipOrientation;
+    private int flipOrientation;//方向
 
     private volatile boolean inFlipAnimation = false;
 
@@ -91,13 +94,15 @@ public class FlipViewController extends AdapterView<Adapter> {
 
     private DataSetObserver adapterDataObserver;
 
+    //缓冲的view
     private final LinkedList<View> bufferedViews = new LinkedList<View>();
+    //发布的view
     private final LinkedList<View> releasedViews = new LinkedList<View>(); //XXX: use a SparseArray to keep the related view indices?
     private int bufferIndex = -1;
     private int adapterIndex = -1;
     private final int sideBufferSize = 1;
 
-    private float touchSlop;
+    private float touchSlop;//滚动/点击的阀值
 
     private ViewFlipListener onViewFlipListener;
 
@@ -124,16 +129,14 @@ public class FlipViewController extends AdapterView<Adapter> {
         super(context, attrs, defStyle);
 
         int orientation = VERTICAL;
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FlipViewController);
-//        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.fliview, 0, 0);
-
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.FlipViewController);
         try {
-            int value = a.getInteger(R.styleable.FlipViewController_orientation, VERTICAL);
+            int value = array.getInteger(R.styleable.FlipViewController_orientation, VERTICAL);
             if (value == HORIZONTAL) {
                 orientation = HORIZONTAL;
             }
 
-            value = a.getInteger(R.styleable.FlipViewController_animationBitmapFormat, 0);
+            value = array.getInteger(R.styleable.FlipViewController_animationBitmapFormat, 0);
             if (value == 1) {
                 setAnimationBitmapFormat(Bitmap.Config.ARGB_4444);
             } else if (value == 2) {
@@ -142,7 +145,7 @@ public class FlipViewController extends AdapterView<Adapter> {
                 setAnimationBitmapFormat(Bitmap.Config.ARGB_8888);
             }
         } finally {
-            a.recycle();
+            array.recycle();
         }
 
         init(context, orientation);
@@ -155,6 +158,12 @@ public class FlipViewController extends AdapterView<Adapter> {
         this(context, attrs, 0);
     }
 
+    /**
+     * 初始化
+     *
+     * @param context
+     * @param orientation
+     */
     private void init(Context context, int orientation) {
         ViewConfiguration configuration = ViewConfiguration.get(getContext());
         touchSlop = configuration.getScaledTouchSlop();
@@ -242,20 +251,20 @@ public class FlipViewController extends AdapterView<Adapter> {
     // Touch Event
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-        if (flipByTouchEnabled) {
-            return cards.handleTouchEvent(event, false);
-        } else {
+        if (((flipOrientation == VERTICAL && event.getY() > start && event.getY() < end) ||
+                (flipOrientation == HORIZONTAL && event.getX() > start && event.getX() < end)))
             return false;
-        }
+        Log.i(TAG, "onInterceptTouchEvent: ");
+        return flipByTouchEnabled && cards.handleTouchEvent(event, false);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (flipByTouchEnabled) {
-            return cards.handleTouchEvent(event, true);
-        } else {
+        if (((flipOrientation == VERTICAL && event.getY() > start && event.getY() < end) ||
+                (flipOrientation == HORIZONTAL && event.getX() > start && event.getX() < end)))
             return false;
-        }
+        Log.i(TAG, "onTouchEvent: ");
+        return flipByTouchEnabled && cards.handleTouchEvent(event, true);
     }
 
     //--------------------------------------------------------------------------------------------------------------------
@@ -273,6 +282,11 @@ public class FlipViewController extends AdapterView<Adapter> {
         return adapter;
     }
 
+    /**
+     * 设置adapter
+     *
+     * @param adapter
+     */
     @Override
     public void setAdapter(Adapter adapter) {
         setAdapter(adapter, 0);
@@ -303,7 +317,7 @@ public class FlipViewController extends AdapterView<Adapter> {
 
     @Override
     public void setSelection(int position) {
-        if (adapter == null) {
+        if (adapter == null || (position < 0 || position >= adapterDataCount)) {
             return;
         }
 
@@ -333,6 +347,9 @@ public class FlipViewController extends AdapterView<Adapter> {
         updateVisibleView(inFlipAnimation ? -1 : bufferIndex);
 
         cards.resetSelection(position, adapterDataCount);
+        if (onViewFlipListener != null)
+            onViewFlipListener.onViewFlipped(selectedView, adapterIndex);
+
     }
 
     @Override
@@ -413,6 +430,12 @@ public class FlipViewController extends AdapterView<Adapter> {
 
     //--------------------------------------------------------------------------------------------------------------------
     // Internals
+
+    /**
+     * 设置surfaceView
+     *
+     * @param context
+     */
     private void setupSurfaceView(Context context) {
         surfaceView = new GLSurfaceView(getContext());
 
@@ -421,6 +444,7 @@ public class FlipViewController extends AdapterView<Adapter> {
 
         surfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         surfaceView.setZOrderOnTop(true);
+        surfaceView.setZOrderMediaOverlay(true);
         surfaceView.setRenderer(renderer);
         surfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         surfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -429,6 +453,9 @@ public class FlipViewController extends AdapterView<Adapter> {
                 LayoutParams.FILL_PARENT), false);
     }
 
+    /**
+     * 释放所有view
+     */
     private void releaseViews() {
         for (View view : bufferedViews) {
             releaseView(view);
@@ -438,12 +465,22 @@ public class FlipViewController extends AdapterView<Adapter> {
         adapterIndex = -1;
     }
 
+    /**
+     * 释放view
+     *
+     * @param view
+     */
     private void releaseView(View view) {
         Assert.assertNotNull(view);
         detachViewFromParent(view);
         addReleasedView(view);
     }
 
+    /**
+     * 添加view到释放view 雷同复用listView的view
+     *
+     * @param view
+     */
     private void addReleasedView(View view) {
         Assert.assertNotNull(view);
         if (releasedViews.size() < MAX_RELEASED_VIEW_SIZE) {
@@ -451,6 +488,13 @@ public class FlipViewController extends AdapterView<Adapter> {
         }
     }
 
+    /**
+     * 获取view from adapter
+     *
+     * @param position
+     * @param addToTop
+     * @return
+     */
     private View viewFromAdapter(int position, boolean addToTop) {
         Assert.assertNotNull(adapter);
 
@@ -465,12 +509,18 @@ public class FlipViewController extends AdapterView<Adapter> {
         return view;
     }
 
+    /**
+     * 添加view到布局
+     *
+     * @param view
+     * @param addToTop
+     * @param isReusedView
+     */
     private void setupAdapterView(View view, boolean addToTop, boolean isReusedView) {
         LayoutParams params = view.getLayoutParams();
         if (params == null) {
-            params =
-                    new AbsListView.LayoutParams(LayoutParams.FILL_PARENT,
-                            LayoutParams.WRAP_CONTENT, 0);
+            params = new AbsListView.LayoutParams(LayoutParams.FILL_PARENT,
+                    LayoutParams.WRAP_CONTENT, 0);
         }
 
         if (isReusedView) {
@@ -549,10 +599,12 @@ public class FlipViewController extends AdapterView<Adapter> {
         //debugBufferedViews();
     }
 
+    /**
+     * 启动滑动动画
+     */
     void showFlipAnimation() {
         if (!inFlipAnimation) {
             inFlipAnimation = true;
-
             cards.setVisible(true);
             cards.setFirstDrawFinished(false);
             surfaceView.requestRender();
@@ -578,6 +630,7 @@ public class FlipViewController extends AdapterView<Adapter> {
 
             if (onViewFlipListener != null) {
                 onViewFlipListener.onViewFlipped(bufferedViews.get(bufferIndex), adapterIndex);
+
             }
 
             handler.post(new Runnable() {
@@ -591,6 +644,9 @@ public class FlipViewController extends AdapterView<Adapter> {
         }
     }
 
+    /**
+     * 监听到数据改变
+     */
     private void onDataChanged() {
         adapterDataCount = adapter.getCount();
         int activeIndex;
@@ -603,6 +659,12 @@ public class FlipViewController extends AdapterView<Adapter> {
         releaseViews();
         setSelection(activeIndex);
     }
+
+    public void setLimit(int start, int end) {
+        this.start = start;
+        this.end = end;
+    }
+
 
     private class MyDataSetObserver extends DataSetObserver {
 

@@ -15,21 +15,21 @@ limitations under the License.
 
  */
 
-package com.waterfairy.widget.flipView2.flip;
+package com.waterfairy.widget.flipView3.flip;
 
 
-import com.waterfairy.widget.flipView2.utils.AphidLog;
+import com.waterfairy.widget.flipView3.utils.AphidLog;
 
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import static com.waterfairy.widget.flipView2.flip.FlipRenderer.checkError;
-import static com.waterfairy.widget.flipView2.utils.TextureUtils.d2r;
-import static com.waterfairy.widget.flipView2.utils.TextureUtils.isValidTexture;
-import static com.waterfairy.widget.flipView2.utils.TextureUtils.toFloatBuffer;
-import static com.waterfairy.widget.flipView2.utils.TextureUtils.toShortBuffer;
+import static com.waterfairy.widget.flipView3.flip.FlipRenderer.checkError;
+import static com.waterfairy.widget.flipView3.utils.TextureUtils.d2r;
+import static com.waterfairy.widget.flipView3.utils.TextureUtils.isValidTexture;
+import static com.waterfairy.widget.flipView3.utils.TextureUtils.toFloatBuffer;
+import static com.waterfairy.widget.flipView3.utils.TextureUtils.toShortBuffer;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static javax.microedition.khronos.opengles.GL10.GL_BACK;

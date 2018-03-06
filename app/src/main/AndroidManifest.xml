@@ -84,6 +84,9 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </activity>
+        <activity android:name=".activity.FlipView2Activity">
+
+        </activity>
     </application>
 
 </manifest>

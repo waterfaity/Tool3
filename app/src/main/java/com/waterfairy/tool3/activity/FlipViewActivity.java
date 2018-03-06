@@ -61,17 +61,5 @@ public class FlipViewActivity extends AppCompatActivity {
                 return FlipViewUtils.getBitmap(files1.get(position).getAbsolutePath(), 1024, 720);
             }
         });
-//        FlipView2 flipView2 = (FlipView2) findViewById(R.id.flip_view);
-//        flipView2.setAdapter(new FlipAdapter() {
-//            @Override
-//            public int getCount() {
-//                return files.length;
-//            }
-//
-//            @Override
-//            public Bitmap getBitmap(int position) {
-//                return FlipViewUtils.getBitmap(files1.get(position).getAbsolutePath(), 1024, 720);
-//            }
-//        });
     }
 }

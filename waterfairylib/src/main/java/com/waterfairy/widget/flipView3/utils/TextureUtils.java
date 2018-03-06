@@ -1,7 +1,7 @@
-package com.waterfairy.widget.flipView2.utils;
+package com.waterfairy.widget.flipView3.utils;
 
 
-import com.waterfairy.widget.flipView2.flip.Texture;
+import com.waterfairy.widget.flipView3.flip.Texture;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

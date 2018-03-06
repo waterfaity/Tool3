@@ -12,7 +12,7 @@ import android.support.annotation.RequiresApi;
  * @author water_fairy
  * @email 995637517@qq.com
  * @date 2018/1/25
- * @Description:
+ * @Description: 注意:smallIcon 设置为图片文件  , 26之后会使用xml文件  报错
  */
 
 public class NotificationUtils extends ContextWrapper {
@@ -106,6 +106,4 @@ public class NotificationUtils extends ContextWrapper {
                 .setSmallIcon(smallIcon)
                 .setAutoCancel(true);
     }
-
-
 }
