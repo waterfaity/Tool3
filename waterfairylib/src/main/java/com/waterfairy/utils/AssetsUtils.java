@@ -1,8 +1,6 @@
 package com.waterfairy.utils;
 
 import android.content.Context;
-import android.content.res.AssetManager;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * Created by water_fairy on 2017/3/30.
@@ -62,7 +59,7 @@ public class AssetsUtils {
                 String[] list = context.getAssets().list(tempSrcPath);
                 if (list.length == 0) {
                     //文件
-                    save(context, tempSrcPath, tempTargetPath);
+                    copyFile(context, tempSrcPath, tempTargetPath);
                 } else {
                     //文件夹
                     save(context, list, tempSrcPath, tempTargetPath);
@@ -73,7 +70,7 @@ public class AssetsUtils {
         }
     }
 
-    private static void save(Context context, String tempSrcPath, String tempTargetPath) {
+    public static boolean copyFile(Context context, String tempSrcPath, String tempTargetPath) {
         try {
             InputStream is = context.getAssets().open(tempSrcPath);
             File file = new File(tempTargetPath);
@@ -88,18 +85,19 @@ public class AssetsUtils {
                     outputStream.write(buf, 0, len);
                 is.close();
                 outputStream.close();
+                return true;
             } else {
-
+                Log.i(TAG, "copyFile: create file error");
             }
-
         } catch (IOException e) {
             e.printStackTrace();
-        }
+         }
+        return false;
     }
 
     /**
      * @param context context
-     * @param path assets文件
+     * @param path    assets文件
      * @return
      * @throws IOException
      */
@@ -112,7 +110,7 @@ public class AssetsUtils {
 
     /**
      * @param context context
-     * @param path assets文件
+     * @param path    assets文件
      * @return InputStream
      * @throws IOException
      */
