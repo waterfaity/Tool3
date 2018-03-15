@@ -22,6 +22,8 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
+import android.view.View;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,9 +33,14 @@ import java.io.IOException;
 
 /**
  * Created by water_fairy on 2017/2/21.
+ * ver: 2018-3-15
  */
 
+
 public class ImageUtils {
+    private static final String TAG = "imgUtils";
+
+
     public static boolean saveBitmap(String imgPath, Bitmap source) {
         return saveBitmap(imgPath, source, Bitmap.CompressFormat.JPEG, 90);
     }
@@ -851,7 +858,15 @@ public class ImageUtils {
         return bitmapTemp;
     }
 
-    public static Bitmap colorToTrans(Bitmap source, int color, int trans) {
+    /**
+     * 指定颜色转换颜色
+     *
+     * @param source
+     * @param colorSource
+     * @param trans
+     * @return
+     */
+    public static Bitmap colorToOtherColor(Bitmap source, int colorSource, int colorTarget, int trans) {
         Bitmap bitmap = null;
         if (source != null && !source.isRecycled()) {
             int width = source.getWidth();
@@ -860,15 +875,10 @@ public class ImageUtils {
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
                     int pixel = source.getPixel(i, j);
-                    if (color >= 0) {
-                        if (pixel == color) {
-                            bitmap.setPixel(i, j, Color.TRANSPARENT);
-                        } else {
-                            bitmap.setPixel(i, j, pixel);
-                        }
+                    if (pixel == colorSource) {
+                        bitmap.setPixel(i, j, colorTarget);
                     } else {
-                        int argb = Color.argb(trans, Color.red(pixel), Color.green(pixel), Color.blue(pixel));
-                        bitmap.setPixel(i, j, argb);
+                        bitmap.setPixel(i, j, pixel);
                     }
                 }
             }
@@ -876,6 +886,16 @@ public class ImageUtils {
         return bitmap;
     }
 
+    /**
+     * 文本生成图片
+     *
+     * @param content
+     * @param textSize
+     * @param maxLen
+     * @param padding
+     * @param paint
+     * @return
+     */
     public static Bitmap txtToImg(String content, int textSize, int maxLen, int padding, Paint paint) {
         float textLen = TxtUtils.getTextLen(content, textSize);
         float perWidth = textLen / content.length();//每字宽
@@ -884,9 +904,10 @@ public class ImageUtils {
         if (textTimes % maxLen != 0) {
             row++;
         }
+        if (row == 1) maxLen = textTimes;
         int width = (int) (maxLen * perWidth) + 2 * padding;
-        int height = (int) (row * perWidth) + 2 * padding;
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        int height = (int) (row * textSize) + 2 * padding;
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmap);
         canvas.drawColor(Color.WHITE);
         if (paint == null) {
@@ -901,9 +922,122 @@ public class ImageUtils {
             if (end >= textTimes) {
                 end = content.length();
             }
-            canvas.drawText(content.substring(start, end),
-                    padding, padding + (i + 1) * textSize, paint);
+            String substring = content.substring(start, end);
+            float perRowLen = TxtUtils.getTextLen(substring, textSize);
+            canvas.drawText(substring,
+                    (width - perRowLen) / 2, padding + (i + 1) * textSize, paint);
         }
         return bitmap;
+    }
+
+
+    /**
+     * 补充区域 填充颜色
+     *
+     * @param bitmap
+     * @param width
+     * @param height
+     * @return
+     */
+    public static Bitmap supplement(Bitmap bitmap, int width, int height, int color) {
+        if (bitmap == null || width <= 0 || height <= 0) return bitmap;
+        int bitmapWidth = bitmap.getWidth();
+        int bitmapHeight = bitmap.getHeight();
+        Bitmap bitmapOut = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+        Canvas canvas = new Canvas(bitmapOut);
+        Paint paint = new Paint();
+        paint.setColor(color);
+        paint.setAntiAlias(true);
+        if (bitmapWidth / (float) bitmapHeight >= width / (float) height) {
+            //图片的宽 大 ,指定区域的高 大
+            int top = (height - bitmapHeight * width / bitmapWidth) / 2;
+            int bottom = height - top;
+            canvas.drawBitmap(bitmap, new Rect(0, 0, bitmapWidth, bitmapHeight), new RectF(0, top, width, height - top), null);
+            canvas.drawRect(0, 0, width, top, paint);
+            canvas.drawRect(0, bottom, width, height, paint);
+        } else {
+            int left = (width - bitmapWidth * height / bitmapHeight) / 2;
+            int right = width - left;
+            canvas.drawBitmap(bitmap, new Rect(0, 0, bitmapWidth, bitmapHeight), new RectF(left, 0, right, height), null);
+            canvas.drawRect(0, 0, left, height, paint);
+            canvas.drawRect(right, 0, width, height, paint);
+        }
+        canvas.save();
+        return bitmapOut;
+    }
+
+    /**
+     * 获取view视图
+     *
+     * @param view
+     * @return
+     */
+    public static Bitmap getBitmapFromView(View view, int width, int height) {
+        Bitmap bitmap = null;
+        try {
+            if (view != null) {
+                view.setDrawingCacheEnabled(true);
+                bitmap = view.getDrawingCache();
+            }
+            if (bitmap == null) {
+                bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+                Canvas canvas = new Canvas(bitmap);
+                canvas.drawColor(Color.parseColor("#11000000"));
+            } else {
+                bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), false);
+            }
+        } catch (OutOfMemoryError | NullPointerException throwable) {
+            throwable.printStackTrace();
+        } finally {
+            if (view != null) {
+                view.setDrawingCacheEnabled(false);
+            }
+        }
+        if (bitmap != null) {
+            Log.i(TAG, "getBitmapFromView: " + bitmap.getWidth() + "-" + bitmap.getHeight());
+        }
+        return bitmap;
+    }
+
+    /**
+     * 从文件读取bitmap 并缩放
+     *
+     * @param imageFile
+     * @param width
+     * @param height
+     * @param useLittle 使用最小的缩小倍数 倍数最小为1 ,
+     * @return
+     */
+    public static Bitmap decodeFromFile(File imageFile, int width, int height, boolean useLittle) throws IOException {
+        if (width <= 0 || height <= 0) {
+            throw new IOException("宽或高必须大于0");
+        }
+        if (!imageFile.exists()) {
+            throw new IOException("文件不存在");
+        }
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+        int outWidth = options.outWidth;
+        int outHeight = options.outHeight;
+        if (outWidth <= 0 || outHeight <= 0) {
+            throw new IOException("文件解析失败");
+        }
+        float xScale = 1;
+        float yScale = 1;
+
+        if (outWidth > width) {
+            //width缩放倍数
+            xScale = outWidth / (float) width;
+        }
+        if (outHeight > height) {
+            //height缩放倍数
+            yScale = outHeight / (float) height;
+        }
+        options.inPreferredConfig = Bitmap.Config.ARGB_4444;
+        int sampleSize = (int) (useLittle ? Math.min(xScale, yScale) : Math.max(xScale, yScale));
+        options.inSampleSize = sampleSize < 1 ? 1 : sampleSize;
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
     }
 }

@@ -17,6 +17,5 @@ public class VersionUtils {
             e.printStackTrace();
         }
         return "1.0";
-
     }
 }

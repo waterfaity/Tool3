@@ -14,6 +14,7 @@ import com.waterfairy.tool3.recyclerview.RecyclerViewActivity;
 import com.waterfairy.utils.PathUtils;
 import com.waterfairy.utils.PermissionUtils;
 import com.waterfairy.utils.ToastUtils;
+import com.waterfairy.utils.VideoUtils;
 
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
@@ -38,15 +39,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void test() {
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        Notification.Builder builder = new Notification.Builder(this);
-        builder.setContentTitle("hhhh");
-        builder.setContentText("fdsa");
-        builder.setSmallIcon(R.mipmap.ic_launcher);
-        Notification build = builder.build();
-        notificationManager.notify(890, build);
-
-    }
+     }
 
     public void onClick(View view) {
         switch (view.getId()) {
