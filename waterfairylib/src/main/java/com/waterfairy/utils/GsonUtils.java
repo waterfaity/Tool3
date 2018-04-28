@@ -7,7 +7,7 @@ import com.google.gson.Gson;
  * 995637517@qq.com
  */
 
-public class JsonUtils {
+public class GsonUtils {
     public static String objectToJson(Object object) {
         Gson gson = new Gson();
         return gson.toJson(object);

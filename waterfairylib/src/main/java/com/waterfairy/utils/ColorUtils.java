@@ -29,6 +29,7 @@ public class ColorUtils {
 
     /**
      * 修改颜色透明度
+     *
      * @param color
      * @param alpha
      * @return
@@ -38,5 +39,35 @@ public class ColorUtils {
         int green = Color.green(color);
         int blue = Color.blue(color);
         return Color.argb(alpha, red, green, blue);
+    }
+
+    public static int[] getColorSystem(
+            int startColorRed, int endColorRed,
+            int startColorGreen, int endColorGreen,
+            int startColorBlue, int endColorBlue,
+            int num) {
+
+        if (num == 0) {
+//            return new int[]{  Color.rgb(startColorRed, startColorGreen, startColorBlue)};
+            return new int[]{};
+        }
+        int dbRed = endColorRed - startColorRed;
+        int dbGreen = endColorGreen - startColorGreen;
+        int dbBlue = endColorBlue - startColorBlue;
+
+        int perRed = dbRed / num;
+        int perGreen = dbGreen / num;
+        int perBlue = dbBlue / num;
+
+        int[] colors = new int[num];
+        for (int i = 0; i < num; i++) {
+            colors[i] = Color.rgb(
+                    startColorRed + i * perRed,
+                    startColorGreen + i * perGreen,
+                    startColorBlue + i * perBlue
+            );
+        }
+        return colors;
+
     }
 }

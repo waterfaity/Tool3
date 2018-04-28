@@ -8,7 +8,7 @@ import android.content.Context;
  */
 
 public class VersionUtils {
-    public static String getVersion(Context context){
+    public static String getVersion(Context context) {
         try {
             String pkName = context.getPackageName();
             return context.getPackageManager().getPackageInfo(

@@ -26,6 +26,7 @@ public class PackageUtils {
             return true;
         }
     }
+
     public static boolean isApplicationAvilible(Context context, String appPackageName) {
         PackageManager packageManager = context.getPackageManager();// 获取packagemanager
         List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息

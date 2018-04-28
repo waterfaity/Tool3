@@ -3,13 +3,13 @@ package com.waterfairy.widget.baseView;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 
 /**
  * Created by water_fairy on 2017/6/13.
@@ -17,13 +17,13 @@ import android.util.Log;
  */
 
 public class BaseSelfView extends AppCompatImageView {
-    private static final String TAG = "MenuImageView";
+    private static final String TAG = "BaseSelfView";
     protected int mWidth, mHeight;
     private ViewDrawObserver viewDrawObserver;
     private int left, right, top, bottom;
     private int currentTimes = 0;
     private int times = 100;//绘画频率
-    private int sleepTime = 1;
+    private int sleepTime = 10;
     private boolean hasDrawFinish;
     protected boolean canDraw;
     private boolean needDraw = true;
@@ -131,27 +131,22 @@ public class BaseSelfView extends AppCompatImageView {
         }
     }
 
-
-    private OnFloatChangeListener onFloatChangeListener;
     protected boolean isDrawing;
 
-    protected boolean isDrawing() {
+    public boolean isDrawing() {
         return isDrawing;
     }
 
     private Handler handler;//延时时钟
 
-    protected void setClock(final OnFloatChangeListener onFloatChangeListener) {
-        this.onFloatChangeListener = onFloatChangeListener;
-        if (isDrawing) return;
-        Log.i(TAG, "setClock: " + isDrawing);
+    protected boolean setClock(final OnFloatChangeListener onFloatChangeListener) {
+        if (isDrawing) return false;
         isDrawing = true;
         currentTimes = 0;
         if (handler == null) {
             handler = new Handler() {
                 @Override
                 public void handleMessage(Message msg) {
-                    super.handleMessage(msg);
                     if (msg.what == WHAT_DRAW) {
                         if (onFloatChangeListener != null && isDrawing) {
                             float ratio = currentTimes / (float) times;//绘画过的比例
@@ -176,6 +171,7 @@ public class BaseSelfView extends AppCompatImageView {
             handler.removeMessages(0);
         }
         handler.sendEmptyMessage(0);
+        return true;
     }
 
     /**
@@ -187,7 +183,7 @@ public class BaseSelfView extends AppCompatImageView {
 
     private void startDraw() {
         if (needDraw)
-            postInvalidate();
+            invalidate();
     }
 
     protected void beforeDraw() {
@@ -215,5 +211,14 @@ public class BaseSelfView extends AppCompatImageView {
         Paint paint = new Paint();
         paint.setTextSize(textSize);
         return paint.measureText(content);
+    }
+
+    public Rect getTextRect(String content, int textSize) {
+        Rect rect = new Rect();
+        if (TextUtils.isEmpty(content) || textSize <= 0) return rect;
+        Paint paint = new Paint();
+        paint.setTextSize(textSize);
+        paint.getTextBounds(content, 0, content.length(), rect);
+        return rect;
     }
 }

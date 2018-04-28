@@ -15,8 +15,12 @@ public class DateUtils {
         Date date = new Date(time);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
         return simpleDateFormat.format(date);
+    }
 
-
+    public static String trans2(long time) {
+        Date date = new Date(time);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return simpleDateFormat.format(date);
     }
 
     public static String trans(String timeStr) {

@@ -85,7 +85,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.FlipView2Activity">
+        </activity>
+        <activity android:name=".activity.TestActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
 
+            </intent-filter>
         </activity>
     </application>
 

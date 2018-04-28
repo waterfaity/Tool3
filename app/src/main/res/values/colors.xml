@@ -2,5 +2,27 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#f49584</color>
+    <!--<color name="colorAccent">#d15c83</color>-->
+    <!--<color name="colorAccent">#c7985b</color>-->
+    <!--<color name="colorAccent">#ded86a</color>-->
+    <!--<color name="colorAccent">#8ee63b</color>-->
+    <!--<color name="colorAccent">#44c4ea</color>-->
+    <!--<color name="colorAccent">#7b72f1</color>-->
+    <!--<color name="colorAccent">#45ac88</color>-->
+    <!--<color name="colorAccent">#32b1bc</color>-->
+    <!--<color name="colorAccent">#36b3e4</color>-->
+    <!--<color name="colorAccent">#d737e9</color>-->
+    <!--<color name="colorAccent">#f4558b</color>-->
+    <!--<color name="colorAccent">#c44fe1</color>-->
+    <!--<color name="colorAccent">#6eeadc</color>-->
+    <!--<color name="colorAccent">#5ccfa9</color>-->
+    <!--<color name="colorAccent">#79c778</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
 </resources>
