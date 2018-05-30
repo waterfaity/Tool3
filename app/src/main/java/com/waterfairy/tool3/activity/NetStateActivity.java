@@ -23,7 +23,7 @@ public class NetStateActivity extends AppCompatActivity {
         mTVState = (TextView) findViewById(R.id.text);
         NetUtils.getNetworkType(this);
         mTVState.setText(NetUtils.isNetworkAvailable(this) + "");
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+          broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {

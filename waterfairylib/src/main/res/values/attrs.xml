@@ -43,4 +43,9 @@
         <attr name="drawableHeight" format="dimension"/>
         <attr name="position" format="integer"/>
     </declare-styleable>
+    <declare-styleable name="XmlTextView">
+        <attr name="xmlAssetsPath" format="string"/>
+        <attr name="xmlLineSpace" format="dimension"/>
+        <attr name="xmlText" format="reference"/>
+    </declare-styleable>
 </resources>

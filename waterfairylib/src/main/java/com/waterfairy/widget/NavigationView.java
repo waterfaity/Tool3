@@ -9,6 +9,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.waterfairy.widget.baseView.BaseView;
+
 /**
  * @author water_fairy
  * @email 995637517@qq.com

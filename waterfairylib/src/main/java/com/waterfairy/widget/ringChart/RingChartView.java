@@ -11,7 +11,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.waterfairy.widget.BaseView;
+import com.waterfairy.widget.baseView.BaseView;
 
 import java.util.ArrayList;
 import java.util.List;

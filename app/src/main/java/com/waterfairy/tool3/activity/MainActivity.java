@@ -15,6 +15,7 @@ import com.waterfairy.utils.PathUtils;
 import com.waterfairy.utils.PermissionUtils;
 import com.waterfairy.utils.ToastUtils;
 import com.waterfairy.utils.VideoUtils;
+import com.waterfairy.widget.ringChart.RingChartView;
 
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void test() {
 
-     }
+    }
 
     public void onClick(View view) {
         switch (view.getId()) {
@@ -63,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.flip_view_2:
                 startActivity(new Intent(this, FlipView2Activity.class));
+                break;
+            case R.id.ring_chart_view:
+                startActivity(new Intent(this, RingChartActivity.class));
                 break;
         }
     }

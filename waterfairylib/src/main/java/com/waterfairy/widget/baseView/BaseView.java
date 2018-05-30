@@ -1,4 +1,4 @@
-package com.waterfairy.widget;
+package com.waterfairy.widget.baseView;
 
 import android.content.Context;
 import android.graphics.Paint;
