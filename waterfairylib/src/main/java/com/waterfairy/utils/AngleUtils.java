@@ -12,6 +12,7 @@ public class AngleUtils {
     private static final String TAG = "angleUtils";
 
     public static Float[] getLineK(float x, float y, float x1, float y1) {
+        //斜率
         Float gradient = null;
         float dx = x1 - x;
         if (dx == 0) {
@@ -42,6 +43,7 @@ public class AngleUtils {
 
     /**
      * 由斜率获取角度
+     *
      * @param k
      * @return
      */
@@ -64,5 +66,34 @@ public class AngleUtils {
     }
 
 
+    public static double getAngle(float x, float y, float centerX, float centerY) {
+        return getAngle(x, y, centerX, centerY, 0);
+
+    }
+
+    public static double getAngle(float x, float y, float centerX, float centerY, double transAngle) {
+        float dy = y - centerY;
+        float dx = x - centerX;
+        double degrees = Math.toDegrees(Math.atan((dy) / dx));
+        if (dx >= 0 && dy >= 0) {
+            //第一象限
+        } else if (dx < 0 && dy > 0) {
+            //二
+            degrees = 180 - Math.abs(degrees);
+        } else if (dx < 0 && dy < 0) {
+            //三
+            degrees += 180;
+        } else {
+            //四
+            degrees = 360 - Math.abs(degrees);
+        }
+        if (transAngle != 0) {
+            transAngle = -transAngle;
+            degrees = degrees + transAngle;
+            if (degrees > 360) degrees = degrees - 360;
+            else if (degrees < 0) degrees = 360 + degrees;
+        }
+        return degrees;
+    }
 
 }
