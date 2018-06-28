@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         PermissionUtils.requestPermission(this, PermissionUtils.REQUEST_STORAGE);
         PermissionUtils.requestPermission(this, PermissionUtils.REQUEST_RECORD);
         test();
+        test();
     }
 
     /**
