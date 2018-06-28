@@ -13,7 +13,6 @@ import java.util.List;
  */
 
 public class Test {
-    private static final String TAG = "Test";
 
     public static List<ExpandBean> getData() {
         List<ExpandBean> mData = new ArrayList<>();
