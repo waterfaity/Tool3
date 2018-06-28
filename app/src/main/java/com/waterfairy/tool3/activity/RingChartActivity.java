@@ -5,8 +5,8 @@ import android.os.Bundle;
 
 import com.waterfairy.tool3.R;
 import com.waterfairy.utils.ToastUtils;
-import com.waterfairy.widget.ringChart.RingChartEntity;
-import com.waterfairy.widget.ringChart.RingChartView;
+import com.waterfairy.widget.chart.ringChart.RingChartEntity;
+import com.waterfairy.widget.chart.ringChart.RingChartView;
 
 import java.util.ArrayList;
 import java.util.List;

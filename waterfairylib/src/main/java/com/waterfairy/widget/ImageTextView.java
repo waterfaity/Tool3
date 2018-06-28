@@ -2,102 +2,140 @@ package com.waterfairy.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
-import android.support.v7.widget.AppCompatTextView;
+import android.graphics.Color;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.waterfairy.library.R;
+
 
 /**
  * @author water_fairy
  * @email 995637517@qq.com
- * @date 2018/4/18
- * @Description:
+ * @date 2018/5/9 16:12
+ * @info:
  */
-public class ImageTextView extends AppCompatTextView {
-    private Drawable mDrawable;//设置的图片
-    private int mScaleWidth; // 图片的宽度
-    private int mScaleHeight;// 图片的高度
-    private int mPosition;// 图片的位置 1上2左3下4右
+public class ImageTextView extends LinearLayout implements View.OnClickListener {
+    //data
+    private int textColor;
+    private String text;
+    private int textSize;
+    private int marginLeft;
+    private int width, height;
+    private boolean isChecked = true;
+    private int imgRes;
+    private int imgResNoChecked;
+    //view
+    private TextView textView;
+    private ImageView imageView;
+    //listener
+    private OnCheckedListener onCheckedListener;
+    private OnClickListener onClickListener;
+
+    public TextView getTextView() {
+        return textView;
+    }
+
+    public ImageView getImageView() {
+        return imageView;
+    }
 
     public ImageTextView(Context context) {
-        super(context);
+        this(context, null);
     }
 
-    public ImageTextView(Context context, AttributeSet attrs) {
+    public ImageTextView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs);
-    }
 
-    public ImageTextView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context, attrs);
-    }
 
-    public void init(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs,
                 R.styleable.ImageTextView);
+        marginLeft = typedArray.getDimensionPixelSize(R.styleable.ImageTextView_drawableMarginLeft, 0);
+        imgRes = typedArray.getResourceId(R.styleable.ImageTextView_drawable, 0);
+        imgResNoChecked = typedArray.getResourceId(R.styleable.ImageTextView_drawableNoChecked, 0);
+        width = typedArray.getDimensionPixelSize(R.styleable.ImageTextView_drawableWidth, 0);
+        height = typedArray.getDimensionPixelSize(R.styleable.ImageTextView_drawableHeight, 0);
+        text = typedArray.getString(R.styleable.ImageTextView_text);
+        textSize = typedArray.getDimensionPixelSize(R.styleable.ImageTextView_textSize, (int) (14 * getResources().getDisplayMetrics().density));
+        textColor = typedArray.getColor(R.styleable.ImageTextView_textColor, Color.parseColor("#454545"));
+        isChecked = typedArray.getBoolean(R.styleable.ImageTextView_checked, true);
 
-        mDrawable = typedArray.getDrawable(R.styleable.ImageTextView_drawable);
-        mScaleWidth = typedArray
-                .getDimensionPixelOffset(
-                        R.styleable.ImageTextView_drawableWidth,
-                        dip2px(20));
-        mScaleHeight = typedArray.getDimensionPixelOffset(
-                R.styleable.ImageTextView_drawableHeight,
-                dip2px(20));
-        mPosition = typedArray.getInt(R.styleable.ImageTextView_position, 3);
+        typedArray.recycle();
+        addView();
+        setOnClickListener(this, true);
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (mDrawable != null) {
-            mDrawable.setBounds(0, 0, dip2px(mScaleWidth),
-                    dip2px(mScaleHeight));
+    private void addView() {
+        textView = new TextView(getContext());
+        imageView = new ImageView(getContext());
+        addView(textView);
+        addView(imageView);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+        textView.setText(text);
+        textView.setTextColor(textColor);
+        LayoutParams layoutParams = (LayoutParams) imageView.getLayoutParams();
+        layoutParams.width = width;
+        layoutParams.height = height;
+        layoutParams.leftMargin = marginLeft;
+        imageView.setBackgroundResource(isChecked ? imgRes : imgResNoChecked);
+        imageView.setLayoutParams(layoutParams);
+    }
 
+    private void setOnClickListener(OnClickListener onClickListener, boolean in) {
+        if (in) {
+            super.setOnClickListener(onClickListener);
+        } else {
+            this.onClickListener = onClickListener;
         }
     }
 
-    private int dip2px(int dp) {
-        return (int) (getResources().getDisplayMetrics().density * dp);
+    public void setOnClickListener(OnClickListener onClickListener) {
+        setOnClickListener(onClickListener, false);
     }
 
+    public void setOnCheckedListener(OnCheckedListener onCheckedListener) {
+        this.onCheckedListener = onCheckedListener;
+    }
+
+
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        switch (mPosition) {
-            case 1:
-                this.setCompoundDrawables(mDrawable, null, null, null);
-                break;
-            case 2:
-                this.setCompoundDrawables(null, mDrawable, null, null);
-                break;
-            case 3:
-                this.setCompoundDrawables(null, null, mDrawable, null);
-                break;
-            case 4:
-                this.setCompoundDrawables(null, null, null, mDrawable);
-                break;
-            default:
-                break;
+    public void onClick(View v) {
+        setCheckState(true);
+    }
+
+    private void setCheckState(boolean checkedListener) {
+        if (onClickListener != null) onClickListener.onClick(this);
+        if (onCheckedListener != null) {
+            if (isChecked) {
+                imageView.setBackgroundResource(imgResNoChecked);
+            } else {
+                imageView.setBackgroundResource(imgRes);
+            }
+            isChecked = !isChecked;
+            if (checkedListener)
+                onCheckedListener.onChecked(this, isChecked);
         }
     }
 
-    /**
-     * 设置左侧图片并重绘
-     */
-    public void setDrawableLeft(Drawable drawable) {
-        this.mDrawable = drawable;
-        invalidate();
+    public void setChecked(boolean checked, boolean checkedListener) {
+        isChecked = !checked;
+        setCheckState(checkedListener);
     }
 
-    /**
-     * 设置左侧图片并重绘
-     */
-    public void setDrawableLeft(int drawableRes, Context context) {
-        this.mDrawable = context.getResources().getDrawable(drawableRes);
-        invalidate();
+    public interface OnCheckedListener {
+        void onChecked(ImageTextView imageTextView, boolean isChecked);
+    }
+
+    public void setText(String text) {
+        textView.setText(text);
+    }
+
+    public void setTextColor(int textColor) {
+        textView.setTextColor(textColor);
     }
 }

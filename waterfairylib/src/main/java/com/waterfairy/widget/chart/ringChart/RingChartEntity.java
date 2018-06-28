@@ -1,4 +1,4 @@
-package com.waterfairy.widget.ringChart;
+package com.waterfairy.widget.chart.ringChart;
 
 /**
  * @author water_fairy

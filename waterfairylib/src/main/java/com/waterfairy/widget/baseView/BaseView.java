@@ -37,6 +37,11 @@ public abstract class BaseView extends View {
         return rect;
     }
 
+    public int getTextWidth(String content, int textSize) {
+        Rect textRect = getTextRect(content, textSize);
+        return textRect.right + Math.abs(textRect.left);
+    }
+
     protected float dp2Px(int dp) {
         return dp * getDensity();
     }
@@ -52,9 +57,20 @@ public abstract class BaseView extends View {
 
     }
 
-    protected void reStart() {
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        width = right - left;
+        height = bottom - top;
+        if (width != 0 && height != 0) {
+            onViewMeasure(changed, width, height);
+        }
+    }
+
+    public void onViewMeasure(boolean changed, int width, int height) {
 
     }
+
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {

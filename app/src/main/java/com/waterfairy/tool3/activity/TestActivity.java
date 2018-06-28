@@ -5,8 +5,8 @@ import android.os.Bundle;
 
 import com.waterfairy.tool3.R;
 import com.waterfairy.utils.ToastUtils;
-import com.waterfairy.widget.ringChart.RingChartEntity;
-import com.waterfairy.widget.ringChart.RingChartView;
+import com.waterfairy.widget.chart.ringChart.RingChartEntity;
+import com.waterfairy.widget.chart.ringChart.RingChartView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +18,10 @@ public class TestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
+
         final List<RingChartEntity> ringChartEntities = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            ringChartEntities.add(new Entity("hah" + i, 9 ));
+            ringChartEntities.add(new Entity("hah" + i, 9));
         }
         RingChartView ringChartView = findViewById(R.id.ring_view);
         ringChartView.setData(ringChartEntities);
@@ -28,7 +29,7 @@ public class TestActivity extends AppCompatActivity {
         ringChartView.setOnPartSelectListener(new RingChartView.OnPartSelectListener() {
             @Override
             public void onPartSelect(int pos, RingChartEntity ringChartEntity) {
-                ToastUtils.show(pos + "--"  );
+                ToastUtils.show(pos + "--");
             }
         });
     }

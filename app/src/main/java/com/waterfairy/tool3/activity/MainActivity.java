@@ -1,24 +1,14 @@
 package com.waterfairy.tool3.activity;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
-import com.waterfairy.tool3.MD5Utils;
 import com.waterfairy.tool3.R;
 import com.waterfairy.tool3.recyclerview.RecyclerViewActivity;
-import com.waterfairy.utils.PathUtils;
 import com.waterfairy.utils.PermissionUtils;
 import com.waterfairy.utils.ToastUtils;
-import com.waterfairy.utils.VideoUtils;
-import com.waterfairy.widget.ringChart.RingChartView;
-
-import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.util.ByteSource;
 
 public class MainActivity extends AppCompatActivity {
 

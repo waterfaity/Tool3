@@ -1,50 +1,30 @@
 package com.waterfairy.widget.baseView;
 
 /**
- * Created by water_fairy on 2017/6/13.
- * 995637517@qq.com
+ * @author water_fairy
+ * @email 995637517@qq.com
+ * @date 2018/6/8 13:48
+ * @info:
  */
-
 public class Coordinate {
+    public int x;
+    public int y;
+    public int value;
+    public String text;
 
     public Coordinate() {
-
     }
 
-    public Coordinate(float x, float y) {
+    public Coordinate(int x, int y) {
         this.x = x;
         this.y = y;
-
     }
 
-    public Coordinate setExtra(float extra) {
-        this.extra = extra;
-        return this;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public Coordinate setX(float x) {
+    public Coordinate(int x, int y, int value, String text) {
         this.x = x;
-        return this;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public Coordinate setY(float y) {
+        this.value = value;
         this.y = y;
-        return this;
+        this.text = text;
     }
 
-    public float getExtra() {
-        return extra;
-    }
-
-    public float extra;
-    public float x;
-    public float y;
 }

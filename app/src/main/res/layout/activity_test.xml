@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context="com.waterfairy.tool3.activity.TestActivity">
 
-    <com.waterfairy.widget.ringChart.RingChartView
+    <com.waterfairy.widget.chart.ringChart.RingChartView
         android:id="@+id/ring_view"
         android:layout_width="200dp"
         android:layout_height="200dp"/>

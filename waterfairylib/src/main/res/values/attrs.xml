@@ -37,15 +37,35 @@
             <enum name="RGB_565" value="2"/>
         </attr>
     </declare-styleable>
-    <declare-styleable name="ImageTextView">
-        <attr name="drawable" format="reference"/>
-        <attr name="drawableWidth" format="dimension"/>
-        <attr name="drawableHeight" format="dimension"/>
-        <attr name="position" format="integer"/>
-    </declare-styleable>
+    <!--<declare-styleable name="ImageTextView">-->
+    <!--<attr name="drawable" format="reference"/>-->
+    <!--<attr name="drawableWidth" format="dimension"/>-->
+    <!--<attr name="drawableHeight" format="dimension"/>-->
+    <!--<attr name="position" format="integer"/>-->
+    <!--</declare-styleable>-->
     <declare-styleable name="XmlTextView">
         <attr name="xmlAssetsPath" format="string"/>
         <attr name="xmlLineSpace" format="dimension"/>
         <attr name="xmlText" format="reference"/>
     </declare-styleable>
+    <declare-styleable name="CheckBoxImageView">
+        <attr name="checkRes" format="reference"/>
+        <attr name="noCheckRes" format="reference"/>
+        <attr name="isChecked" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="ImageTextView">
+        <attr name="drawable" format="reference"/>
+        <attr name="drawableNoChecked" format="reference"/>
+        <attr name="drawableWidth" format="dimension"/>
+        <attr name="drawableHeight" format="dimension"/>
+        <attr name="drawableMarginLeft" format="dimension"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="textColor" format="color"/>
+        <attr name="text" format="string"/>
+        <attr name="checked" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="RadarChartView">
+        <attr name="axisNum" format="integer"/>
+    </declare-styleable>
+
 </resources>

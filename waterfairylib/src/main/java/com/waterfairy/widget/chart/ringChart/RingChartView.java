@@ -1,4 +1,4 @@
-package com.waterfairy.widget.ringChart;
+package com.waterfairy.widget.chart.ringChart;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -70,6 +71,7 @@ public class RingChartView extends BaseView implements View.OnTouchListener {
     private boolean userCenter = false;
     private boolean setPartText = false;
     private OnPartSelectListener onPartSelectListener;
+    private boolean showSetTotalValue;
 
     public RingChartView(Context context) {
         super(context);
@@ -126,6 +128,10 @@ public class RingChartView extends BaseView implements View.OnTouchListener {
 
     public boolean isSetPartText() {
         return setPartText;
+    }
+
+    public void setSetPartText(boolean setPartText) {
+        this.setPartText = setPartText;
     }
 
     /**
@@ -202,7 +208,10 @@ public class RingChartView extends BaseView implements View.OnTouchListener {
                     mStartDegree.add(tempValues * 360);
                     mStartDegree.add(360F);
                 } else {
-                    float tempRatio = value / mTotalValue;
+                    float tempRatio = 0;
+                    if (mTotalValue != 0) {
+                        tempRatio = value / mTotalValue;
+                    }
                     mValues.add(tempRatio);
                     mStartDegree.add(tempValues * 360);
                     tempValues += tempRatio;
@@ -221,6 +230,7 @@ public class RingChartView extends BaseView implements View.OnTouchListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
         int width = getWidth();
         int height = getHeight();
         if (width <= 0 || height <= 0 || mValues == null) {
@@ -255,6 +265,7 @@ public class RingChartView extends BaseView implements View.OnTouchListener {
             //绘制文本
             for (int i = 0; i < mValues.size(); i++) {
                 float angle = 360 * mValues.get(i) * mRatio;
+                if (mStartDegree.get(i) <= 0) continue;
                 if (mSelectPos == i) {
                     drawPartText(canvas, i, mStartDegree.get(i), angle, mTempRectFSelectInside, mTempRectFSelectOutside);
                 } else {
@@ -262,28 +273,37 @@ public class RingChartView extends BaseView implements View.OnTouchListener {
                 }
             }
         }
+        if (mValues == null || mValues.size() == 0) {
+            mPaint.setColor(Color.parseColor("#aaaaaa"));
+            canvas.drawArc(mRectFOutside, 0, 360, true, mPaint);
+
+        }
 
         //绘制总分
         String numStr = "";
-        if (mSelectPos != -1) {
+        String titleStr = "";
+        if (mSelectPos > -1 && mDataList != null && mDataList.size() > 0 && mDataList.size() > mSelectPos) {
             numStr = mDataList.get(mSelectPos).getValueStr() + "";
+            titleStr = mDataList.get(mSelectPos).getTitle();
+            if (TextUtils.isEmpty(titleStr)) titleStr = title;
         } else {
-            if (totalValueSet == -1) {
-                numStr = mTotalValue + "";
-            } else {
+            titleStr = title;
+            if (showSetTotalValue) {
                 numStr = totalValueSet + "";
+            } else {
+                numStr = mTotalValue + "";
             }
         }
-
+        //中心数据值
         Rect totalNumRect = getTextRect(numStr, (int) totalNumTextSize);
         mTextPaint.setTextSize(totalNumTextSize);
         mTextPaint.setColor(totalNumColor);
         canvas.drawText(numStr, centerX - totalNumRect.width() / 2, centerY, mTextPaint);
-
-        Rect titleRect = getTextRect(title, (int) mTitleTextSize);
+        //中心title
+        Rect titleRect = getTextRect(titleStr, (int) mTitleTextSize);
         mTextPaint.setTextSize(mTitleTextSize);
         mTextPaint.setColor(mTitleTextColor);
-        canvas.drawText(title, centerX - titleRect.width() / 2, centerY + titleRect.height(), mTextPaint);
+        canvas.drawText(titleStr, centerX - titleRect.width() / 2, centerY + titleRect.height(), mTextPaint);
     }
 
     private void calcSelectRect(float startAngle, float angle) {
@@ -443,8 +463,9 @@ public class RingChartView extends BaseView implements View.OnTouchListener {
         this.onPartSelectListener = onPartSelectListener;
     }
 
-    public void setTotalNumText(int totalValue) {
+    public void setTotalNumText(int totalValue,boolean showSetTotalValue) {
         this.totalValueSet = totalValue;
+        this.showSetTotalValue = showSetTotalValue;
     }
 
 
