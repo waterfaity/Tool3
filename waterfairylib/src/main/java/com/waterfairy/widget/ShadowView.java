@@ -16,6 +16,7 @@ import android.util.AttributeSet;
 import com.waterfairy.library.R;
 import com.waterfairy.widget.baseView.BaseSelfView;
 
+
 /**
  * @author water_fairy
  * @email 995637517@qq.com
@@ -35,8 +36,9 @@ public class ShadowView extends BaseSelfView {
     private RectF centerRect;//中心方块区域
     //hasCorner =false
     private Path leftPath, topPath, rightPath, bottomPath;
-    private int centerColor = Color.parseColor("#666666");//中心颜色
+    private int startColor = Color.parseColor("#666666");//中心颜色
     private int endColor = Color.TRANSPARENT;//结束颜色
+    private int solidColor = startColor;//solid颜色
     private boolean hasCornerTop = true, hasCornerRight = true, hasCornerLeft = true, hasCornerBottom = true;//是否有4个方向的 1/4圆过度
     private boolean hasCorner;
 
@@ -49,12 +51,17 @@ public class ShadowView extends BaseSelfView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ShadowView);
         radius = typedArray.getDimensionPixelSize(R.styleable.ShadowView_shadowRadius,
                 (int) (context.getResources().getDisplayMetrics().density * 20));
-        int startColor = typedArray.getColor(R.styleable.ShadowView_shadowStartColor, -1);
-        int endColor = typedArray.getColor(R.styleable.ShadowView_shadowEndColor, -1);
+        startColor = typedArray.getColor(R.styleable.ShadowView_shadowStartColor, startColor);
+        endColor = typedArray.getColor(R.styleable.ShadowView_shadowEndColor, Color.parseColor("#00000000"));
+        solidColor = typedArray.getColor(R.styleable.ShadowView_shadowSolidColor, startColor);
         hasCorner = typedArray.getBoolean(R.styleable.ShadowView_hasCorner, true);
+
+        hasCornerTop = typedArray.getBoolean(R.styleable.ShadowView_hasCornerTop, true);
+        hasCornerRight = typedArray.getBoolean(R.styleable.ShadowView_hasCornerRight, true);
+        hasCornerLeft = typedArray.getBoolean(R.styleable.ShadowView_hasCornerLeft, true);
+        hasCornerBottom = typedArray.getBoolean(R.styleable.ShadowView_hasCornerBottom, true);
+
         typedArray.recycle();
-        if (startColor != -1) centerColor = startColor;
-        if (endColor != -1) this.endColor = endColor;
         radiusx2 = 2 * radius;
         onInitDataOk();
     }
@@ -70,42 +77,42 @@ public class ShadowView extends BaseSelfView {
             }
 
             if (hasCornerTop && hasCornerLeft) {
-                ltRadial = new RadialGradient(radius, radius, radius, centerColor, endColor, Shader.TileMode.CLAMP);
+                ltRadial = new RadialGradient(radius, radius, radius, startColor, endColor, Shader.TileMode.CLAMP);
                 ltRectFArc = new RectF(0, 0, radiusx2, radiusx2);
             }
 
             if (hasCornerTop && hasCornerRight) {
-                rtRadial = new RadialGradient(mWidth - radius, radius, radius, centerColor, endColor, Shader.TileMode.CLAMP);
+                rtRadial = new RadialGradient(mWidth - radius, radius, radius, startColor, endColor, Shader.TileMode.CLAMP);
                 rtRectFArc = new RectF(mWidth - radiusx2, 0, mWidth, radiusx2);
             }
 
             if (hasCornerBottom && hasCornerRight) {
-                rbRadial = new RadialGradient(mWidth - radius, mHeight - radius, radius, centerColor, endColor, Shader.TileMode.CLAMP);
+                rbRadial = new RadialGradient(mWidth - radius, mHeight - radius, radius, startColor, endColor, Shader.TileMode.CLAMP);
                 rbRectFArc = new RectF(mWidth - radiusx2, mHeight - radiusx2, mWidth, mHeight);
             }
 
             if (hasCornerLeft && hasCornerBottom) {
-                lbRadial = new RadialGradient(radius, mHeight - radius, radius, centerColor, endColor, Shader.TileMode.CLAMP);
+                lbRadial = new RadialGradient(radius, mHeight - radius, radius, startColor, endColor, Shader.TileMode.CLAMP);
                 lbRectFArc = new RectF(0, mHeight - radiusx2, radiusx2, mHeight);
             }
 //        上
             if (hasCornerTop) {//没有top  对 左右 有影响
-                topLinear = new LinearGradient(radius, 0, radius, radius, endColor, centerColor, Shader.TileMode.CLAMP);
+                topLinear = new LinearGradient(radius, 0, radius, radius, endColor, startColor, Shader.TileMode.CLAMP);
                 topRectF = new RectF(hasCornerLeft ? radius : 0, 0, hasCornerRight ? mWidth - radius : mWidth, radius);
             }
 //        右
             if (hasCornerRight) {//没有right 对上下 有影响
-                rightLinear = new LinearGradient(mWidth - radius, radius, mWidth, radius, centerColor, endColor, Shader.TileMode.CLAMP);
+                rightLinear = new LinearGradient(mWidth - radius, radius, mWidth, radius, startColor, endColor, Shader.TileMode.CLAMP);
                 rightRectF = new RectF(mWidth - radius, hasCornerTop ? radius : 0, mWidth, hasCornerBottom ? mHeight - radius : mHeight);
             }
 //        下
             if (hasCornerBottom) {
-                bottomLinear = new LinearGradient(radius, mHeight - radius, radius, mHeight, centerColor, endColor, Shader.TileMode.CLAMP);
+                bottomLinear = new LinearGradient(radius, mHeight - radius, radius, mHeight, startColor, endColor, Shader.TileMode.CLAMP);
                 bottomRectF = new RectF(hasCornerLeft ? radius : 0, mHeight - radius, hasCornerRight ? mWidth - radius : mWidth, mHeight);
             }
 //        左
             if (hasCornerLeft) {//对上下
-                leftLinear = new LinearGradient(0, radius, radius, radius, endColor, centerColor, Shader.TileMode.CLAMP);
+                leftLinear = new LinearGradient(0, radius, radius, radius, endColor, startColor, Shader.TileMode.CLAMP);
                 leftRectF = new RectF(0, hasCornerTop ? radius : 0, radius, hasCornerBottom ? mHeight - radius : mHeight);
             }
             centerRect = new RectF(hasCornerLeft ? radius : 0, hasCornerTop ? radius : 0, hasCornerRight ? mWidth - radius : mWidth, hasCornerBottom ? mHeight - radius : mHeight);
@@ -142,10 +149,10 @@ public class ShadowView extends BaseSelfView {
             bottomPath.lineTo(mWidth, mHeight);
             bottomPath.lineTo(0, mHeight);
 
-            leftLinear = new LinearGradient(0, 0, radius, 0, endColor, centerColor, Shader.TileMode.CLAMP);
-            topLinear = new LinearGradient(0, 0, 0, radius, endColor, centerColor, Shader.TileMode.CLAMP);
-            rightLinear = new LinearGradient(mWidth - radius, 0, mWidth, 0, centerColor, endColor, Shader.TileMode.CLAMP);
-            bottomLinear = new LinearGradient(0, mHeight - radius, 0, mHeight, centerColor, endColor, Shader.TileMode.CLAMP);
+            leftLinear = new LinearGradient(0, 0, radius, 0, endColor, startColor, Shader.TileMode.CLAMP);
+            topLinear = new LinearGradient(0, 0, 0, radius, endColor, startColor, Shader.TileMode.CLAMP);
+            rightLinear = new LinearGradient(mWidth - radius, 0, mWidth, 0, startColor, endColor, Shader.TileMode.CLAMP);
+            bottomLinear = new LinearGradient(0, mHeight - radius, 0, mHeight, startColor, endColor, Shader.TileMode.CLAMP);
 
             centerRect = new RectF(radius, radius, mWidth - radius, mHeight - radius);
         }
@@ -159,7 +166,7 @@ public class ShadowView extends BaseSelfView {
     }
 
     public void initColor(int centerColor, int endColor) {
-        this.centerColor = centerColor;
+        this.startColor = centerColor;
         this.endColor = endColor;
     }
 
@@ -230,7 +237,7 @@ public class ShadowView extends BaseSelfView {
         }
         //画中心
         paint.setShader(null);
-        paint.setColor(centerColor);
+        paint.setColor(solidColor);
         canvas.drawRect(centerRect, paint);
     }
 }

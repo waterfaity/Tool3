@@ -10,6 +10,13 @@ import android.graphics.RectF;
  * @info:
  */
 public class PathUtils {
+    /**
+     * 指定 rect 内获取圆角
+     *
+     * @param rect
+     * @param radius
+     * @return
+     */
     public static Path getCorner(RectF rect, int radius) {
         Path path = new Path();
         //计算path
@@ -33,7 +40,4 @@ public class PathUtils {
         }
         return path;
     }
-
-
-
 }

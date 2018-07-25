@@ -7,15 +7,15 @@ package com.waterfairy.widget.baseView;
  * @info:
  */
 public class Coordinate {
-    public int x;
-    public int y;
+    public float x;
+    public float y;
     public int value;
     public String text;
 
     public Coordinate() {
     }
 
-    public Coordinate(int x, int y) {
+    public Coordinate(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -27,4 +27,35 @@ public class Coordinate {
         this.text = text;
     }
 
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 }

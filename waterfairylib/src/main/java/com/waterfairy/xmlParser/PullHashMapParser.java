@@ -17,8 +17,6 @@ import java.util.HashMap;
 
 /**
  * Created by water_fairy on 2017/2/16.
- * ver 1.1 2017-10-24
- * 修改文件创建
  */
 
 public class PullHashMapParser {

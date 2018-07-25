@@ -6,8 +6,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 
-import java.util.List;
-
 /**
  * @author water_fairy
  * @email 995637517@qq.com
@@ -15,6 +13,17 @@ import java.util.List;
  * @info:
  */
 public class CanvasUtils {
+    /**
+     * 绘制圆角
+     *
+     * @param canvas      画笔
+     * @param rect        边框
+     * @param radius      半径
+     * @param strokeWidth 线宽
+     * @param strokeColor 线颜色
+     * @param solid       背景颜色
+     * @param paint       画笔
+     */
     public static void drawCorner(Canvas canvas, RectF rect, int radius, float strokeWidth, int strokeColor, int solid, Paint paint) {
         if (canvas != null && rect != null) {
             float strokeWidthSrc = 0;
@@ -45,105 +54,72 @@ public class CanvasUtils {
         }
     }
 
-    public static void drawTextList(Canvas canvas, RectF textListRectF, List<String> strings,
-                                    int[] colors, float textSize, Paint paint, float padding) {
-        drawTextList(canvas, textListRectF, strings, colors, 0, textSize, paint, padding, false);
-    }
-
-    public static void drawTextList(Canvas canvas, RectF textListRectF, List<String> strings,
-                                    int[] colors,
-                                    float textSize, Paint paint,
-                                    float padding, boolean hasColorLine) {
-        drawTextList(canvas, textListRectF, strings, colors, 0, textSize, paint, padding, hasColorLine);
-    }
 
     /**
-     * 绘制 垂直文本
+     * 绘制水平文本 附带 颜色条
+     * 说明:
+     * 以最宽的文本为标准
      *
      * @param canvas
-     * @param textListRectF
-     * @param strings
+     * @param textListBean
      * @param colors
-     * @param textColor     不设置使用colors
-     * @param textSize
      * @param paint
-     * @param padding       边距
-     * @param hasColorLine  颜色条
      */
-
-    public static void drawTextList(Canvas canvas, RectF textListRectF, List<String> strings,
-                                    int[] colors, int textColor,
-                                    float textSize, Paint paint,
-                                    float padding, boolean hasColorLine) {
-        if (canvas != null && textListRectF != null && strings != null && strings.size() > 0) {
-            if (padding < 0) padding = 0;
+    public static void drawHorTextList(Canvas canvas, RectUtils.TextRectFBean textListBean, int[] colors, Paint paint) {
+        if (canvas != null && textListBean != null && textListBean.texts != null) {
+            if (textListBean.padding < 0) textListBean.padding = 0;
             if (colors == null || colors.length == 0) {
                 colors = new int[]{Color.GRAY};
             }
             if (paint == null) {
                 paint = new Paint();
                 paint.setAntiAlias(true);
-                paint.setTextSize(textSize);
+                paint.setTextSize(textListBean.textSize);
             }
-            float startX = textListRectF.left + padding;
-            int textWidth = 0;
-            float lineStartX = 0;
-            if (hasColorLine) {
-                textWidth = RectUtils.getTextRect("正", (int) textSize).width();
-                startX = startX + textWidth * 1.5F;
-                lineStartX = textListRectF.left + padding;
-            }
-            //平均高度
-            float perHeight = (textListRectF.height() - 2 * padding) / strings.size();
+
+            //源paint 属性
             float strokeWidth = paint.getStrokeWidth();
-            for (int i = 0; i < strings.size(); i++) {
-                if (textColor != 0) {
-                    paint.setColor(textColor);
+            int paintColor = paint.getColor();
+            float textSize = paint.getTextSize();
+            //线高度
+            //每行高度
+            float perHeight = textListBean.perHeight * (1 + textListBean.textTimes);
+            paint.setStrokeWidth(textListBean.perHeight / 4);
+            paint.setTextSize(textListBean.textSize);
+            //线中心y
+            float lineCenterY = 0;
+            for (int i = 0; i < textListBean.lineNum; i++) {
+                //每行文本y起点 第一行不加倍
+                float y = 0;
+                if (i == 0) {
+                    y = textListBean.rectF.top + textListBean.padding + textListBean.perHeight;
                 } else {
-                    paint.setColor(colors[i % colors.length]);
+                    y = textListBean.rectF.top + textListBean.padding + textListBean.perHeight + perHeight * i;
                 }
-                float y = textListRectF.top + padding + perHeight * (i + 1);
-                if (hasColorLine) {
-                    paint.setStrokeWidth(textWidth / 4);
-                    paint.setColor(colors[i % colors.length]);
-                    canvas.drawLine(lineStartX, y - perHeight / 3, lineStartX + textWidth, y - perHeight / 3, paint);
+                //文本底线 - 文本高度的一半
+                lineCenterY = y - textListBean.perHeight / 3;
+                for (int j = 0; j < textListBean.columnNum; j++) {
+                    int pos = i * textListBean.columnNum + j;
+                    if (textListBean.texts.size() > pos) {
+                        paint.setColor(colors[pos % colors.length]);
+                        //获取文本
+                        String text = textListBean.texts.get(pos);
+                        //线/文本x起点
+                        float startX = j * textListBean.perWidth + textListBean.padding + textListBean.rectF.left;
+                        if (textListBean.hasColorLine) {
+                            //画线
+                            paint.setStrokeWidth(textListBean.perHeight / 4);
+                            canvas.drawLine(startX, lineCenterY, startX + textListBean.singleTextWidth, lineCenterY, paint);
+                            //文本x起点
+                            startX += textListBean.singleTextWidth * 1.5F;
+                        }
+                        paint.setStrokeWidth(strokeWidth);
+                        canvas.drawText(text, startX, y, paint);
+                    }
                 }
-                if (textColor != 0) {
-                    paint.setColor(textColor);
-                } else {
-                    paint.setColor(colors[i % colors.length]);
-                }
-                paint.setStrokeWidth(strokeWidth);
-                canvas.drawText(strings.get(i), startX, y, paint);
             }
-        }
-    }
-
-    /**
-     * 绘制垂直文本 附带 颜色条
-     *
-     * @param canvas
-     * @param textListRectF
-     * @param strings
-     * @param colors
-     * @param textSize
-     * @param paint
-     * @param padding
-     * @param hasColorLine  颜色标识条
-     */
-    public static void drawTextListHor(Canvas canvas, RectF textListRectF, List<String> strings, int[] colors, float textSize, Paint paint, float padding, boolean hasColorLine) {
-        if (canvas != null && textListRectF != null && strings != null && strings.size() > 0) {
-            if (padding < 0) padding = 0;
-            if (colors == null || colors.length == 0) {
-                colors = new int[]{Color.GRAY};
-            }
-            if (paint == null) {
-                paint = new Paint();
-                paint.setAntiAlias(true);
-                paint.setTextSize(textSize);
-            }
-
-
+            paint.setTextSize(textSize);
+            paint.setColor(paintColor);
         }
     }
 }

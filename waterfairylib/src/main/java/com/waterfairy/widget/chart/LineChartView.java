@@ -82,26 +82,33 @@ public class LineChartView extends BaseView {
     private Paint mPaintText;
     private Paint mPaintLine;
     //rect
-    private RectF mInfoRect;
+//    private RectF mInfoRect;
+    private RectUtils.TextRectFBean mInfoTextBean;
     //data
     private boolean parentDisTouch = false;
-    private ArrayList<String> xTitles;
+    private List<String> xTitles;
     private int mSelectPos;
     //颜色
-    private int mColorInfoBg;
-    private int mColorNormalText;
+    private int mColorInfoBg;//提示信息背景颜色
+    private int mColorNormalText;//文本颜色  坐标颜色
+    private int mColorLineSelect;//选中的位置的 垂直线的颜色
     //titles
-    private List<String> typeTitles;
-    private ArrayList<String> titlesWithScore;
+    private List<String> typeTitles;//类型文本list
+    private ArrayList<String> titlesWithScore;//有得分的类型文本list  选中提示的信息
     //多类型
     private boolean isMulti;
+    //------- 类型提示 右侧 / 底部
     public static final int TYPE_DIR_NONE = 0;
-    public static final int TYPE_DIR_VER = 1;
-    public static final int TYPE_DIR_HOR = 2;
+    private static final int TYPE_DIR_LEFT = 1;
+    public static final int TYPE_DIR_RIGHT = 2;
+    private static final int TYPE_DIR_TOP = 3;
+    public static final int TYPE_DIR_BOTTOM = 4;
     private int typeTextDir;//类型文字方向
-    private float mRightTypeWidth;
-    private float mBottomTypeWidth;
+    private float mTypeTextWidth;//类型文本宽
+    private float mTypeTextHeight;//高
     private RectF typeTextListRectF;//类型文本边框
+    private RectUtils.TextRectFBean typeTitleBean;//类型文本bean
+    //-------
 
 
     public LineChartView(Context context) {
@@ -119,6 +126,7 @@ public class LineChartView extends BaseView {
     private void initColor() {
         mColorInfoBg = Color.parseColor("#CCFFFFFF");
         mColorNormalText = Color.parseColor("#454545");
+        mColorLineSelect = Color.parseColor("#66454545");
     }
 
     /**
@@ -146,8 +154,6 @@ public class LineChartView extends BaseView {
         mPaintLine.setColor(Color.parseColor("#289456"));
         mPaintLine.setAntiAlias(true);
         mPaintLine.setStrokeWidth(density * 1);
-
-
     }
 
     public void iniLineColor(int color) {
@@ -160,8 +166,8 @@ public class LineChartView extends BaseView {
 
     public void addData(List<Entity> dataList, int maxValue) {
         if (mDataList == null) mDataList = new ArrayList<>();
-        mDataList.add(dataList);
 
+        mDataList.add(dataList);
         setData(mDataList, maxValue);
     }
 
@@ -172,9 +178,12 @@ public class LineChartView extends BaseView {
     }
 
     public void setData(List<List<Entity>> mDataList, int maxValue) {
-        this.maxValue = maxValue;
+        this.maxValue = Math.max(maxValue, this.maxValue);
         this.mDataList = mDataList;
         isMulti = mDataList.size() > 1;
+    }
+
+    public void fresh() {
         requestLayout();
         invalidate();
     }
@@ -201,26 +210,65 @@ public class LineChartView extends BaseView {
         calcY();
         //计算x轴
         calcX();
+        //计算位置
         reCalcTypeText();
     }
 
+    /**
+     * 由 typeTextDir 计算具体坐标
+     */
     private void reCalcTypeText() {
         if (typeTextListRectF != null) {
-            typeTextListRectF.left += rightLine;
-            typeTextListRectF.right += rightLine;
-            int dx = bottomLine - topLine;
-            if (typeTextListRectF.height() < (dx)) {
-                float dx2 = (dx - typeTextListRectF.height()) / 2;
-                typeTextListRectF.top += dx2;
-                typeTextListRectF.bottom += dx2;
+            switch (typeTextDir) {
+
+                case TYPE_DIR_LEFT:
+                case TYPE_DIR_RIGHT:
+                    if (typeTextDir == TYPE_DIR_LEFT) {
+                        typeTextListRectF.left = leftLine - mTypeTextWidth;
+                        typeTextListRectF.right = leftLine;
+                    } else {
+                        typeTextListRectF.left += rightLine;
+                        typeTextListRectF.right += rightLine;
+                    }
+
+                    int dx = bottomLine - topLine;
+                    if (typeTextListRectF.height() < (dx)) {
+                        float dx2 = (dx - typeTextListRectF.height()) / 2;
+                        typeTextListRectF.top += dx2;
+                        typeTextListRectF.bottom += dx2;
+                    }
+                    break;
+                case TYPE_DIR_TOP:
+                case TYPE_DIR_BOTTOM:
+
+                    if (typeTextDir == TYPE_DIR_TOP) {
+                        typeTextListRectF.top = topLine - mTypeTextHeight;
+                        typeTextListRectF.bottom = bottomLine;
+                    } else {
+                        Rect textRect = getTextRect("正", mTextSize);
+                        typeTextListRectF.top += (bottomLine + 2 * textRect.height());
+                        typeTextListRectF.bottom += (bottomLine + 2 * textRect.height());
+                    }
+                    int centerX = getWidth() / 2;
+                    typeTextListRectF.left = centerX - mTypeTextWidth / 2;
+                    typeTextListRectF.right = centerX + mTypeTextWidth / 2;
+                    break;
             }
+
         }
     }
 
+    /**
+     * 计算typeTitleBean   主要是rect  不是具体位置
+     */
     private void calcTypeText() {
         if (typeTitles != null && typeTitles.size() > 0 && typeTextDir != TYPE_DIR_NONE) {
-            typeTextListRectF = RectUtils.getTextListRectF(typeTitles, mTextSize, 0.5F, mTextSize);
-            mRightTypeWidth = typeTextListRectF.width();
+            boolean isTypeTextVer = typeTextDir == TYPE_DIR_LEFT || typeTextDir == TYPE_DIR_RIGHT;
+            typeTitleBean = RectUtils.getTextRectFBean(typeTitles, mTextSize, 0.5F, getWidth(), isTypeTextVer ? 10 : 0, isTypeTextVer ? 0 : 20, true,
+                    isTypeTextVer);
+            typeTextListRectF = typeTitleBean.rectF;
+            mTypeTextWidth = typeTextListRectF.width();
+            mTypeTextHeight = typeTextListRectF.height();
         }
     }
 
@@ -228,9 +276,8 @@ public class LineChartView extends BaseView {
     private void calcNormal() {
         if (yNum < 1) yNum = 1;
         if (maxValue <= 0) maxValue = 100;
-        rightLine = (int) (width - textWidth * 2 - getPaddingRight() - mRightTypeWidth);
-
-        leftLine = (("" + maxValue).length() + 2) * textWidth + getPaddingLeft();
+        rightLine = (int) (width - textWidth * 2 - getPaddingRight() - (typeTextDir == TYPE_DIR_RIGHT ? mTypeTextWidth : 0));
+        leftLine = (int) ((("" + maxValue).length() + 2) * textWidth + getPaddingLeft() + (typeTextDir == TYPE_DIR_LEFT ? mTypeTextWidth : 0));
         radius = (int) (density * 2.5);
     }
 
@@ -240,8 +287,8 @@ public class LineChartView extends BaseView {
             if ((maxValue + i) % yNum == 0) {
                 int tempMaxValue = maxValue + i;
                 //设置底部线
-                bottomLine = height - 3 * textHeight - getPaddingBottom();
-                topLine = textHeight * 2 + getPaddingTop();
+                bottomLine = (int) (height - 3 * textHeight - getPaddingBottom() - (typeTextDir == TYPE_DIR_BOTTOM ? mTypeTextHeight : 0));
+                topLine = (int) (textHeight * 2 + getPaddingTop() + (typeTextDir == TYPE_DIR_TOP ? mTypeTextHeight : 0));
                 int perHeight = (bottomLine - topLine) / yNum;
                 perValueHeight = (bottomLine - topLine) / (float) tempMaxValue;
                 mYLineList = new ArrayList<>();
@@ -257,30 +304,13 @@ public class LineChartView extends BaseView {
         }
     }
 
-    //
-//    private void calcX() {
-//        if (mDataList != null && mDataList.size() > 0 && mDataList.get(0).size() > 0) {
-//            //计算坐标
-//            mCoordinateList = new ArrayList<>();
-//            int tempLineWidth = rightLine - leftLine;
-//            xNum = mDataList.get(0).size();
-//            if (xNum > xMaxNum) xNum = xMaxNum;
-//            if (xNum == 1) {
-//                //只有一个
-//                addCoordinateData(1);
-//            } else {
-//                perWidth = tempLineWidth / (xNum - 1);
-//                addCoordinateData(mDataList.get(0).size());
-//            }
-//        }
-//    }
     private void calcX() {
         if (mDataList != null && mDataList.size() > 0) {
             List<Entity> entities = mDataList.get(0);
-            if (entities != null && entities.size() > 0) {
-
-            }
-            //计算坐标
+//            if (entities != null && entities.size() > 0) {
+//
+//            }
+            //计算数据坐标
             mCoordinateList = new ArrayList<>();
             int tempLineWidth = rightLine - leftLine;
             xNum = entities.size();
@@ -328,35 +358,25 @@ public class LineChartView extends BaseView {
     }
 
     private void drawTypeText(Canvas canvas) {
-        CanvasUtils.drawTextList(canvas, typeTextListRectF, typeTitles, colors, mColorNormalText, mTextSize, mPaintText, mTextSize, true);
+//        CanvasUtils.drawCorner(canvas, typeTitleBean.rectF, 10, 2, mColorNormalText, mColorInfoBg, mPaintLine);
+        CanvasUtils.drawHorTextList(canvas, typeTitleBean, colors, mPaintText);
     }
 
+    /**
+     * 点击某个位置  出现提示信息
+     *
+     * @param canvas
+     */
     private void drawInfo(Canvas canvas) {
         if (showInfo && isShowingInfo && typeTitles != null) {
+            //绘制选中的pos 垂直线
+            mPaintLine.setColor(mColorLineSelect);
+            canvas.drawLine(mInfoTextBean.centerX, topLine, mInfoTextBean.centerX, bottomLine, mPaintLine);
+            //背景绘制 - 圆角
+            CanvasUtils.drawCorner(canvas, mInfoTextBean.rectF, 10, 2, mColorNormalText, mColorInfoBg, mPaintLine);
+            //提示内容
+            CanvasUtils.drawHorTextList(canvas, mInfoTextBean, colors, mPaintText);
 
-//            mPaintLine.setColor(mColorNormalText);
-//            mPaintLine.setStyle(Paint.Style.STROKE);
-//            canvas.drawRect(mInfoRect, mPaintLine);
-//
-//            mPaintLine.setStyle(Paint.Style.FILL);
-//            mPaintLine.setColor(mColorInfoBg);
-//            canvas.drawRect(mInfoRect, mPaintLine);
-
-            CanvasUtils.drawCorner(canvas, mInfoRect, 10, 2, mColorNormalText, mColorInfoBg, mPaintLine);
-
-            CanvasUtils.drawTextList(canvas, mInfoRect, titlesWithScore, colors, mTextSize, mPaintText, 10);
-//
-//            for (int i = 0; i < mDataList.size(); i++) {
-//                List<Entity> entities = mDataList.get(i);
-//                String title = "";
-//                if (typeTitles.size() > i) title = typeTitles.get(i);
-//                if (entities != null && entities.size() > mSelectPos) {
-//                    Entity entity = entities.get(mSelectPos);
-//                    String text = title + ":" + entity.getValue();
-//                    mPaintText.setColor(colors[i % colors.length]);
-//                    canvas.drawText(text, mInfoRect.left + chinaTextWidth / 2, mInfoRect.top + chinaTextWidth * 1.5F + i * (chinaTextWidth * 1.1F), mPaintText);
-//                }
-//            }
         }
     }
 
@@ -371,7 +391,7 @@ public class LineChartView extends BaseView {
             List<Coordinate> coordinateList = mCoordinateList.get(j);
             for (int i = startPos; i < maxPos + 1 && i < coordinateList.size(); i++) {
                 Coordinate coordinate = coordinateList.get(i);
-                int x = coordinate.x + scrollX;
+                int x = (int) (coordinate.x + scrollX);
                 boolean overSideLeft = false;
                 boolean overSideRight = false;
                 if (x < leftLine) overSideLeft = true;
@@ -397,16 +417,20 @@ public class LineChartView extends BaseView {
                     }
                 }
 
-                if (i % dNumDrawXText == 0 && !TextUtils.isEmpty(coordinate.text) && j == 0) {
-                    Rect textRect = getTextRect(coordinate.text, mTextSize);
+                String xTitle = "";
+                if (xTitles != null && xTitles.size() > i) {
+                    xTitle = xTitles.get(i);
+                } else {
+                    xTitle = coordinate.text;
+                }
+                if (i % dNumDrawXText == 0 && !TextUtils.isEmpty(xTitle) && j == 0) {
+                    Rect textRect = getTextRect(xTitle, mTextSize);
                     int width = textRect.right + Math.abs(textRect.left);
                     int height = Math.abs(textRect.bottom - textRect.top);
-                    canvas.drawText(coordinate.text, x - width / 2, bottomLine + height * 2F, mPaintText);
+                    canvas.drawText(xTitle, x - width / 2, bottomLine + height * 2F, mPaintText);
                 }
             }
         }
-
-
     }
 
     private void drawY(Canvas canvas) {
@@ -432,6 +456,7 @@ public class LineChartView extends BaseView {
             lastMoveX = event.getX();
             getParent().requestDisallowInterceptTouchEvent(parentDisTouch);
         } else if (action == MotionEvent.ACTION_MOVE) {
+            isShowingInfo=false;
             handleMove(event);
         } else if (action == MotionEvent.ACTION_UP) {
             float touchX = event.getX() + Math.abs(scrollX);
@@ -445,10 +470,9 @@ public class LineChartView extends BaseView {
                             if (onPosClickListener != null)
                                 onPosClickListener.onLineClick(i, coordinate.x + scrollX, event.getY());
                             if (showInfo && typeTitles != null) {
-                                onTouchPos(i, coordinate.x + scrollX, event.getY());
+                                onTouchPos(i, (int) (coordinate.x + scrollX), event.getY());
                                 invalidate();
                             }
-
                             return true;
                         }
                     }
@@ -458,57 +482,6 @@ public class LineChartView extends BaseView {
         return true;
     }
 
-    //    private void onTouchPos(int pos, int x) {
-//        if (isShowingInfo) {
-//            isShowingInfo = false;
-//        } else {
-//            isShowingInfo = true;
-//            //计算展示的位置
-//            if (mDataList != null && mDataList.size() > 0) {
-//
-//
-//                int maxWidth = 0, maxHeight = 0;
-//                int lines = mDataList.size();
-//                for (int i = 0; i < mDataList.size(); i++) {
-//                    List<Entity> entities = mDataList.get(i);
-//                    String title = "";
-//                    if (typeTitles.size() > i) title = typeTitles.get(i);
-//                    if (entities != null && entities.size() > pos) {
-//                        Entity entity = entities.get(pos);
-//                        String text = title + ":" + entity.getValue();
-//                        maxWidth = Math.max(getTextRect(text, mTextSize).width(), maxWidth);
-//                    }
-//                }
-//
-//                maxWidth = maxWidth + getTextRect("正", mTextSize).width();//多一个字符作为边界
-//                maxHeight = (int) (lines * (chinaTextWidth * 1.1F) + chinaTextWidth);
-//                //
-//                int halfWidth = maxWidth / 2;
-//                //x到paddingleft 的距离
-//                int dx1 = x - getPaddingLeft();
-//                //x到paddingRight的距离
-//                int dx2 = getWidth() - getPaddingRight() - x;
-//
-//                int infoStartX = 0, infoEndX = 0;
-//                int infoTopY = 0, infoBottomY = 0;
-//
-//                if (dx1 < halfWidth) {
-//                    infoStartX = getPaddingLeft();
-//                    infoEndX = infoStartX + maxWidth;
-//                } else if (dx2 < halfWidth) {
-//                    infoEndX = getWidth() - getPaddingRight();
-//                    infoStartX = infoEndX - maxWidth;
-//                } else {
-//                    infoStartX = x - halfWidth;
-//                    infoEndX = x + halfWidth;
-//                }
-//                infoBottomY = centerY + maxHeight / 2;
-//                infoTopY = centerY - maxHeight / 2;
-//                mInfoRect = new RectF(infoStartX, infoTopY, infoEndX, infoBottomY);
-//            }
-//        }
-//        invalidate();
-//    }
     private void onTouchPos(int pos, int x, float y) {
         if (isShowingInfo) {
             isShowingInfo = false;
@@ -516,8 +489,6 @@ public class LineChartView extends BaseView {
             isShowingInfo = true;
             //计算展示的位置
             if (mDataList != null && mDataList.size() > 0) {
-
-
                 titlesWithScore = new ArrayList<>();
                 for (int i = 0; i < mDataList.size(); i++) {
                     List<Entity> entities = mDataList.get(i);
@@ -529,7 +500,11 @@ public class LineChartView extends BaseView {
                         titlesWithScore.add(text);
                     }
                 }
-                mInfoRect = RectUtils.getTextListRectF(RectUtils.getTextListRectF(titlesWithScore, mTextSize, 0.2F, 10), x, y, leftLine, topLine, rightLine, bottomLine);
+
+                mInfoTextBean = RectUtils.getTextRectFBean(titlesWithScore, mTextSize, 0.2F, 0, 10, 0, true, true);
+                mInfoTextBean.rectF = RectUtils.getRectF(mInfoTextBean.rectF, x, y, leftLine, topLine, rightLine, bottomLine);
+                mInfoTextBean.centerX = x;
+                mInfoTextBean.centerY = y;
             }
         }
         invalidate();
@@ -551,7 +526,7 @@ public class LineChartView extends BaseView {
         this.parentDisTouch = parentDisTouch;
     }
 
-    public void setXTitles(ArrayList<String> titles) {
+    public void setXTitles(List<String> titles) {
         this.xTitles = titles;
     }
 

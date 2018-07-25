@@ -26,6 +26,10 @@ public class AssetsUtils {
 
     private static final String TAG = "assetUtils";
 
+    public static String getAssetPath(String path) {
+        return "file:///android_asset/" + path;
+    }
+
     /**
      * @param context
      * @param assetPath  例如html   asset/html  如果  assetPath =null  copy所有文件
@@ -75,6 +79,9 @@ public class AssetsUtils {
             InputStream is = context.getAssets().open(tempSrcPath);
             File file = new File(tempTargetPath);
             if (!file.exists()) {
+                if (!file.getParentFile().exists()) {
+                    file.getParentFile().mkdirs();
+                }
                 file.createNewFile();
             }
             if (file.exists()) {
@@ -91,7 +98,7 @@ public class AssetsUtils {
             }
         } catch (IOException e) {
             e.printStackTrace();
-         }
+        }
         return false;
     }
 

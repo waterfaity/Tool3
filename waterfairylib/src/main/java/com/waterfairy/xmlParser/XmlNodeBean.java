@@ -54,8 +54,26 @@ public class XmlNodeBean {
 
     }
 
-    public void setAttrBeans(List<XmlAttrBean> attrBeans) {
+    public XmlNodeBean setAttrBeans(List<XmlAttrBean> attrBeans) {
         this.attrBeans = attrBeans;
+        return this;
+    }
+
+
+    public XmlNodeBean addAttrBeans(List<XmlAttrBean> attrBeans) {
+        if (attrBeans != null) {
+            if (this.attrBeans == null) attrBeans = new ArrayList<>();
+            this.attrBeans.addAll(attrBeans);
+        }
+        return this;
+    }
+
+    public XmlNodeBean addAttrBean(XmlAttrBean xmlAttrBean) {
+        if (xmlAttrBean != null) {
+            if (this.attrBeans == null) attrBeans = new ArrayList<>();
+            attrBeans.add(xmlAttrBean);
+        }
+        return this;
     }
 
     public List<XmlNodeBean> getNodeBeans() {
@@ -63,8 +81,25 @@ public class XmlNodeBean {
         return nodeBeans;
     }
 
-    public void setNodeBeans(List<XmlNodeBean> nodeBeans) {
+    public XmlNodeBean setNodeBeans(List<XmlNodeBean> nodeBeans) {
         this.nodeBeans = nodeBeans;
+        return this;
+    }
+
+    public XmlNodeBean addNodeBeans(List<XmlNodeBean> nodeBeans) {
+        if (nodeBeans != null) {
+            if (this.nodeBeans == null) this.nodeBeans = new ArrayList<>();
+            this.nodeBeans.addAll(nodeBeans);
+        }
+        return this;
+    }
+
+    public XmlNodeBean addNodeBean(XmlNodeBean xmlNodeBean) {
+        if (xmlNodeBean != null) {
+            if (this.nodeBeans == null) nodeBeans = new ArrayList<>();
+            nodeBeans.add(xmlNodeBean);
+        }
+        return this;
     }
 
 

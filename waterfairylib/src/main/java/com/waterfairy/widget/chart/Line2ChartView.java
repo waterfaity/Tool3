@@ -199,7 +199,7 @@ public class Line2ChartView extends BaseView {
         if (dNumDrawXText < 0) dNumDrawXText = 1;
         for (int i = startPos; i < maxPos + 1 && i < mCoordinateList.size(); i++) {
             Coordinate coordinate = mCoordinateList.get(i);
-            int x = coordinate.x + scrollX;
+            int x = (int) (coordinate.x + scrollX);
             boolean overSideLeft = false;
             boolean overSideRight = false;
             if (x < leftLine) overSideLeft = true;

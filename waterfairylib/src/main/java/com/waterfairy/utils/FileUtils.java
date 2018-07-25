@@ -19,7 +19,6 @@ import java.util.Random;
 
 /**
  * Created by water_fairy on 2016/12/5.
- * ver_1.0_2018-03-06
  */
 
 public class FileUtils {
@@ -162,6 +161,13 @@ public class FileUtils {
 
     }
 
+    /**
+     * 复制文件
+     *
+     * @param fromFile
+     * @param toFile
+     * @throws IOException
+     */
     public static void copyFile(String fromFile, String toFile) throws IOException {
         File saveFile = new File(toFile);
         File parentFile = new File(saveFile.getParent());
@@ -181,6 +187,13 @@ public class FileUtils {
         }
     }
 
+    /**
+     * 获取app的数据文件夹 内部数据存储文件夹
+     *
+     * @param context
+     * @param extra
+     * @return
+     */
     public static String getAPPPath(Context context, String extra) {
         String cachePath = context.getCacheDir().getAbsolutePath();
         return cachePath.substring(0, cachePath.length() - 6) +
@@ -188,6 +201,8 @@ public class FileUtils {
     }
 
     /**
+     * 文件删除
+     *
      * @param delFile
      */
     public static void deleteFile(File delFile) throws Exception {
@@ -205,6 +220,12 @@ public class FileUtils {
         }
     }
 
+    /**
+     * 创建文件
+     *
+     * @param filePath
+     * @return
+     */
     public static boolean createFile(String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {
@@ -267,9 +288,14 @@ public class FileUtils {
         return audioCacheFile.getAbsolutePath();
     }
 
+    /**
+     * 创建一个随机文件名(*.png)
+     *
+     * @param fileSuffix 后缀名 .png  .jpg
+     * @return
+     */
     public static String createFileName(String fileSuffix) {
         String md5Code = MD5Utils.getMD5Code(new Date().getTime() + "-" + new Random().nextLong());
         return md5Code + fileSuffix;// 照片命名
-
     }
 }

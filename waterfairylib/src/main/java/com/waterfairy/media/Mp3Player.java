@@ -126,6 +126,7 @@ public class Mp3Player {
         }
         try {
             if (!TextUtils.equals(mediaPath, currentPath)) {
+                mediaPlayer.reset();
                 mediaPlayer.setDataSource(mediaPath);
                 mediaPlayer.prepare();
             }

@@ -22,16 +22,18 @@ public class XmlAttrBean {
         return attrName;
     }
 
-    public void setAttrName(String attrName) {
+    public XmlAttrBean setAttrName(String attrName) {
         this.attrName = attrName;
+        return this;
     }
 
     public String getAttrValue() {
         return attrValue;
     }
 
-    public void setAttrValue(String attrValue) {
+    public XmlAttrBean setAttrValue(String attrValue) {
         this.attrValue = attrValue;
+        return this;
     }
 
     @Override

@@ -20,10 +20,17 @@
         <attr name="checkIndex" format="integer"/>
     </declare-styleable>
     <declare-styleable name="ShadowView">
-        <attr name="shadowRadius" format="dimension"/>
-        <attr name="shadowStartColor" format="color"/>
-        <attr name="shadowEndColor" format="color"/>
-        <attr name="hasCorner" format="boolean"/>
+        <declare-styleable name="ShadowView">
+            <attr name="shadowRadius" format="dimension"/>
+            <attr name="shadowStartColor" format="color"/>
+            <attr name="shadowEndColor" format="color"/>
+            <attr name="shadowSolidColor" format="color"/>
+            <attr name="hasCorner" format="boolean"/>
+            <attr name="hasCornerLeft" format="boolean"/>
+            <attr name="hasCornerTop" format="boolean"/>
+            <attr name="hasCornerRight" format="boolean"/>
+            <attr name="hasCornerBottom" format="boolean"/>
+        </declare-styleable>
     </declare-styleable>
     <declare-styleable name="FlipViewController">
         <attr name="orientation" format="enum">

@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -273,7 +272,7 @@ public class RadarChartView extends BaseView {
                     List<Coordinate> coordinateList = new ArrayList<>();
                     for (int j = 0; j < dataList.size(); j++) {
                         int value = dataList.get(j).getValue();
-                        coordinateList.add(getCoordinate(value<0?0:value, j));
+                        coordinateList.add(getCoordinate(value < 0 ? 0 : value, j));
                     }
                     itemBean.setCoordinateList(coordinateList);
                 }
@@ -393,10 +392,12 @@ public class RadarChartView extends BaseView {
                         titles.add(title + ":" + entity.getValue());
                     }
 
-                    RectF textListRectF = RectUtils.getTextListRectF(titles, textSize, 0.2F, 10);
-                    RectF textListRectF1 = RectUtils.getTextListRectF(textListRectF, touchX, touchY);
-                    CanvasUtils.drawCorner(canvas, textListRectF1, 10, 2, bgLineColor, frontBgColor, textPaint);
-                    CanvasUtils.drawTextList(canvas, textListRectF1, titles, colors, textSize, textPaint, 10);
+                    RectUtils.TextRectFBean textListBean = RectUtils.getTextRectFBean(titles, textSize, 0.2F, 0, 10, 0, false, true);
+                    textListBean.rectF = RectUtils.getRectF(textListBean.rectF, touchX, touchY);
+                    CanvasUtils.drawCorner(canvas, textListBean.rectF, 10, 2, bgLineColor, frontBgColor, textPaint);
+                    CanvasUtils.drawHorTextList(canvas, textListBean, colors, textPaint);
+
+
                 }
             }
         }

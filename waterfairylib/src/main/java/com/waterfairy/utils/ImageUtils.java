@@ -15,6 +15,8 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.renderscript.Allocation;
@@ -24,6 +26,7 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -820,7 +823,7 @@ public class ImageUtils {
     /**
      * 平铺
      *
-     * @param style  方式  x,y,xy
+     * @param style  方式  x1,y1,xy
      * @param length 宽度或长度
      * @param bitmap 平铺的图片
      * @param extra  xy时  (length 作为宽 extra作为高)
@@ -886,17 +889,23 @@ public class ImageUtils {
         return bitmap;
     }
 
+
+    public static Bitmap txtToImg(String content, int textSize, int maxLen, int padding, Paint paint) {
+        return txtToImg(content, textSize, maxLen, padding, paint, -1);
+    }
+
     /**
      * 文本生成图片
      *
-     * @param content
-     * @param textSize
-     * @param maxLen
-     * @param padding
-     * @param paint
+     * @param content  内容
+     * @param textSize 文字大小
+     * @param maxLen   每行字体个数
+     * @param padding  左右上下 padding
+     * @param paint    画笔
      * @return
      */
-    public static Bitmap txtToImg(String content, int textSize, int maxLen, int padding, Paint paint) {
+    public static Bitmap txtToImg(String content, int textSize, int maxLen, int padding, Paint paint, int imgWidth) {
+        float textHeight = textSize * 1.2f;
         float textLen = TxtUtils.getTextLen(content, textSize);
         float perWidth = textLen / content.length();//每字宽
         int textTimes = content.length();//字体个数
@@ -906,8 +915,8 @@ public class ImageUtils {
         }
         if (row == 1) maxLen = textTimes;
         int width = (int) (maxLen * perWidth) + 2 * padding;
-        int height = (int) (row * textSize) + 2 * padding;
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        int height = (int) (row * textHeight) + 3 * padding;
+        Bitmap bitmap = Bitmap.createBitmap(Math.max(width, imgWidth), height, Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmap);
         canvas.drawColor(Color.WHITE);
         if (paint == null) {
@@ -924,8 +933,7 @@ public class ImageUtils {
             }
             String substring = content.substring(start, end);
             float perRowLen = TxtUtils.getTextLen(substring, textSize);
-            canvas.drawText(substring,
-                    (width - perRowLen) / 2, padding + (i + 1) * textSize, paint);
+            canvas.drawText(substring, (bitmap.getWidth() - perRowLen) / 2, padding + (i + 1) * textHeight, paint);
         }
         return bitmap;
     }
@@ -1040,4 +1048,83 @@ public class ImageUtils {
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
     }
+
+    /**
+     * 从文件读取bitmap 并缩放
+     *
+     * @param imageFile
+     * @return
+     */
+    public static Bitmap decodeFromFile(File imageFile, int times) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_4444;
+        options.inSampleSize = times < 1 ? 1 : times;
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
+    }
+
+    /**
+     * 从资源文件读取bitmap 并缩放
+     *
+     * @param width
+     * @param height
+     * @param useLittle 使用最小的缩小倍数 倍数最小为1 ,
+     * @return
+     */
+    public static Bitmap decodeFromRes(Context context, int imageRes, int width, int height, boolean useLittle) throws IOException {
+        if (width <= 0 || height <= 0) {
+            throw new IOException("宽或高必须大于0");
+        }
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(context.getResources(), imageRes, options);
+        int outWidth = options.outWidth;
+        int outHeight = options.outHeight;
+        if (outWidth <= 0 || outHeight <= 0) {
+            throw new IOException("文件解析失败");
+        }
+        float xScale = 1;
+        float yScale = 1;
+
+        if (outWidth > width) {
+            //width缩放倍数
+            xScale = outWidth / (float) width;
+        }
+        if (outHeight > height) {
+            //height缩放倍数
+            yScale = outHeight / (float) height;
+        }
+        options.inPreferredConfig = Bitmap.Config.ARGB_4444;
+        int sampleSize = (int) (useLittle ? Math.min(xScale, yScale) : Math.max(xScale, yScale));
+        options.inSampleSize = sampleSize < 1 ? 1 : sampleSize;
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(context.getResources(), imageRes, options);
+    }
+
+    public static Bitmap decodeFromRes(Context context, int imageRes, int times) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inSampleSize = times < 1 ? 1 : times;
+        return BitmapFactory.decodeResource(context.getResources(), imageRes, options);
+    }
+
+    public static void destroy(View view) {
+        if (view != null) {
+            Drawable drawable = null;
+            if (view instanceof ImageView) {
+                drawable = ((ImageView) view).getDrawable();
+            } else {
+                drawable = view.getBackground();
+            }
+            if (drawable != null && drawable instanceof BitmapDrawable) {
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+                Bitmap bitmap = bitmapDrawable.getBitmap();
+                if (bitmap != null && !bitmap.isRecycled()) {
+                    bitmap.recycle();
+                    bitmap = null;
+                }
+            }
+        }
+    }
+
 }

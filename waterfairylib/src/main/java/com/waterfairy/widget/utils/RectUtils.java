@@ -30,46 +30,23 @@ public class RectUtils {
         return rect;
     }
 
-    public static RectF getTextListRectF(List<String> texts, float textSize, float textTimes, float padding) {
-        return getTextListRectF(texts, textSize, textTimes, padding, false);
-    }
-
     /**
-     * 获取 list 文本边框
+     * 有参照物的边框的转换
+     * 有中心坐标
      *
-     * @param texts
-     * @param textSize
-     * @param textTimes
-     * @param padding      边框距离
-     * @param hasColorLine 画标识线
+     * @param rectF
+     * @param centerX
+     * @param centerY
      * @return
      */
-    public static RectF getTextListRectF(List<String> texts, float textSize, float textTimes, float padding, boolean hasColorLine) {
-        if (texts == null || texts.size() == 0) return null;
-        if (padding < 0) padding = 0;
-        int maxWidth = 0;
-        int maxHeight = 0;
-        int tempWidth = 0;
-        if (hasColorLine) {
-            tempWidth = (int) (getTextRect("正", (int) textSize).width() * 1.5F);
-        }
-        for (int i = 0; i < texts.size(); i++) {
-            String text = texts.get(i);
-            Rect textRect = getTextRect(text, (int) textSize);
-            int width = textRect.right + textRect.left;
-            int height = textRect.bottom - textRect.top;
-            maxWidth = Math.max(width, maxWidth);
-            maxHeight = Math.max(height, maxHeight);
-        }
-        return new RectF(0, 0, maxWidth + 2 * padding + tempWidth, maxHeight * (1 + textTimes) * texts.size() + 2 * padding);
-    }
-
-    public static RectF getTextListRectF(RectF rectF, float centerX, float centerY) {
-        return getTextListRectF(rectF, centerX, centerY, 0, 0, 0, 0);
+    public static RectF getRectF(RectF rectF, float centerX, float centerY) {
+        return getRectF(rectF, centerX, centerY, 0, 0, 0, 0);
     }
 
     /**
      * 有参照物的边框的转换
+     * 1.有中心坐标
+     * 2.确保不会超过边界
      *
      * @param centerX 将要显示的中心
      * @param centerY
@@ -79,9 +56,9 @@ public class RectUtils {
      * @param bottom
      * @return
      */
-    public static RectF getTextListRectF(RectF rectF,
-                                         float centerX, float centerY,
-                                         int left, int top, int right, int bottom) {
+    public static RectF getRectF(RectF rectF,
+                                 float centerX, float centerY,
+                                 int left, int top, int right, int bottom) {
         //width
         float textWidth = rectF.width();
         float halfWidth = textWidth / 2;
@@ -119,5 +96,98 @@ public class RectUtils {
             textBottom = centerY + halfHeight;
         }
         return new RectF(textLeft, textTop, textRight, textBottom);
+    }
+    /*--------------------水平字体----------------------------------------------------------------------*/
+
+    /**
+     * * 获取 list 水平文本边框
+     *
+     * @param texts        文本list
+     * @param textSize     字体大小
+     * @param textTimes    字体间距倍数
+     * @param canvasWidth  画布宽  保证文本最大长度小于画布宽
+     * @param padding      边框距离
+     * @param endWidth     字体后间距
+     * @param hasColorLine 画标识线
+     * @param singleColumn 单例
+     * @return TextListBean
+     */
+    public static TextRectFBean getTextRectFBean(List<String> texts, float textSize, float textTimes,
+                                                 float canvasWidth, float padding, float endWidth,
+                                                 boolean hasColorLine, boolean singleColumn) {
+        if (texts == null || texts.size() == 0) return null;
+        if (padding < 0) padding = 0;
+        int maxWidth = 0;
+        int maxHeight = 0;
+        float tempWidth = 0;
+        //线长1倍字体  与字体间距0.5倍字体
+        tempWidth = getTextRect("正", (int) textSize).width();
+        for (int i = 0; i < texts.size(); i++) {
+            String text = texts.get(i);
+            Rect textRect = getTextRect(text, (int) textSize);
+            int width = textRect.right + textRect.left;
+            int height = textRect.bottom - textRect.top;
+            maxWidth = Math.max(width, maxWidth);
+            maxHeight = Math.max(height, maxHeight);
+        }
+        //每段字体长度   字体长度+线长度(线长1倍字体  与字体间距0.5倍字体)+1倍字体间距
+        float lineTextMaxWidth = 0;
+        if (hasColorLine) {
+            lineTextMaxWidth = maxWidth + tempWidth * 1.5F + endWidth;
+        } else {
+            lineTextMaxWidth = maxWidth + endWidth;
+        }
+        //列数 行数
+        int columnNum = 0, lineNum = 0;
+        if (lineTextMaxWidth < canvasWidth || canvasWidth == 0) {
+            //每行个数
+            if (singleColumn) columnNum = 1;
+            else columnNum = (int) ((canvasWidth - (2 * padding)) / lineTextMaxWidth);
+            //行数
+            lineNum = texts.size() / columnNum;
+            if (texts.size() % columnNum != 0) {
+                lineNum++;
+            }
+        }
+        //底坐标,第一行不加倍
+        float bottom = 0;
+        if (lineNum > 1) {
+            bottom = maxHeight + 2 * padding + maxHeight * (1 + textTimes) * (lineNum - 1);
+        } else {
+            bottom = maxHeight + 2 * padding;
+        }
+        //如果只有一行  列数等于 texts的长度
+        if (lineNum == 1) columnNum = texts.size();
+        TextRectFBean horTextListBean = new TextRectFBean();
+        horTextListBean.rectF = new RectF(0, 0, lineTextMaxWidth * columnNum + 2 * padding, bottom);
+        horTextListBean.columnNum = columnNum;
+        horTextListBean.lineNum = lineNum;
+        horTextListBean.padding = padding;
+        horTextListBean.hasColorLine = hasColorLine;
+        horTextListBean.textTimes = textTimes;
+        horTextListBean.texts = texts;
+        horTextListBean.textSize = textSize;
+        horTextListBean.perWidth = lineTextMaxWidth;
+        horTextListBean.perHeight = maxHeight;
+        horTextListBean.singleTextWidth = tempWidth;
+        horTextListBean.centerY = horTextListBean.rectF.centerY();
+        horTextListBean.centerX = horTextListBean.rectF.centerX();
+        return horTextListBean;
+    }
+
+    public static class TextRectFBean {
+        public float centerX;//中心x 有边界限定的  指限定之前的中心
+        public float centerY;//中心y
+        public int columnNum;//每行几个数据
+        public int lineNum;//行
+        public RectF rectF;//边界
+        public float padding;//padding
+        public boolean hasColorLine;//颜色条
+        public float textTimes; //间距倍数
+        public List<String> texts; //文本
+        public float textSize;//文本大小
+        public float perWidth;//每个模块 宽
+        public int perHeight;//文本高度
+        public float singleTextWidth;//文本高度
     }
 }

@@ -24,7 +24,7 @@ public class XmlParser {
 
     public XmlNodeBean readXml(InputStream inputStream) throws IOException, XmlPullParserException {
         if (inputStream == null) return null;
-         XmlPullParser xmlPullParser = Xml.newPullParser();
+        XmlPullParser xmlPullParser = Xml.newPullParser();
         xmlPullParser.setInput(inputStream, UTF_8);
         XmlNodeBean xmlNodeBean = readNode(xmlPullParser, 0);
         inputStream.close();
@@ -41,9 +41,9 @@ public class XmlParser {
         nodeBean.setLevel(level);
         level++;
         int eventCode = xmlPullParser.getEventType();
-        while (eventCode !=  XmlPullParser.END_DOCUMENT) {
+        while (eventCode != XmlPullParser.END_DOCUMENT) {
             switch (eventCode) {
-                case  XmlPullParser.START_TAG:
+                case XmlPullParser.START_TAG:
                     //标签开始
                     String key = xmlPullParser.getName();
                     nodeBean.setNodeName(key);
@@ -72,7 +72,7 @@ public class XmlParser {
                         nodeBean.setNodeValue(xmlPullParser.getText());
                     }
                     continue;
-                case  XmlPullParser.END_TAG:
+                case XmlPullParser.END_TAG:
                     //标签结束  返回一个节点
                     xmlPullParser.next();
                     return nodeBean;
