@@ -190,4 +190,32 @@ public class RectUtils {
         public int perHeight;//文本高度
         public float singleTextWidth;//文本高度
     }
+
+    /**
+     * 以图片说明
+     * <p>
+     * 一个矩形放入指定区域内 并贴边居中
+     *
+     * @return
+     */
+    public Rect getCenterRect(int srcWidth, int srcHeight, int targetWidth, int targetHeight) {
+        if (srcWidth > 0 && srcHeight > 0 && targetWidth > 0 && targetHeight > 0) {
+            Rect rect = new Rect();
+            //计算图像位置
+            float tempWidth = 0, tempHeight = 0;
+            if (srcHeight / (float) srcWidth >= targetHeight / (float) targetWidth) {
+                //图片高
+                tempWidth = targetHeight * srcWidth / ((float) srcHeight);
+                int halfWidth = (int) ((targetWidth - tempWidth) / 2);
+                rect.set(halfWidth, 0, targetWidth - halfWidth, targetHeight);
+            } else {
+                //画布高
+                tempHeight = targetWidth * srcHeight / ((float) srcWidth);
+                int halfHeight = (int) ((targetHeight - tempHeight) / 2);
+                rect.set(0, halfHeight, targetWidth, targetHeight - halfHeight);
+            }
+            return rect;
+        }
+        return null;
+    }
 }
