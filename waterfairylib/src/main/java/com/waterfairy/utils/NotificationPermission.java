@@ -31,9 +31,9 @@ public class NotificationPermission {
         int uid = appInfo.uid;
 
         Class appOpsClass = null;
-      /* Context.APP_OPS_MANAGER
-       * 通过反射获取通知的开关状态
-       * */
+        /* Context.APP_OPS_MANAGER
+         * 通过反射获取通知的开关状态
+         * */
         boolean hasPermission = false;
         try {
             appOpsClass = Class.forName(AppOpsManager.class.getName());

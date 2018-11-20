@@ -33,7 +33,7 @@ public class HexUtil {
             m = i * 2 + 1;
             n = m + 1;
             int intVal = Integer.decode("0x" + src.substring(i * 2, m) + src.substring(m, n));
-            ret[i] = Byte.valueOf((byte)intVal);
+            ret[i] = Byte.valueOf((byte) intVal);
         }
         return ret;
     }

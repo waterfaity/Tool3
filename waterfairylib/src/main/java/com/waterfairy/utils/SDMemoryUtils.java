@@ -17,6 +17,7 @@ import java.util.List;
 public class SDMemoryUtils {
     /**
      * 获取内置SD卡路径
+     *
      * @return
      */
     public String getInnerSDCardPath() {
@@ -25,10 +26,10 @@ public class SDMemoryUtils {
 
     /**
      * 获取外置SD卡路径
-     * @return  应该就一条记录或空
+     *
+     * @return 应该就一条记录或空
      */
-    public List<String> getExtSDCardPath()
-    {
+    public List<String> getExtSDCardPath() {
         List<String> lResult = new ArrayList<String>();
         try {
             Runtime rt = Runtime.getRuntime();
@@ -38,13 +39,11 @@ public class SDMemoryUtils {
             BufferedReader br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null) {
-                if (line.contains("extSdCard"))
-                {
-                    String [] arr = line.split(" ");
+                if (line.contains("extSdCard")) {
+                    String[] arr = line.split(" ");
                     String path = arr[1];
                     File file = new File(path);
-                    if (file.isDirectory())
-                    {
+                    if (file.isDirectory()) {
                         lResult.add(path);
                     }
                 }

@@ -456,7 +456,7 @@ public class LineChartView extends BaseView {
             lastMoveX = event.getX();
             getParent().requestDisallowInterceptTouchEvent(parentDisTouch);
         } else if (action == MotionEvent.ACTION_MOVE) {
-            isShowingInfo=false;
+            isShowingInfo = false;
             handleMove(event);
         } else if (action == MotionEvent.ACTION_UP) {
             float touchX = event.getX() + Math.abs(scrollX);

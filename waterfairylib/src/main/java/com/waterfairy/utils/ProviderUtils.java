@@ -19,11 +19,12 @@ public class ProviderUtils {
     public static String authority;
 
     //"com.xueduoduo.intelligence.school.fileProvider"
-    public static void setAuthority(String authorityTemp) {
+
+    public static void initAuthority(String authorityTemp) {
         authority = authorityTemp;
     }
 
-    public static Uri initAuthority(Context context, File file) {
+    public static Uri getProviderUri(Context context, File file) {
         return getProviderUri(context, null, file);
     }
 
@@ -46,6 +47,4 @@ public class ProviderUtils {
         }
         return intent;
     }
-
-
 }

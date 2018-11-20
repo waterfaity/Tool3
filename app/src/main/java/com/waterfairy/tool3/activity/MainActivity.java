@@ -1,6 +1,7 @@
 package com.waterfairy.tool3.activity;
 
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.View;
 import com.waterfairy.tool3.R;
 import com.waterfairy.tool3.recyclerview.RecyclerViewActivity;
 import com.waterfairy.utils.PermissionUtils;
+import com.waterfairy.utils.RingTonUtils;
 import com.waterfairy.utils.ToastUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
      * 2.内容
      */
     private void test() {
-
+        RingTonUtils.PlayRingTone(this, RingtoneManager.TYPE_RINGTONE);
     }
 
     public void onClick(View view) {

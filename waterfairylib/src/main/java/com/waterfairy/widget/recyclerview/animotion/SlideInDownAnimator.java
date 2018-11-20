@@ -2,13 +2,13 @@ package com.waterfairy.widget.recyclerview.animotion;
 
 /**
  * Copyright (C) 2017 Wasabeef
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,13 +26,13 @@ public class SlideInDownAnimator
 //        extends BaseItemAnimator
 {
 
-  public SlideInDownAnimator() {
+    public SlideInDownAnimator() {
 
-  }
+    }
 
-  public SlideInDownAnimator(Interpolator interpolator) {
+    public SlideInDownAnimator(Interpolator interpolator) {
 //    mInterpolator = interpolator;
-  }
+    }
 
 //  @Override protected void animateRemoveImpl(final RecyclerView.ViewHolder holder) {
 //    ViewCompat.animate(holder.itemView)

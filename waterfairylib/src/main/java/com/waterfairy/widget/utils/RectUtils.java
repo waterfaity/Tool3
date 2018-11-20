@@ -192,13 +192,58 @@ public class RectUtils {
     }
 
     /**
-     * 以图片说明
-     * <p>
-     * 一个矩形放入指定区域内 并贴边居中
-     *
+     * @param srcRectF    需要计算的区域
+     * @param targetRectF 目标区域
+     * @param toSide      贴边
      * @return
      */
-    public Rect getCenterRect(int srcWidth, int srcHeight, int targetWidth, int targetHeight) {
+    public static Rect getCenterRect(RectF srcRectF, RectF targetRectF, boolean toSide) {
+        RectF centerRec = getCenterRectF(srcRectF, targetRectF, toSide);
+        return new Rect((int) centerRec.left, (int) centerRec.top, (int) centerRec.right, (int) centerRec.bottom);
+    }
+
+    public static RectF getCenterRectF(RectF srcRectF, RectF targetRectF, boolean toSide) {
+
+        if (srcRectF != null && targetRectF != null) {
+            float srcWidth = (int) srcRectF.width();
+            float srcHeight = (int) srcRectF.height();
+
+            float targetWidth = targetRectF.width();
+            float targetHeight = targetRectF.height();
+
+            if (srcWidth > 0 && srcHeight > 0 && targetWidth > 0 && targetHeight > 0) {
+                RectF rect = new RectF();
+
+                if (srcWidth <= targetWidth && srcHeight < targetHeight && !toSide) {
+                    //包涵在内
+                    float halfWidth = (targetWidth - srcWidth) / 2;
+                    float halfHeight = (targetHeight - srcHeight) / 2;
+                    rect.set(targetRectF.left + halfWidth, targetRectF.top + halfHeight, targetRectF.left + halfWidth + srcWidth, targetRectF.top + halfHeight + srcHeight);
+                } else {
+                    //有越界
+
+                    //计算图像位置
+                    float tempWidth = 0, tempHeight = 0;
+
+                    if (srcHeight / srcWidth >= targetHeight / targetWidth) {
+                        //图片高
+                        tempWidth = targetHeight * srcWidth / (srcHeight);
+                        int halfWidth = (int) ((targetWidth - tempWidth) / 2);
+                        rect.set(targetRectF.left + halfWidth, targetRectF.top + 0, targetRectF.left + targetWidth - halfWidth, targetRectF.top + targetHeight);
+                    } else {
+                        //画布高
+                        tempHeight = targetWidth * srcHeight / (srcWidth);
+                        int halfHeight = (int) ((targetHeight - tempHeight) / 2);
+                        rect.set(targetRectF.left + 0, targetRectF.top + halfHeight, targetRectF.left + targetWidth, targetRectF.top + targetHeight - halfHeight);
+                    }
+                }
+                return rect;
+            }
+        }
+        return null;
+    }
+
+    public static Rect getCenterRect(int srcWidth, int srcHeight, int targetWidth, int targetHeight) {
         if (srcWidth > 0 && srcHeight > 0 && targetWidth > 0 && targetHeight > 0) {
             Rect rect = new Rect();
             //计算图像位置

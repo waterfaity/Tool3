@@ -3,10 +3,14 @@ package com.waterfairy.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.view.View;
 import android.widget.ImageView;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author water_fairy
@@ -22,21 +26,38 @@ public class BGImgUtils {
      * @param bgRes
      * @param bgImgView
      */
-    public static void setBg(Context context, int bgRes, ImageView bgImgView) {
+    public static void setBg(Context context, int bgRes, String imgName, ImageView bgImgView) {
+        if (bgRes == 0) return;
+        if (bgImgView == null) return;
         int screenWidth = ScreenInfoTool.getInstance().getScreenWidth();
         int screenHeight = ScreenInfoTool.getInstance().getScreenHeight();
         int tempScreenWidth = Math.max(screenWidth, screenHeight);
         int tempScreenHeight = Math.min(screenWidth, screenHeight);
-        File file = new File(getFilePath(context, tempScreenWidth, tempScreenHeight, bgRes));
+        File file = new File(getFilePath(context, tempScreenWidth, tempScreenHeight, imgName));
         if (file.exists()) {
-            bgImgView.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath()));
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+            bgImgView.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath(), options));
         } else {
             bgImgView.setImageBitmap(saveAndGetBitmap(context, file.getAbsolutePath(), tempScreenWidth, tempScreenHeight, bgRes));
         }
     }
 
     private static Bitmap saveAndGetBitmap(Context context, String imgFilePath, int screenWidth, int screenHeight, int bgRes) {
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), bgRes);
+        Bitmap bitmap = null;
+        try {
+//            bitmap = ImageUtils.decodeFromRes(context, bgRes, screenWidth, screenHeight, true);
+            Bitmap bitmapTemp = ImageUtils.decodeFromRes(context, bgRes, screenWidth, screenHeight, true);
+            bitmap = ImageUtils.matrix(bitmapTemp, screenWidth, screenHeight, false);
+            if (bitmap != bitmapTemp) {
+                bitmapTemp.recycle();
+                bitmapTemp = null;
+            }
+//            gradlew compileDebugSources --stacktrace -info
+        } catch (IOException e) {
+            e.printStackTrace();
+            bitmap = BitmapFactory.decodeResource(context.getResources(), bgRes);
+        }
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         if (screenWidth / (float) screenHeight >= width / (float) height) {
@@ -54,9 +75,9 @@ public class BGImgUtils {
         }
     }
 
-    private static String getFilePath(Context context, int screenWidth, int screenHeight, int bgRes) {
+    private static String getFilePath(Context context, int screenWidth, int screenHeight, String imgName) {
         return FileUtils.getCache(context, FileUtils.FILE_TYPE_IMG, FileUtils.CACHE_TYPE_SD) +
-                "/bg_img_" + bgRes + "_" + screenWidth + "_" + screenHeight + ".jpg";
+                "/bg_img_" + imgName + "_" + screenWidth + "_" + screenHeight + ".jpg";
     }
 
     private static void saveBitmap(final Bitmap bitmap, final String savePath) {
@@ -68,5 +89,30 @@ public class BGImgUtils {
                 return null;
             }
         }.execute();
+    }
+
+    /**
+     * 图片销毁
+     * 注:如果用 setImageRes()    销毁 再 使用  ,提示报错 isRecycled
+     *
+     * @param view
+     */
+    public static void destroy(View view) {
+        if (view != null) {
+            Drawable drawable = null;
+            if (view instanceof ImageView) {
+                drawable = ((ImageView) view).getDrawable();
+            } else {
+                drawable = view.getBackground();
+            }
+            if (drawable != null && drawable instanceof BitmapDrawable) {
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+                Bitmap bitmap = bitmapDrawable.getBitmap();
+                if (bitmap != null && !bitmap.isRecycled()) {
+                    bitmap.recycle();
+                    bitmap = null;
+                }
+            }
+        }
     }
 }

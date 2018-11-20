@@ -32,7 +32,7 @@ public class RGBColorBitmapCreator {
     private Bitmap drawBitmap() {
         Bitmap bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
-        Paint paint=new Paint();
+        Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setColor(Color.WHITE);
         canvas.drawCircle(mWidth / 2, mHeight / 2, mHeight / 2, sweepPaint);

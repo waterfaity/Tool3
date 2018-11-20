@@ -80,7 +80,7 @@ public class BLEService extends Service {
     }
 
     public void write(BluetoothGattCharacteristic writeGatt, byte[] bytes) {
-        if (writeGatt != null&&blueToothGatt!=null) {
+        if (writeGatt != null && blueToothGatt != null) {
             writeGatt.setValue(bytes);
             boolean b = blueToothGatt.writeCharacteristic(writeGatt);
             if (b) {

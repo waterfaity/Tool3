@@ -20,12 +20,13 @@ import retrofit2.http.Url;
  * 995637517@qq.com
  */
 
-public interface IUploadService  {
+public interface IUploadService {
     @Streaming
     @POST()
     @Multipart
     Call<ResponseBody> upload(@Url String url,
                               @Part MultipartBody.Part part);
+
     @Streaming
     @POST()
     @Multipart
@@ -33,6 +34,7 @@ public interface IUploadService  {
                               @Header("RANGE") String start,
                               @QueryMap Map<String, String> options,
                               @Part MultipartBody.Part part);
+
     @Streaming
     @POST()
     @Multipart

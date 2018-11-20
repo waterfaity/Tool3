@@ -40,4 +40,65 @@ public class PathUtils {
         }
         return path;
     }
+
+    public static Path getCorner(RectF rect, int radius, int... corners) {
+        Path path = new Path();
+        boolean isHas0 = false;
+        boolean isHas1 = false;
+        boolean isHas2 = false;
+        boolean isHas3 = false;
+        for (int corner : corners) {
+            switch (corner) {
+                case 0:
+                    isHas0 = true;
+                    break;
+                case 1:
+                    isHas1 = true;
+                    break;
+                case 2:
+                    isHas2 = true;
+                    break;
+                case 3:
+                    isHas3 = true;
+                    break;
+            }
+        }
+
+
+        //启点
+        if (!isHas0) {
+            path.moveTo(rect.left, rect.top);
+        } else {
+            path.moveTo(rect.left + radius, rect.top);
+        }
+        //终点
+        if (isHas1) {
+            path.lineTo(rect.right - radius, rect.top);
+            path.quadTo(rect.right, rect.top, rect.right, rect.top + radius);
+        } else {
+            path.lineTo(rect.right, rect.top);
+        }
+
+        if (isHas2) {
+            path.lineTo(rect.right, rect.bottom - radius);
+            path.quadTo(rect.right, rect.bottom, rect.right - radius, rect.bottom);
+        } else {
+            path.lineTo(rect.right, rect.bottom);
+        }
+
+        if (isHas3) {
+            path.lineTo(rect.left + radius, rect.bottom);
+            path.quadTo(rect.left, rect.bottom, rect.left, rect.bottom - radius);
+        } else {
+            path.lineTo(rect.left, rect.bottom);
+        }
+
+        if (isHas0) {
+            path.lineTo(rect.left, rect.top + radius);
+            path.quadTo(rect.left, rect.top, rect.left + radius, rect.top);
+        } else {
+            path.lineTo(rect.left, rect.top);
+        }
+        return path;
+    }
 }

@@ -53,5 +53,5 @@ dependencies {
 
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.21'
     implementation 'org.apache.shiro:shiro-web:1.2.3'
-    testReleaseCompile 'junit:junit:4.12'
+    testReleaseImplementation 'junit:junit:4.12'
 }

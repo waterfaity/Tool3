@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 /**
@@ -39,13 +40,13 @@ public class CanvasUtils {
             }
 
             Path path = PathUtils.getCorner(rect, radius);
-            //stroke
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(strokeColor);
-            canvas.drawPath(path, paint);
             //solid
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(solid);
+            canvas.drawPath(path, paint);
+            //stroke
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(strokeColor);
             canvas.drawPath(path, paint);
             //复原
             if (styleSrc != null)
@@ -120,6 +121,37 @@ public class CanvasUtils {
             }
             paint.setTextSize(textSize);
             paint.setColor(paintColor);
+        }
+    }
+
+
+    public static void drawChart(Canvas canvas, Rect mTargetRect, int width, int height, int chartNum) {
+        if (width != 0 && height != 0) {
+            float left = 0, right = width, top = 0, bottom = height;
+            if (mTargetRect != null) {
+                left = mTargetRect.left;
+                right = mTargetRect.right;
+                top = mTargetRect.top;
+                bottom = mTargetRect.bottom;
+            }
+            Paint paintChart = new Paint();
+            //网格
+            float perHeight = (bottom - top) / chartNum;
+            float perWidth = (right - left) / chartNum;
+
+            for (int i = 0; i <= chartNum; i++) {
+                if (i % 10 == 0) {
+                    paintChart.setColor(Color.GREEN);
+                } else if (i % 5 == 0) {
+                    paintChart.setColor(Color.BLUE);
+                } else {
+                    paintChart.setColor(Color.GRAY);
+                }
+                //x
+                canvas.drawLine(left, top + i * perHeight, right, top + i * perHeight, paintChart);
+                //y
+                canvas.drawLine(left + i * perWidth, top, left + i * perWidth, bottom, paintChart);
+            }
         }
     }
 }

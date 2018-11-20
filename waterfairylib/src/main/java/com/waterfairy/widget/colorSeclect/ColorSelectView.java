@@ -88,7 +88,7 @@ public class ColorSelectView extends BaseSelfViewGroup implements ColorTransitio
     }
 
     public void setOnColorSelectListener(OnColorSelectListener onColorSelectListener) {
-        this.onColorSelectListener=onColorSelectListener;
+        this.onColorSelectListener = onColorSelectListener;
     }
 }
 

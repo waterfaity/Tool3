@@ -67,7 +67,9 @@ public abstract class ProgressHandler extends Handler {
         }
     }
 
-    public abstract void start(UIProgressListener uiProgressListener,long currentBytes, long contentLength, boolean done);
-    public abstract void progress(UIProgressListener uiProgressListener,long currentBytes, long contentLength, boolean done);
-    public abstract void finish(UIProgressListener uiProgressListener,long currentBytes, long contentLength, boolean done);
+    public abstract void start(UIProgressListener uiProgressListener, long currentBytes, long contentLength, boolean done);
+
+    public abstract void progress(UIProgressListener uiProgressListener, long currentBytes, long contentLength, boolean done);
+
+    public abstract void finish(UIProgressListener uiProgressListener, long currentBytes, long contentLength, boolean done);
 }

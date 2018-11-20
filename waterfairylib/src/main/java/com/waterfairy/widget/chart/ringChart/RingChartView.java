@@ -463,7 +463,7 @@ public class RingChartView extends BaseView implements View.OnTouchListener {
         this.onPartSelectListener = onPartSelectListener;
     }
 
-    public void setTotalNumText(int totalValue,boolean showSetTotalValue) {
+    public void setTotalNumText(int totalValue, boolean showSetTotalValue) {
         this.totalValueSet = totalValue;
         this.showSetTotalValue = showSetTotalValue;
     }

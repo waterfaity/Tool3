@@ -179,7 +179,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         }
         printWriter.close();
         String result = writer.toString();
-        Log.e(TAG, "saveCrashInfo2File: "+result);
+        Log.e(TAG, "saveCrashInfo2File: " + result);
         sb.append(result);
         try {
             long timestamp = System.currentTimeMillis();

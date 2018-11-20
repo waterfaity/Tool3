@@ -33,7 +33,7 @@ public class ColorTransitionView extends BaseSelfView implements View.OnTouchLis
     private OnRadioChangeListener onRadioChangeListener;
 
     public ColorTransitionView(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public ColorTransitionView(Context context, @Nullable AttributeSet attrs) {

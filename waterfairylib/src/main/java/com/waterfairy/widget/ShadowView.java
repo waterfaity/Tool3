@@ -13,8 +13,8 @@ import android.graphics.Shader;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
-import com.waterfairy.library.R;
 import com.waterfairy.widget.baseView.BaseSelfView;
+import com.xueduoduo.jssecurityedu.R;
 
 
 /**

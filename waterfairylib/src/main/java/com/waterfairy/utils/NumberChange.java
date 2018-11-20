@@ -6,8 +6,8 @@ package com.waterfairy.utils;
 public class NumberChange {
 
     /*
-    * 把16进制字符串转换成字节数组 @param hex @return
-    */
+     * 把16进制字符串转换成字节数组 @param hex @return
+     */
     public static byte[] hexStringToByte(String hex) {
         int len = (hex.length() / 2);
         byte[] result = new byte[len];

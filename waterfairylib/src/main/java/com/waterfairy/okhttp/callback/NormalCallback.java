@@ -11,10 +11,12 @@ import java.io.IOException;
 public abstract class NormalCallback implements Callback {
     @Override
     public abstract void onResponse(Response response) throws IOException;
+
     @Override
     public void onProgress(long currentBytes, long contentLength, boolean done) {
 
     }
+
     @Override
     public abstract void onFailure(Request request, IOException e);
 }

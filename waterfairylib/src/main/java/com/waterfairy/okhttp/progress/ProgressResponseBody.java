@@ -43,7 +43,8 @@ public class ProgressResponseBody extends ResponseBody {
 
     /**
      * 构造函数，赋值
-     * @param responseBody 待包装的响应体
+     *
+     * @param responseBody     待包装的响应体
      * @param progressListener 回调接口
      */
     public ProgressResponseBody(ResponseBody responseBody, ProgressListener progressListener) {
@@ -54,27 +55,33 @@ public class ProgressResponseBody extends ResponseBody {
 
     /**
      * 重写调用实际的响应体的contentType
+     *
      * @return MediaType
      */
-    @Override public MediaType contentType() {
+    @Override
+    public MediaType contentType() {
         return responseBody.contentType();
     }
 
     /**
      * 重写调用实际的响应体的contentLength
+     *
      * @return contentLength
      * @throws IOException 异常
      */
-    @Override public long contentLength() throws IOException {
+    @Override
+    public long contentLength() throws IOException {
         return responseBody.contentLength();
     }
 
     /**
      * 重写进行包装source
+     *
      * @return BufferedSource
      * @throws IOException 异常
      */
-    @Override public BufferedSource source() throws IOException {
+    @Override
+    public BufferedSource source() throws IOException {
         if (bufferedSource == null) {
             //包装
             bufferedSource = Okio.buffer(source(responseBody.source()));
@@ -84,6 +91,7 @@ public class ProgressResponseBody extends ResponseBody {
 
     /**
      * 读取，回调进度接口
+     *
      * @param source Source
      * @return Source
      */
@@ -92,12 +100,14 @@ public class ProgressResponseBody extends ResponseBody {
         return new ForwardingSource(source) {
             //当前读取字节数
             long totalBytesRead = 0L;
-            @Override public long read(Buffer sink, long byteCount) throws IOException {
+
+            @Override
+            public long read(Buffer sink, long byteCount) throws IOException {
                 long bytesRead = super.read(sink, byteCount);
                 //增加当前读取的字节数，如果读取完成了bytesRead会返回-1
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;
                 //回调，如果contentLength()不知道长度，会返回-1
-                if (progressListener!=null) {
+                if (progressListener != null) {
                     progressListener.onProgress(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
                 }
                 return bytesRead;

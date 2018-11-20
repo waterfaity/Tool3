@@ -596,7 +596,7 @@ public class OkHttpManager1 {
             }
         }
 
-        if (imgUrl==null){
+        if (imgUrl == null) {
             return;
         }
 

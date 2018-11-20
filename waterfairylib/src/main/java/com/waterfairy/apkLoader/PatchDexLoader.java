@@ -93,10 +93,10 @@ public class PatchDexLoader {
         int len2 = Array.getLength(right);
         int totalLen = len1 + len2;
         Object concatArray = Array.newInstance(left.getClass().getComponentType(), totalLen);
-        for(int i = 0; i < len1; i++) {
+        for (int i = 0; i < len1; i++) {
             Array.set(concatArray, i, Array.get(left, i));
         }
-        for(int j = 0; j < len2; j++) {
+        for (int j = 0; j < len2; j++) {
             Array.set(concatArray, len1 + j, Array.get(right, j));
         }
         return concatArray;

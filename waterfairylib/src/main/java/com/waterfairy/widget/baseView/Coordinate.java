@@ -9,7 +9,7 @@ package com.waterfairy.widget.baseView;
 public class Coordinate {
     public float x;
     public float y;
-    public int value;
+    public float value;
     public String text;
 
     public Coordinate() {
@@ -20,7 +20,7 @@ public class Coordinate {
         this.y = y;
     }
 
-    public Coordinate(int x, int y, int value, String text) {
+    public Coordinate(float x, float y, float value, String text) {
         this.x = x;
         this.value = value;
         this.y = y;
@@ -43,11 +43,11 @@ public class Coordinate {
         this.y = y;
     }
 
-    public int getValue() {
+    public float getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(float value) {
         this.value = value;
     }
 

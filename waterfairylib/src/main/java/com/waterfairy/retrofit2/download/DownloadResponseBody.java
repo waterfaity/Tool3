@@ -55,7 +55,7 @@ public class DownloadResponseBody extends ResponseBody {
                 long bytesRead = super.read(sink, byteCount);
                 readTotal += bytesRead != -1 ? bytesRead : 0;
                 if (null != downloadingListener)
-                    downloadingListener.onDownloading(bytesRead == -1,contentLength(), readTotal);
+                    downloadingListener.onDownloading(bytesRead == -1, contentLength(), readTotal);
                 return bytesRead;
             }
         };

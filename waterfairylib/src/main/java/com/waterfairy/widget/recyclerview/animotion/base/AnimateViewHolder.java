@@ -5,12 +5,12 @@ import android.support.v7.widget.RecyclerView;
 
 public interface AnimateViewHolder {
 
-  void preAnimateAddImpl(final RecyclerView.ViewHolder holder);
+    void preAnimateAddImpl(final RecyclerView.ViewHolder holder);
 
-  void preAnimateRemoveImpl(final RecyclerView.ViewHolder holder);
+    void preAnimateRemoveImpl(final RecyclerView.ViewHolder holder);
 
-  void animateAddImpl(final RecyclerView.ViewHolder holder, ViewPropertyAnimatorListener listener);
+    void animateAddImpl(final RecyclerView.ViewHolder holder, ViewPropertyAnimatorListener listener);
 
-  void animateRemoveImpl(final RecyclerView.ViewHolder holder,
-                         ViewPropertyAnimatorListener listener);
+    void animateRemoveImpl(final RecyclerView.ViewHolder holder,
+                           ViewPropertyAnimatorListener listener);
 }

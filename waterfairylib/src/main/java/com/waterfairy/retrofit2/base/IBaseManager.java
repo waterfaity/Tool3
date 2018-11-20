@@ -12,7 +12,7 @@ public abstract class IBaseManager {
      * @param tag
      * @return
      */
-   abstract IBaseControl add(BaseProgressInfo downloadInfo, String tag);
+    abstract IBaseControl add(BaseProgressInfo downloadInfo, String tag);
 
     /**
      * 获取下载
@@ -27,31 +27,32 @@ public abstract class IBaseManager {
      *
      * @param url
      */
-    abstract  boolean remove(String url);
+    abstract boolean remove(String url);
 
     /**
      * 移除所有下载(会删除当前下载中的文件)
      */
-    abstract   boolean removeAll();
+    abstract boolean removeAll();
 
     /**
      * 暂停所有下载
      */
-    abstract  boolean pauseAll();
+    abstract boolean pauseAll();
 
     /**
      * 停止所有下载
      */
-    abstract   boolean stopAll();
+    abstract boolean stopAll();
 
     /**
      * 开始所有下载
      */
-    abstract  boolean startAll();
+    abstract boolean startAll();
 
     /**
      * 下载完成
+     *
      * @param url
      */
-    abstract  void onFinished(String url);
+    abstract void onFinished(String url);
 }

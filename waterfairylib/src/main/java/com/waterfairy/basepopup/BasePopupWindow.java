@@ -92,30 +92,39 @@ public abstract class BasePopupWindow implements BasePopup {
 
     /**
      * PopupWindow展示出来后，需要执行动画的View.一般为蒙层之上的View
+     *
      * @return
      */
     protected abstract Animation getShowAnimation();
 
     /**
      * 设置一个点击后触发dismiss PopupWindow的View，一般为蒙层
+     *
      * @return
      */
     protected abstract View getClickToDismissView();
 
     /**
      * 设置展示动画View的属性动画
+     *
      * @return
      */
-    public Animator getShowAnimator() { return null; }
+    public Animator getShowAnimator() {
+        return null;
+    }
 
     /**
      * 设置一个拥有输入功能的View，一般为EditTextView
+     *
      * @return
      */
-    public View getInputView() { return null; }
+    public View getInputView() {
+        return null;
+    }
 
     /**
      * 设置PopupWindow销毁时的退出动画
+     *
      * @return
      */
     public Animation getExitAnimation() {
@@ -124,6 +133,7 @@ public abstract class BasePopupWindow implements BasePopup {
 
     /**
      * 设置PopupWindow销毁时的退出属性动画
+     *
      * @return
      */
     public Animator getExitAnimator() {
@@ -192,6 +202,7 @@ public abstract class BasePopupWindow implements BasePopup {
 
     /**
      * PopupWindow是否需要自适应输入法，为输入法弹出让出区域
+     *
      * @param needAdjust <br>
      *                   ture for "SOFT_INPUT_ADJUST_RESIZE" mode<br>
      *                   false for "SOFT_INPUT_ADJUST_NOTHING" mode
@@ -199,8 +210,7 @@ public abstract class BasePopupWindow implements BasePopup {
     public void setAdjustInputMethod(boolean needAdjust) {
         if (needAdjust) {
             mPopupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        }
-        else {
+        } else {
             mPopupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         }
     }
@@ -208,41 +218,41 @@ public abstract class BasePopupWindow implements BasePopup {
     /**
      * 当PopupWindow展示的时候，这个参数决定了是否自动弹出输入法
      * 如果使用这个方法，您必须保证通过 <strong>getInputView()<strong/>得到一个EditTextView
+     *
      * @param autoShow
      */
     public void setAutoShowInputMethod(boolean autoShow) {
         this.autoShowInputMethod = autoShow;
         if (autoShow) {
             setAdjustInputMethod(true);
-        }
-        else {
+        } else {
             setAdjustInputMethod(false);
         }
     }
 
     /**
      * 这个参数决定点击返回键是否可以取消掉PopupWindow
+     *
      * @param backPressEnable
      */
     public void setBackPressEnable(boolean backPressEnable) {
         if (backPressEnable) {
             mPopupWindow.setBackgroundDrawable(new ColorDrawable());
-        }
-        else {
+        } else {
             mPopupWindow.setBackgroundDrawable(null);
         }
     }
 
     /**
      * 这个方法封装了LayoutInflater.from(context).inflate，方便您设置PopupWindow所用的xml
+     *
      * @param resId reference of layout
      * @return root View of the layout
      */
     public View getPopupViewById(int resId) {
         if (resId != 0) {
             return LayoutInflater.from(mContext).inflate(resId, null);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -256,6 +266,7 @@ public abstract class BasePopupWindow implements BasePopup {
 
     /**
      * 这个方法用于简化您为View设置OnClickListener事件，多个View将会使用同一个点击事件
+     *
      * @param listener
      * @param views
      */
@@ -271,6 +282,7 @@ public abstract class BasePopupWindow implements BasePopup {
 
     /**
      * PopupWindow是否处于展示状态
+     *
      * @return
      */
     public boolean isShowing() {
@@ -304,13 +316,11 @@ public abstract class BasePopupWindow implements BasePopup {
                 curExitAnima.setAnimationListener(mAnimationListener);
                 mAnimaView.clearAnimation();
                 mAnimaView.startAnimation(curExitAnima);
-            }
-            else if (curExitAnimator != null) {
+            } else if (curExitAnimator != null) {
                 curExitAnimator.removeListener(mAnimatorListener);
                 curExitAnimator.addListener(mAnimatorListener);
                 curExitAnimator.start();
-            }
-            else {
+            } else {
                 mPopupWindow.dismiss();
             }
         } catch (Exception e) {
@@ -362,7 +372,7 @@ public abstract class BasePopupWindow implements BasePopup {
      * 生成TranslateAnimation
      *
      * @param durationMillis 动画显示时间
-     * @param start 初始位置
+     * @param start          初始位置
      */
     protected Animation getTranslateAnimation(int start, int end, int durationMillis) {
         Animation translateAnimation = new TranslateAnimation(0, 0, start, end);

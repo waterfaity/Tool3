@@ -1,12 +1,16 @@
 package com.waterfairy.widget.baseView;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.waterfairy.widget.utils.CanvasUtils;
 
 /**
  * @author water_fairy
@@ -16,6 +20,7 @@ import android.view.View;
  */
 
 public abstract class BaseView extends View {
+    protected boolean showChart;
     protected boolean isDrawing;
     protected float density;
     protected int width, height;
@@ -58,6 +63,15 @@ public abstract class BaseView extends View {
     }
 
     @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if (isShowChart())
+            CanvasUtils.drawChart(canvas, getChartRect(), getWidth(), getHeight(), getChartNum());
+
+    }
+
+
+    @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         width = right - left;
@@ -77,5 +91,44 @@ public abstract class BaseView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         width = w;
         height = h;
+    }
+
+    protected void destroyBitmap(Bitmap bitmap) {
+        if (bitmap != null && !bitmap.isRecycled()) {
+            bitmap.recycle();
+            bitmap = null;
+        }
+    }
+
+
+    /**
+     * 网格数
+     *
+     * @return
+     */
+    protected int getChartNum() {
+        return 50;
+    }
+
+    /**
+     * 网格区域
+     *
+     * @return
+     */
+    protected Rect getChartRect() {
+        return null;
+    }
+
+    public void setShowChart(boolean showChart) {
+        this.showChart = showChart;
+    }
+
+    /**
+     * 展示网格
+     *
+     * @return
+     */
+    protected boolean isShowChart() {
+        return showChart;
     }
 }

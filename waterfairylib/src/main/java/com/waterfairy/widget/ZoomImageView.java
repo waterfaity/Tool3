@@ -82,7 +82,7 @@ public class ZoomImageView extends BaseSelfView {
                 Log.i(TAG, "第1个点抬起\t" + pointerCount);
                 break;
             case MotionEvent.ACTION_POINTER_2_DOWN:
-                Log.i(TAG, "第2个点按下\t" + pointerCount+ "--" + startDistance);
+                Log.i(TAG, "第2个点按下\t" + pointerCount + "--" + startDistance);
                 x2 = event.getX(1);
                 y2 = event.getY(1);
                 startDistance = (float) Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));

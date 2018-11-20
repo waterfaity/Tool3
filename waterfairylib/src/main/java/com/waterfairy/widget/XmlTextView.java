@@ -12,11 +12,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-import com.waterfairy.library.R;
 import com.waterfairy.utils.AssetsUtils;
 import com.waterfairy.xmlParser.XmlAttrBean;
 import com.waterfairy.xmlParser.XmlNodeBean;
 import com.waterfairy.xmlParser.XmlParser;
+import com.xueduoduo.jssecurityedu.R;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -34,19 +34,24 @@ import java.util.List;
  */
 public class XmlTextView extends View {
     private static final String TAG = "xmlTextView";
-    private Paint mTextPaint;
     private XmlNodeBean nodeBean;
     public static final String DEFAULT_COLOR = "#7c7d7e";
     public static final String DEFAULT_TEXT_SIZE = "14";
     public final static String NODE_STRING = "font";
+    public final static String NODE_ROOT = "content";
     public final static String COLOR_STRING = "color";
     public final static String TEXT_SIZE_STRING = "textSize";
-    private List<LineData> mLineDataList;
+    private List<LineData> mLineDataList;//绘画所需坐标数据
     private static float density;
     private int LINE_DIVIDER = 0;//间隔
     private Paint mPaint;
 
+    private int maxWidth, maxHeight;
+
     private boolean measure = true;
+    private float textSize;
+    private int textColor = -1;
+
 
     public XmlTextView(Context context) {
         this(context, null);
@@ -58,23 +63,44 @@ public class XmlTextView extends View {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.XmlTextView);
-        String string = typedArray.getString(R.styleable.XmlTextView_xmlText);
-        if (!TextUtils.isEmpty(string)) {
-            setText(typedArray.getString(R.styleable.XmlTextView_xmlText));
-        }
+//        String string = typedArray.getString(R.styleable.XmlTextView_xmlText);
+//        if (!TextUtils.isEmpty(string)) {
+//            setText(typedArray.getString(R.styleable.XmlTextView_xmlText), false);
+//        }
         try {
-            InputStream is = AssetsUtils.getIS(context, typedArray.getString(R.styleable.XmlTextView_xmlAssetsPath));
-            if (is != null)
-                setXmlIS(AssetsUtils.getIS(context, typedArray.getString(R.styleable.XmlTextView_xmlAssetsPath)));
+            String assetPath = typedArray.getString(R.styleable.XmlTextView_xmlAssetsPath);
+            if (!TextUtils.isEmpty(assetPath)) {
+                InputStream is = AssetsUtils.getIS(context, assetPath);
+                if (is != null)
+                    setXmlIS(AssetsUtils.getIS(context, typedArray.getString(R.styleable.XmlTextView_xmlAssetsPath)), false);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
         LINE_DIVIDER = (int) typedArray.getDimension(R.styleable.XmlTextView_xmlLineSpace, 0f);
         typedArray.recycle();
+        initTest();
+    }
+
+    private void initTest() {
+        if (nodeBean == null)
+            nodeBean = new XmlNodeBean();
     }
 
     public void setText(String text) {
-        setXmlNode(new XmlNodeBean(NODE_STRING, text));
+        setText(text, true);
+    }
+
+    public void setTextColor(int color) {
+        textColor = color;
+    }
+
+    public void setTextSize(float textSize) {
+        this.textSize = textSize;
+    }
+
+    public void setText(String text, boolean fresh) {
+        setXmlNode(new XmlNodeBean(NODE_ROOT, "").addNodeBean(new XmlNodeBean(NODE_STRING, text)), fresh);
     }
 
     public void setXmlText(String xmlText) {
@@ -82,6 +108,10 @@ public class XmlTextView extends View {
     }
 
     public void setXmlIS(InputStream inputStream) {
+        setXmlIS(inputStream, true);
+    }
+
+    public void setXmlIS(InputStream inputStream, boolean fresh) {
         try {
             setXmlNode(XmlParser.getPullHashMapParser().readXml(inputStream));
         } catch (IOException | XmlPullParserException e) {
@@ -92,7 +122,7 @@ public class XmlTextView extends View {
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-            setXmlNode(new XmlNodeBean(NODE_STRING, xmlText));
+            setXmlNode(new XmlNodeBean(NODE_STRING, xmlText), fresh);
             Log.e(TAG, "read xmlText Error or it's null,check the text form");
         }
     }
@@ -108,15 +138,12 @@ public class XmlTextView extends View {
         return xmlText;
     }
 
+    int lastWidth = 0;
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-        int modeWidth = MeasureSpec.getMode(widthMeasureSpec);
-        int modeHeight = MeasureSpec.getMode(heightMeasureSpec);
         int sizeWidth = MeasureSpec.getSize(widthMeasureSpec);
-        int sizeHeight = MeasureSpec.getSize(heightMeasureSpec);
         if (measure) {
             calcLineData(getPaddingLeft(), sizeWidth - getPaddingRight());
             measure = false;
@@ -126,13 +153,30 @@ public class XmlTextView extends View {
             int viewHeight = lineData.y + lineData.height + getPaddingBottom() + lineData.height / 5;
             setMeasuredDimension(sizeWidth, viewHeight);
         }
-     }
+
+//        int sizeWidth = MeasureSpec.getSize(widthMeasureSpec);
+//        if (sizeWidth != 0 && ((lastWidth != sizeWidth) || measure)) {
+//            calcLineData(getPaddingLeft(), sizeWidth - getPaddingRight());
+//            if (mLineDataList != null && mLineDataList.size() > 0) {
+//                LineData lineData = mLineDataList.get(mLineDataList.size() - 1);
+//                int viewHeight = lineData.y + lineData.height + getPaddingBottom() + lineData.height / 5;
+//                setMeasuredDimension(sizeWidth, viewHeight);
+//            }
+//            measure = false;
+//        }
+//        lastWidth = sizeWidth;
+    }
 
 
     public void setXmlNode(XmlNodeBean nodeBean) {
+        setXmlNode(nodeBean, true);
+    }
+
+    private void setXmlNode(XmlNodeBean nodeBean, boolean fresh) {
         this.nodeBean = nodeBean;
         measure = true;
-        invalidate();
+        if (fresh)
+            invalidate();
     }
 
     private InputStream getIS(String xmlText) {
@@ -147,28 +191,15 @@ public class XmlTextView extends View {
         super.onDraw(canvas);
         int width = getWidth();
         int height = getHeight();
-         int startX = 0;
+        int startX = 0;
         int endX = width;
         int startY = 0;
         int endY = height;
         if (endX - startX <= 0 || endY - startY <= 0) {
             return;
         }
-//        if (measure) {
-//            //计算高度
-//            calcLineData(startX, endX);
-//            measure = false;
-//            if (mLineDataList != null && mLineDataList.size() > 0) {
-//                LineData lineData = mLineDataList.get(mLineDataList.size() - 1);
-//                int viewHeight = lineData.y + lineData.height;
-//                setMeasuredDimension(getWidth(), viewHeight + getPaddingTop() + getPaddingBottom());
-//                requestLayout();
-//            }
-//        } else {
         //绘制文本
         drawText(canvas);
-//            measure = true;
-//        }
     }
 
     private void drawText(Canvas canvas) {
@@ -178,8 +209,8 @@ public class XmlTextView extends View {
                 List<LineData.TextData> textDataList = lineData.getTextDataList();
                 for (int j = 0; j < textDataList.size(); j++) {
                     LineData.TextData textData = textDataList.get(j);
-                    mPaint.setColor(textData.textColor);
-                    mPaint.setTextSize(textData.textSize);
+                    mPaint.setColor(textColor != -1 ? textColor : textData.textColor);
+                    mPaint.setTextSize(textSize != 0 ? textSize : textData.textSize);
                     canvas.drawText(textData.text, textData.startX, lineData.y + lineData.height, mPaint);
 //                    canvas.drawLine(textData.startX, lineData.y, textData.endX, lineData.y, mPaint);
                 }
@@ -199,21 +230,20 @@ public class XmlTextView extends View {
             String text = xmlNodeBean.getNodeValue();
             if (!TextUtils.isEmpty(text)) {
                 LineData.TextData textData = getLineTextData(xmlNodeBean);
-//                int minPaddingRight = textData.textSize / 2;
                 int minPaddingRight = 0;
                 String preText = "";
                 int preWidth = 0;
                 int startPos = 0;
+                //每段文字 开始循环计算长度
                 for (int j = 0; j < text.length(); j++) {
                     String willText = text.substring(startPos, j + 1);
                     //计算每段字符
-                    Rect willRect = getTextRect(willText, textData.textSize);
+                    Rect willRect = getTextRect(willText, textSize != 0 ? textSize : textData.textSize);
                     int willAddWidth = willRect.right + (willRect.left > 0 ? willRect.left : (-willRect.left));
                     int willAddHeight = willRect.bottom + (willRect.top > 0 ? willRect.top : (-willRect.top));
                     //增加之后的长度
-
-
                     if (tempLineData.width + willAddWidth + minPaddingRight > maxWidth) {
+                        //增加一个字符后超过最大宽 - 准备换行
                         if (preText.length() >= 1) {
                             //增加之前的文本
                             //1.去除将添加的文本后的长度大于等于1 (还有文本)
@@ -221,14 +251,16 @@ public class XmlTextView extends View {
                             LineData.TextData tempTextData = new LineData.TextData();
                             tempTextData.text = preText;
                             tempTextData.textColor = textData.textColor;
-                            tempTextData.textSize = textData.textSize;
+                            tempTextData.textSize = textSize != 0 ? textSize : textData.textSize;
                             tempTextData.startX = tempLineData.width + startX;
                             tempTextData.endX = preWidth + tempLineData.width + startX;
                             tempLineData.getTextDataList().add(tempTextData);
                         }
-                        startPos = j;
+                        j--;//退一个字符
+                        startPos = j + 1;
                         //添加一行
                         mLineDataList.add(tempLineData);
+                        maxWidth = Math.max(tempLineData.width, maxWidth);
                         //重建一行
                         int nextY = tempLineData.y + tempLineData.height;
                         tempLineData = new LineData();
@@ -243,7 +275,7 @@ public class XmlTextView extends View {
                             LineData.TextData tempTextData = new LineData.TextData();
                             tempTextData.text = new String(willText);
                             tempTextData.textColor = textData.textColor;
-                            tempTextData.textSize = textData.textSize;
+                            tempTextData.textSize = textSize != 0 ? textSize : textData.textSize;
                             tempTextData.startX = tempLineData.width + startX;
                             tempTextData.endX = willAddWidth + tempLineData.width + startX;
 
@@ -256,6 +288,8 @@ public class XmlTextView extends View {
                 }
             }
             if (i == nodeBeans.size() - 1) {
+                //最后一个 添加进数据
+                maxWidth = Math.max(tempLineData.width, maxWidth);
                 mLineDataList.add(tempLineData);
             }
         }
@@ -273,18 +307,19 @@ public class XmlTextView extends View {
                         textData.textColor = Color.parseColor(attrValue);
                     } catch (Exception e) {
                         e.printStackTrace();
-                     }
+                    }
                     break;
                 case TEXT_SIZE_STRING:
                     try {
                         textData.textSize = Integer.parseInt(attrValue) * density;
                     } catch (Exception e) {
-                     }
+                    }
                     break;
             }
         }
         return textData;
     }
+
 
     static class LineData {
         int linNum;//第一行  0 , 1 , 2 ...

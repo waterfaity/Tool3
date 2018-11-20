@@ -7,13 +7,13 @@ import android.view.View;
 
 /**
  * Copyright (C) 2017 Wasabeef
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,13 +23,14 @@ import android.view.View;
 
 public class SlideInBottomAnimationAdapter extends AnimationAdapter {
 
-  public SlideInBottomAnimationAdapter(RecyclerView.Adapter adapter) {
-    super(adapter);
-  }
+    public SlideInBottomAnimationAdapter(RecyclerView.Adapter adapter) {
+        super(adapter);
+    }
 
-  @Override protected Animator[] getAnimators(View view) {
-    return new Animator[] {
-        ObjectAnimator.ofFloat(view, "translationY", view.getMeasuredHeight(), 0)
-    };
-  }
+    @Override
+    protected Animator[] getAnimators(View view) {
+        return new Animator[]{
+                ObjectAnimator.ofFloat(view, "translationY", view.getMeasuredHeight(), 0)
+        };
+    }
 }

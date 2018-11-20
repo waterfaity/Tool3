@@ -11,7 +11,7 @@ import retrofit2.http.Url;
  * Created by shui on 2017/4/26.
  */
 
-public interface IDownloadService  {
+public interface IDownloadService {
     @Streaming
     @GET
     Call<ResponseBody> download(@Header("RANGE") String start, @Url String url);

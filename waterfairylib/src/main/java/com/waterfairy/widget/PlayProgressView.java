@@ -24,7 +24,7 @@ public class PlayProgressView extends BaseSelfView {
     private Paint paint;
     private Paint paintCircle;
     private int strokeWidthCircle;
-    private int color=Color.BLUE;
+    private int color = Color.BLUE;
 
     public PlayProgressView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);

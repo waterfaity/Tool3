@@ -10,6 +10,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -28,6 +29,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.waterfairy.widget.utils.PathUtils;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,7 +41,6 @@ import java.io.IOException;
  * Created by water_fairy on 2017/2/21.
  * ver: 2018-3-15
  */
-
 
 public class ImageUtils {
     private static final String TAG = "imgUtils";
@@ -212,6 +214,36 @@ public class ImageUtils {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));///设置相交模式
         canvas.drawBitmap(source, null, rect, paint);
         return bitmap;
+    }
+
+    /**
+     * @param source
+     * @param radius
+     * @param corners int[] {0,1,2,3} 左上,右上,右下,左下  顺时针
+     * @return
+     */
+    public static Bitmap round(Bitmap source, int radius, boolean recycleBitmap, int... corners) {
+        if (corners != null && radius != 0 && source != null && !source.isRecycled()) {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            Rect rect = new Rect(0, 0, width, height);//矩形
+
+            Path cornerPath = PathUtils.getCorner(new RectF(0, 0, width, height), radius, corners);
+            Bitmap bitmap = createBitmap(source);
+            Canvas canvas = new Canvas(bitmap);
+            Paint paint = new Paint();//画笔
+            paint.setColor(Color.parseColor("#000000"));
+            paint.setAntiAlias(true);//设置锯齿
+            canvas.drawPath(cornerPath, paint);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(source, null, rect, paint);
+            if (recycleBitmap && !source.isRecycled()) {
+                source.recycle();
+                source = null;
+            }
+            return bitmap;
+        }
+        return source;
     }
 
     /**
@@ -823,7 +855,7 @@ public class ImageUtils {
     /**
      * 平铺
      *
-     * @param style  方式  x1,y1,xy
+     * @param style  方式  x,y,xy
      * @param length 宽度或长度
      * @param bitmap 平铺的图片
      * @param extra  xy时  (length 作为宽 extra作为高)
@@ -1108,6 +1140,11 @@ public class ImageUtils {
         return BitmapFactory.decodeResource(context.getResources(), imageRes, options);
     }
 
+    /**
+     * 图片销毁
+     *
+     * @param view
+     */
     public static void destroy(View view) {
         if (view != null) {
             Drawable drawable = null;
@@ -1127,4 +1164,29 @@ public class ImageUtils {
         }
     }
 
+    public static Bitmap alphaBitmap(Bitmap bitmapSrc, float alpha) {
+        Bitmap bitmap = null;
+        if (bitmapSrc != null && !bitmapSrc.isRecycled()) {
+            int width = bitmapSrc.getWidth();
+            int height = bitmapSrc.getHeight();
+            if (width > 0 && height > 0) {
+                bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+                for (int i = 0; i < width; i++) {
+                    for (int j = 0; j < height; j++) {
+                        int pixel = bitmapSrc.getPixel(i, j);
+                        int alphaTemp = Color.alpha(pixel);
+                        int redTemp = Color.red(pixel);
+                        int greenTemp = Color.green(pixel);
+                        int blueTemp = Color.blue(pixel);
+                        int alphaTarget = Color.alpha(Color.TRANSPARENT);
+                        if (alphaTemp == 255) {
+                            alphaTarget = ((int) alpha * 255);
+                        }
+                        bitmap.setPixel(i, j, Color.argb(alphaTarget, redTemp, greenTemp, blueTemp));
+                    }
+                }
+            }
+        }
+        return bitmap == null ? bitmapSrc : bitmap;
+    }
 }

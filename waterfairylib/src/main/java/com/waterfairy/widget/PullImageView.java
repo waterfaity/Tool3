@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.waterfairy.bean.OptionBean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +40,8 @@ public class PullImageView extends android.support.v7.widget.AppCompatImageView 
     private Bitmap pullBitmap;
 
     private int viewTop;
+    private int rightNum;//正确得答案个数
+    private int bottomHeight;
 
     public PullImageView(Context context) {
         this(context, null);
@@ -76,6 +79,10 @@ public class PullImageView extends android.support.v7.widget.AppCompatImageView 
         this.pullHeight = pullHeight;
     }
 
+    public void setBottomHeight(int bottomHeight) {
+        this.bottomHeight = bottomHeight;
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
@@ -90,22 +97,37 @@ public class PullImageView extends android.support.v7.widget.AppCompatImageView 
     }
 
     private void calc() {
-        viewTop = getHeight() - (imgHeight + pullHeight + (2 * diverWidth));
+        viewTop = getHeight() - (imgHeight + bottomHeight);
         int width = getWidth();
         int num = optionBeans.length;
         int totalWidth = num * imgWidth + (num - 1) * diverWidth;
         int leftX = (width - totalWidth) / 2;
         beanList = new ArrayList<>();
+        rightNum = 0;
         for (int i = 0; i < num; i++) {
-            Rect rect = new Rect(leftX + (i != 0 ? diverWidth : 0) + imgWidth * i, viewTop, leftX + (i != 0 ? diverWidth : 0) + imgWidth * (i + 1), imgHeight + viewTop);
+            Rect rect = new Rect(leftX + (imgWidth + diverWidth) * i, viewTop, leftX + (imgWidth + diverWidth) * i + imgWidth, imgHeight + viewTop);
+            if (optionBeans[i].isRight) {
+                rightNum++;
+            }
             beanList.add(new CoordinateBean(rect, optionBeans[i]));
         }
 
         pullTargetHashMap = new HashMap<>();
         pullBitmap = BitmapFactory.decodeResource(getResources(), pullImg);
         mPullSrcRect = new Rect(0, 0, pullBitmap.getWidth(), pullBitmap.getHeight());
-        int pullSrcLeftX = width / 2 - (pullWidth / 2);
-        pullTargetHashMap.put(PULL_TARGET_SRC, new Rect(pullSrcLeftX, viewTop + imgHeight + diverWidth * 2, pullSrcLeftX + pullWidth, imgHeight + diverWidth * 2 + pullHeight + viewTop));
+
+        //最下面
+//        int pullSrcLeftX = width / 2 - (pullWidth / 2);
+//        pullTargetHashMap.put(PULL_TARGET_SRC, new Rect(pullSrcLeftX, viewTop + imgHeight + diverWidth * 2, pullSrcLeftX + pullWidth, imgHeight + diverWidth * 2 + pullHeight + viewTop));
+        //右上角
+        int pullSrcLeftX = width - pullWidth / 2 - pullWidth;
+        int pullSrcTop = viewTop - pullWidth / 3 - pullWidth;
+        pullTargetHashMap.put(PULL_TARGET_SRC, new Rect(pullSrcLeftX, pullSrcTop, pullSrcLeftX + pullWidth, pullHeight + pullSrcTop));
+
+        if (onViewCreateListener != null) {
+            CoordinateBean coordinateBean = beanList.get(0);
+            onViewCreateListener.onViewCreate(coordinateBean.targetRect.left, coordinateBean.targetRect.bottom);
+        }
     }
 
     private boolean canMove;
@@ -125,7 +147,7 @@ public class PullImageView extends android.support.v7.widget.AppCompatImageView 
     }
 
     private void up() {
-        if (canMove) {
+        if (canMove && mMoveRect != null && beanList != null) {
             canMove = false;
             for (int i = 0; i < beanList.size(); i++) {
                 CoordinateBean coordinateBean = beanList.get(i);
@@ -137,13 +159,13 @@ public class PullImageView extends android.support.v7.widget.AppCompatImageView 
                         //拖到指定图片区域
                         int halfWidth = pullWidth / 2;
                         int halfHeight = pullHeight / 2;
-                        //回调
-                        if (onItemSelectListener != null) {
-                            onItemSelectListener.onItemSelect(i, coordinateBean.optionBean.isRight);
-                        }
                         //正确添加
                         if (coordinateBean.optionBean.isRight)
                             pullTargetHashMap.put(i + 1, new Rect(coordinateBean.targetRect.centerX() - halfWidth, coordinateBean.targetRect.centerY() - halfHeight, coordinateBean.targetRect.centerX() + halfWidth, coordinateBean.targetRect.centerY() + halfHeight));
+                        //回调
+                        if (onItemSelectListener != null) {
+                            onItemSelectListener.onItemSelect(i, coordinateBean.optionBean.isRight, pullTargetHashMap.size() == rightNum + 1);
+                        }
                         break;
                     }
                 }
@@ -209,32 +231,16 @@ public class PullImageView extends android.support.v7.widget.AppCompatImageView 
     }
 
     public interface OnItemSelectListener {
-        void onItemSelect(int pos, boolean right);
+        void onItemSelect(int pos, boolean right, boolean allRight);
     }
 
-    public static class OptionBean {
-        public OptionBean(int imgRes, boolean isRight) {
-            this.imgRes = imgRes;
-            this.isRight = isRight;
-        }
+    private OnViewCreateListener onViewCreateListener;
 
-        public int imgRes;
-        public boolean isRight;
+    public void setOnViewCreateListener(OnViewCreateListener onViewCreateListener) {
+        this.onViewCreateListener = onViewCreateListener;
+    }
 
-        public int getImgRes() {
-            return imgRes;
-        }
-
-        public void setImgRes(int imgRes) {
-            this.imgRes = imgRes;
-        }
-
-        public boolean isRight() {
-            return isRight;
-        }
-
-        public void setRight(boolean right) {
-            isRight = right;
-        }
+    public interface OnViewCreateListener {
+        void onViewCreate(int bottomX, int bottomY);
     }
 }
