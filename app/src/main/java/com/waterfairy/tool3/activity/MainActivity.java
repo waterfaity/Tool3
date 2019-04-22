@@ -23,8 +23,7 @@ public class MainActivity extends AppCompatActivity {
         ToastUtils.initToast(getApplicationContext());
         PermissionUtils.requestPermission(this, PermissionUtils.REQUEST_STORAGE);
         PermissionUtils.requestPermission(this, PermissionUtils.REQUEST_RECORD);
-        test();
-        test();
+
     }
 
     /**
@@ -60,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.ring_chart_view:
                 startActivity(new Intent(this, RingChartActivity.class));
+                break;
+            case R.id.wx_img:
+                startActivity(new Intent(this, WXCacheImgActivity.class));
                 break;
         }
     }

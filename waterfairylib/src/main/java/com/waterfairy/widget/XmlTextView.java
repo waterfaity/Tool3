@@ -12,11 +12,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.waterfairy.library.R;
 import com.waterfairy.utils.AssetsUtils;
 import com.waterfairy.xmlParser.XmlAttrBean;
 import com.waterfairy.xmlParser.XmlNodeBean;
 import com.waterfairy.xmlParser.XmlParser;
-import com.xueduoduo.jssecurityedu.R;
 
 import org.xmlpull.v1.XmlPullParserException;
 

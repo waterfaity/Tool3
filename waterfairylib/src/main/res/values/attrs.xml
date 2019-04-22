@@ -73,4 +73,16 @@
         <attr name="axisNum" format="integer"/>
     </declare-styleable>
 
+    <declare-styleable name="CornerView">
+        <attr name="cornerType" format="integer"/>
+        <attr name="cornerPosition">
+            <enum name="LT" value="0"/>
+            <enum name="RT" value="1"/>
+            <enum name="RB" value="2"/>
+            <enum name="LB" value="3"/>
+        </attr>
+        <attr name="cornerRadius" format="dimension"/>
+        <attr name="cornerColor" format="color"/>
+    </declare-styleable>
+
 </resources>

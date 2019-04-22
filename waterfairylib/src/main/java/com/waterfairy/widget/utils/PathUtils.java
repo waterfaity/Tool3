@@ -11,7 +11,7 @@ import android.graphics.RectF;
  */
 public class PathUtils {
     /**
-     * 指定 rect 内获取圆角
+     * 指定 rect 内获取圆角  四角+四边
      *
      * @param rect
      * @param radius
@@ -41,7 +41,17 @@ public class PathUtils {
         return path;
     }
 
+
+    /**
+     * 四角+四边
+     *
+     * @param rect
+     * @param radius
+     * @param corners 0,1,2,3
+     * @return
+     */
     public static Path getCorner(RectF rect, int radius, int... corners) {
+
         Path path = new Path();
         boolean isHas0 = false;
         boolean isHas1 = false;
@@ -98,6 +108,72 @@ public class PathUtils {
             path.quadTo(rect.left, rect.top, rect.left + radius, rect.top);
         } else {
             path.lineTo(rect.left, rect.top);
+        }
+        return path;
+    }
+
+    /**
+     * corner 外部
+     * 四角没有四边
+     *
+     * @param rect
+     * @param radius
+     * @param corners 0,1,2,3
+     * @return
+     */
+    public static Path getCornerOut(RectF rect, int radius, int... corners) {
+
+        Path path = new Path();
+        boolean isHas0 = false;
+        boolean isHas1 = false;
+        boolean isHas2 = false;
+        boolean isHas3 = false;
+        for (int corner : corners) {
+            switch (corner) {
+                case 0:
+                    isHas0 = true;
+                    break;
+                case 1:
+                    isHas1 = true;
+                    break;
+                case 2:
+                    isHas2 = true;
+                    break;
+                case 3:
+                    isHas3 = true;
+                    break;
+            }
+        }
+        if (isHas0) {
+            path.moveTo(rect.left, rect.top + radius);
+            path.addArc(new RectF(rect.left, rect.top, rect.left + radius * 2, rect.top + radius * 2), 180, 90);
+//            path.quadTo(rect.left, rect.top, rect.left + radius, rect.top);
+            path.lineTo(rect.left, rect.top);
+            path.lineTo(rect.left, rect.top + radius);
+        }
+        if (isHas1) {
+            path.moveTo(rect.right - radius, rect.top);
+//            path.quadTo(rect.right, rect.top, rect.right, rect.top + radius);
+            path.addArc(new RectF(rect.right - radius * 2, rect.top, rect.right, rect.top + radius * 2), 270, 90);
+
+            path.lineTo(rect.right, rect.top);
+            path.lineTo(rect.right - radius, rect.top);
+        }
+
+        if (isHas2) {
+            path.moveTo(rect.right, rect.bottom - radius);
+            path.addArc(new RectF(rect.right - radius * 2, rect.bottom - radius * 2, rect.right, rect.bottom), 0, 90);
+//            path.quadTo(rect.right, rect.bottom, rect.right - radius, rect.bottom);
+            path.lineTo(rect.right, rect.bottom);
+            path.lineTo(rect.right, rect.bottom - radius);
+        }
+
+        if (isHas3) {
+            path.moveTo(rect.left + radius, rect.bottom);
+            path.addArc(new RectF(rect.left, rect.bottom - radius * 2, rect.left + radius * 2, rect.bottom), 90, 90);
+//            path.quadTo(rect.left, rect.bottom, rect.left, rect.bottom - radius);
+            path.lineTo(rect.left, rect.bottom);
+            path.lineTo(rect.left + radius, rect.bottom);
         }
         return path;
     }

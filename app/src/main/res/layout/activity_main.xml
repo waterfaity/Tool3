@@ -72,6 +72,13 @@
                 android:onClick="onClick"
                 android:text="ring_chart_view"/>
 
+            <Button
+                android:id="@+id/wx_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="wx_img"/>
+
 
         </LinearLayout>
     </ScrollView>
