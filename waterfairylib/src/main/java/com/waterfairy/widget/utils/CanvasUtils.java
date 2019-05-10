@@ -6,6 +6,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.SweepGradient;
+import android.util.Log;
 
 /**
  * @author water_fairy
@@ -124,7 +126,13 @@ public class CanvasUtils {
         }
     }
 
-
+    /**
+     * @param canvas
+     * @param mTargetRect
+     * @param width
+     * @param height
+     * @param chartNum
+     */
     public static void drawChart(Canvas canvas, Rect mTargetRect, int width, int height, int chartNum) {
         if (width != 0 && height != 0) {
             float left = 0, right = width, top = 0, bottom = height;
@@ -152,6 +160,63 @@ public class CanvasUtils {
                 //y
                 canvas.drawLine(left + i * perWidth, top, left + i * perWidth, bottom, paintChart);
             }
+        }
+    }
+
+    /**
+     * 画阴影
+     *
+     * @param canvas      画布
+     * @param radiusBig   最大半径
+     * @param shadowWidth 阴影距离
+     * @param paint
+     */
+    public static void drawShadow(Canvas canvas, int radiusBig, int shadowWidth, Paint paint) {
+        drawShadow(canvas, radiusBig, shadowWidth, paint, Color.parseColor("#000000"), 8, 120, -120, new float[]{0.2F, 0.5F, 0.8F});
+    }
+
+    /**
+     * @param canvas      画布
+     * @param radiusBig   最大半径
+     * @param shadowWidth 阴影距离
+     * @param paint       画笔
+     * @param shadowColor 阴影颜色
+     * @param alphaStart  透明 开始
+     * @param alphaEnd    透明 结束
+     * @param rotate      旋转角度
+     * @param points      位置 大小范围:0-1   根据旋转角度确定具体位置
+     */
+    public static void drawShadow(Canvas canvas, int radiusBig, int shadowWidth, Paint paint, int shadowColor, int alphaStart, int alphaEnd, int rotate, float[] points) {
+        if (canvas == null || radiusBig <= 0 || shadowWidth <= 0) return;
+        if (paint == null) {
+            paint = new Paint();
+            paint.setAntiAlias(true);
+        }
+
+        //绘制阴影
+        paint.setStyle(Paint.Style.STROKE);
+        //旋转
+        canvas.rotate(rotate, radiusBig, radiusBig);
+        //中心颜色
+        for (int i = 0; i < shadowWidth; i++) {
+
+            //过度 radio:  0-1
+            float radio = (i + 1) / (float) shadowWidth;
+
+            //alpha 过度  0 - alphaStart
+            //alpha 过度  0 - alphaEnd
+            int alphaStartTemp = (int) (radio * alphaStart);
+            int alphaEndTemp = (int) (radio * alphaEnd);
+
+            //color 过度   colorStart
+            //color 过度   colorEnd
+            int colorStart = Color.argb(alphaStartTemp, Color.red(shadowColor), Color.green(shadowColor), Color.blue(shadowColor));
+            int colorEnd = Color.argb(alphaEndTemp, Color.red(shadowColor), Color.green(shadowColor), Color.blue(shadowColor));
+
+            SweepGradient sweepGradient = new SweepGradient(radiusBig, radiusBig,
+                    new int[]{colorStart, colorEnd, colorStart}, points);
+            paint.setShader(sweepGradient);
+            canvas.drawCircle(radiusBig, radiusBig, radiusBig - i, paint);
         }
     }
 }

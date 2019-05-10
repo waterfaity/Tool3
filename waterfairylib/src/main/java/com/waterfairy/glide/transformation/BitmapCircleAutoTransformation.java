@@ -74,7 +74,7 @@ public class BitmapCircleAutoTransformation extends BitmapTransformation {
         if (size < radius) {
             radius = size;
         }
-        return ImageUtils.round(source, radius, true,corners == null ? new int[]{0, 1, 2, 3} : corners  );
+        return ImageUtils.round(source, radius,   corners == null ? new int[]{0, 1, 2, 3} : corners  );
     }
 
     private Bitmap circleBitmap(BitmapPool bitmapPool, Bitmap source) {

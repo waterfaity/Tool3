@@ -11,6 +11,15 @@ public class AngleUtils {
 
     private static final String TAG = "angleUtils";
 
+    /**
+     * 两点计算斜率
+     *
+     * @param x
+     * @param y
+     * @param x1
+     * @param y1
+     * @return
+     */
     public static Float[] getLineK(float x, float y, float x1, float y1) {
         //斜率
         Float gradient = null;
@@ -71,7 +80,17 @@ public class AngleUtils {
 
     }
 
-    public static double getAngle(float x, float y, float centerX, float centerY, double transAngle) {
+    /**
+     * 根据两点(参考原点和指定点)确定角度
+     *
+     * @param x           touchX
+     * @param y           touchY
+     * @param centerX     原点x
+     * @param centerY     原点y
+     * @param rotateAngle 旋转角度
+     * @return
+     */
+    public static double getAngle(float x, float y, float centerX, float centerY, double rotateAngle) {
         float dy = y - centerY;
         float dx = x - centerX;
         double degrees = Math.toDegrees(Math.atan((dy) / dx));
@@ -87,9 +106,9 @@ public class AngleUtils {
             //四
             degrees = 360 - Math.abs(degrees);
         }
-        if (transAngle != 0) {
-            transAngle = -transAngle;
-            degrees = degrees + transAngle;
+        if (rotateAngle != 0) {
+            rotateAngle = -rotateAngle;
+            degrees = degrees + rotateAngle;
             if (degrees > 360) degrees = degrees - 360;
             else if (degrees < 0) degrees = 360 + degrees;
         }

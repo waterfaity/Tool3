@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,7 +13,7 @@ import com.waterfairy.utils.AngleUtils;
 
 public class AngleTestView extends View {
 
-    private final String TAG="angleTestView";
+    private final String TAG = "angleTestView";
     private int centerX;
     private int centerY;
 
@@ -22,14 +21,14 @@ public class AngleTestView extends View {
         super(context);
     }
 
-    public AngleTestView(Context context, @Nullable AttributeSet attrs) {
+    public AngleTestView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        if (event.getAction()==MotionEvent.ACTION_DOWN){
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
             move(event);
         }
         return true;
@@ -42,7 +41,7 @@ public class AngleTestView extends View {
         super.onDraw(canvas);
         Paint paint = new Paint();
         paint.setColor(Color.BLUE);
-        canvas.drawCircle(centerX,centerY,10,paint);
+        canvas.drawCircle(centerX, centerY, 10, paint);
     }
 
     private void move(MotionEvent event) {
@@ -52,25 +51,25 @@ public class AngleTestView extends View {
 //        Log.i(TAG, "move: "+lineK[0]+"  "+lineK[1]+"  "+lineK[2]);
 
 
-        double angle = AngleUtils.getAngle(x, y, centerX, centerY,-90);
+        double angle = AngleUtils.getAngle(x, y, centerX, centerY, -90);
 
-        int num=6 ;
-        float perAngle=360F/num;
+        int num = 6;
+        float perAngle = 360F / num;
         for (int i = 0; i < num; i++) {
             float startAngle = i * perAngle;
-            float endAngle = (i+1) * perAngle;
-            if (startAngle<angle&&angle<endAngle){
-                Log.i(TAG, "move: "+i);
+            float endAngle = (i + 1) * perAngle;
+            if (startAngle < angle && angle < endAngle) {
+//                Log.i(TAG, "move: " + i);
             }
         }
-//        Log.i(TAG, "move: "+((int)angle));
+        Log.i(TAG, "move: " + ((int) angle) + " x:" + x + "  y:" + y);
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
-        centerX=(right-left)/2;
-        centerY=(bottom-top)/2;
+        centerX = (right - left) / 2;
+        centerY = (bottom - top) / 2;
     }
 }

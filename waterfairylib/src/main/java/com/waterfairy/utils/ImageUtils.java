@@ -45,9 +45,12 @@ import java.io.IOException;
 public class ImageUtils {
     private static final String TAG = "imgUtils";
 
-
     public static boolean saveBitmap(String imgPath, Bitmap source) {
-        return saveBitmap(imgPath, source, Bitmap.CompressFormat.JPEG, 90);
+        return saveBitmap(imgPath, source, false);
+    }
+
+    public static boolean saveBitmap(String imgPath, Bitmap source, boolean recycler) {
+        return saveBitmap(imgPath, source, Bitmap.CompressFormat.JPEG, 90, recycler);
     }
 
     /**
@@ -60,6 +63,11 @@ public class ImageUtils {
      * @return
      */
     public static boolean saveBitmap(String imgPath, Bitmap source, Bitmap.CompressFormat compressFormat, int quality) {
+        return saveBitmap(imgPath, source, compressFormat, quality, false);
+    }
+
+    public static boolean saveBitmap(String imgPath, Bitmap source, Bitmap.CompressFormat compressFormat, int quality, boolean recycler) {
+        if (source == null || source.isRecycled()) return false;
         File file = new File(imgPath);
         boolean canSave = true;
         if (!file.exists()) {
@@ -86,6 +94,10 @@ public class ImageUtils {
                 file.delete();
                 canSave = false;
             }
+        }
+        if (recycler && !source.isRecycled()) {
+            source.recycle();
+            source = null;
         }
         return canSave;
     }
@@ -222,7 +234,7 @@ public class ImageUtils {
      * @param corners int[] {0,1,2,3} 左上,右上,右下,左下  顺时针
      * @return
      */
-    public static Bitmap round(Bitmap source, int radius, boolean recycleBitmap, int... corners) {
+    public static Bitmap round(Bitmap source, int radius, int... corners) {
         if (corners != null && radius != 0 && source != null && !source.isRecycled()) {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -237,10 +249,6 @@ public class ImageUtils {
             canvas.drawPath(cornerPath, paint);
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
             canvas.drawBitmap(source, null, rect, paint);
-            if (recycleBitmap && !source.isRecycled()) {
-                source.recycle();
-                source = null;
-            }
             return bitmap;
         }
         return source;
@@ -1036,6 +1044,20 @@ public class ImageUtils {
         if (bitmap != null) {
             Log.i(TAG, "getBitmapFromView: " + bitmap.getWidth() + "-" + bitmap.getHeight());
         }
+        return bitmap;
+    }
+
+    public static Bitmap getBitmapFromView2(View view) {
+
+        if (view == null) return null;
+        return getBitmapFromView2(view, view.getWidth(), view.getHeight());
+    }
+
+    public static Bitmap getBitmapFromView2(View view, int width, int height) {
+        if (view == null || width <= 0 || height <= 0) return null;
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
         return bitmap;
     }
 
