@@ -33,9 +33,9 @@ public class TagLayoutView extends ViewGroup {
         int childCount = getChildCount();
         int totalHeight = 0, totalWidth = 0;
         int childWidth = 0, childHeight = 0;
-        int rootViewWidth = getMeasuredWidth();
-
+        int rootViewWidth = getMeasuredWidth();//最大可用宽度
         int maxHeightInLine = 0;
+        int maxWidthInLine = 0;
         for (int i = 0; i < childCount; i++) {
             //获取子view
             View childView = getChildAt(i);
@@ -59,18 +59,23 @@ public class TagLayoutView extends ViewGroup {
             if (i == childCount - 1) {
                 totalHeight += maxHeightInLine;
             }
+            maxWidthInLine = Math.max(totalWidth, maxWidthInLine);
         }
 
         //计算布局总宽/高度
         int height = 0;
-        if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY) {
+        int modeHeight = MeasureSpec.getMode(heightMeasureSpec);
+        if (modeHeight== MeasureSpec.EXACTLY) {
             height = MeasureSpec.getSize(heightMeasureSpec);
         } else {
             height = totalHeight;
         }
         int width = 0;
-        if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY) {
+        int mode = MeasureSpec.getMode(widthMeasureSpec);
+        if (mode == MeasureSpec.EXACTLY) {
             width = MeasureSpec.getSize(widthMeasureSpec);
+        } else if (mode == MeasureSpec.AT_MOST) {
+            width = maxWidthInLine;
         } else {
             width = rootViewWidth;
         }
@@ -95,4 +100,5 @@ public class TagLayoutView extends ViewGroup {
             view.layout(location[0], location[1], location[2], location[3]);
         }
     }
+
 }

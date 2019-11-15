@@ -63,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.wx_img:
                 startActivity(new Intent(this, WXCacheImgActivity.class));
                 break;
+            case R.id.location:
+                startActivity(new Intent(this, LocationActivity.class));
+                break;
         }
     }
 }
