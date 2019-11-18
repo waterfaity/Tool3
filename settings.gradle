@@ -1,1 +1,1 @@
-include ':app', ':waterfairylib'
+include ':app', ':waterfairylib','baidulocation'

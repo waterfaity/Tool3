@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.icu.text.UFormat;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -14,7 +13,9 @@ import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author water_fairy
@@ -25,14 +26,16 @@ import java.util.List;
 public class LocationTool {
 
 
-    public static final int ERROR_NO_PERMISSION = 1;
-    public static final int ERROR_ACTIVITY_IS_EMPTY = 2;
-    public static final int ERROR_NO_PROVIDER_CAN_USE = 3;
-    private static final String TAG = "LocationTool";
+    public static final int ERROR_NO_PERMISSION = 1;//没有权限
+    public static final int ERROR_ACTIVITY_IS_EMPTY = 2;//页面已销毁
+    public static final int ERROR_NO_PROVIDER_CAN_USE = 3;//没有位置获取途径
+    public static final int ERROR_WAITING_FRESH = 4;//等待刷新
+    public static final int ERROR_EREOR_LOCATION_DISABLE = 5;//位置定位未打开
+    private static final String TAG = "ContentValues";
     private OnGetLocationListener onGetLocationListener;
     private LocationManager locationManager;
-    private LocationListener listener;
-    private LocationListener noListener;
+    private HashMap<String, LocationListener> listenerHashMap;
+    //    private LocationListener noListener;
     private Activity activity;
 
     public LocationTool setOnGetLocationListener(OnGetLocationListener onGetLocationListener) {
@@ -43,7 +46,7 @@ public class LocationTool {
     public interface OnGetLocationListener {
         void onGetLocation(Location location);
 
-        void onGetLocationError(int errCode);
+        void onGetLocationError(int errCode, String msg);
     }
 
     private LocationTool() {
@@ -54,6 +57,12 @@ public class LocationTool {
         return new LocationTool();
     }
 
+    /**
+     * 定位
+     *
+     * @param activity
+     * @return
+     */
     public void location(Activity activity) {
         if (activity != null) {
             this.activity = activity;
@@ -61,74 +70,66 @@ public class LocationTool {
                     //请求权限
                     ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 10010);
-                onGetLocationListener.onGetLocationError(ERROR_NO_PERMISSION);
+                onGetLocationListener.onGetLocationError(ERROR_NO_PERMISSION, "没有权限");
             } else {
                 if (locationManager == null)
                     locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
-                if (listener != null && locationManager != null) {
-                    locationManager.removeUpdates(listener);
-                }
+                releaseListener();
+                //获取最优provide
+                String provider = locationManager.getBestProvider(getCriteria(), true);
 
-                if (locationManager != null) {
-                    String provider = locationManager.getBestProvider(getCriteria(), true);
-
-                    if (!TextUtils.isEmpty(provider)) {
-                        Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
-                        if (lastKnownLocation != null) {
-                            if (onGetLocationListener != null) {
-                                onGetLocationListener.onGetLocation(lastKnownLocation);
+                if (!TextUtils.isEmpty(provider)) {
+                    Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
+                    if (lastKnownLocation == null) {
+                        List<String> allProviders = locationManager.getAllProviders();
+                        for (String providerTemp : allProviders) {
+                            Location lastKnownLocationTemp = locationManager.getLastKnownLocation(providerTemp);
+                            if (lastKnownLocationTemp != null) {
+                                lastKnownLocation = lastKnownLocationTemp;
+                                break;
                             }
-                            locationManager.requestLocationUpdates(provider, 1000, 0, noListener = getNoListener());
-                        } else {
-                            locationManager.requestLocationUpdates(provider, 1000, 0, listener = getLocationUpdateListener());
+                        }
+                    }
+                    if (lastKnownLocation != null) {
+                        if (onGetLocationListener != null) {
+                            onGetLocationListener.onGetLocation(lastKnownLocation);
                         }
                     } else {
-                        onGetLocationListener.onGetLocationError(ERROR_NO_PROVIDER_CAN_USE);
+                        onGetLocationListener.onGetLocationError(ERROR_WAITING_FRESH, "等待刷新");
+                        if (listenerHashMap == null) {
+                            listenerHashMap = new HashMap<>();
+                        }
+                        List<String> allProviders = locationManager.getAllProviders();
+                        for (String providerTemp : allProviders) {
+                            Log.i(TAG, "location: requestLocationUpdates " + providerTemp);
+                            LocationListener updateListener = getLocationUpdateListener();
+                            listenerHashMap.put(providerTemp, updateListener);
+                            locationManager.requestLocationUpdates(providerTemp, 1000, 0, updateListener);
+                        }
                     }
+                } else {
+                    onGetLocationListener.onGetLocationError(ERROR_NO_PROVIDER_CAN_USE, "位置信息获取途径不可用");
                 }
             }
         } else {
-            onGetLocationListener.onGetLocationError(ERROR_ACTIVITY_IS_EMPTY);
+            onGetLocationListener.onGetLocationError(ERROR_ACTIVITY_IS_EMPTY, "没有权限");
         }
     }
 
-    private LocationListener getNoListener() {
-        return new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-
-                if (noListener != null) {
-                    locationManager.removeUpdates(noListener);
-                    noListener = null;
-                }
+    private void releaseListener() {
+        if (listenerHashMap != null && locationManager != null) {
+            Set<String> strings = listenerHashMap.keySet();
+            for (String provider : strings) {
+                locationManager.removeUpdates(listenerHashMap.get(provider));
             }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-                Log.i(TAG, "onStatusChanged: ");
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                Log.i(TAG, "onProviderEnabled: `");
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                Log.i(TAG, "onProviderDisabled: ");
-            }
-        };
+            listenerHashMap.clear();
+        }
     }
 
     public void release() {
         if (locationManager != null) {
-            if (noListener != null) {
-                locationManager.removeUpdates(noListener);
-            }
-            if (listener != null) {
-                locationManager.removeUpdates(listener);
-            }
+            releaseListener();
             locationManager = null;
             activity = null;
         }
@@ -138,29 +139,32 @@ public class LocationTool {
         return new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-
-                if (onGetLocationListener != null && activity != null) {
-                    onGetLocationListener.onGetLocation(location);
-                }
-                if (listener != null) {
-                    locationManager.removeUpdates(listener);
-                    listener = null;
+                if (listenerHashMap != null) {
+                    LocationListener locationListener = listenerHashMap.get(location.getProvider());
+                    if (locationListener != null) {
+                        locationManager.removeUpdates(locationListener);
+                        listenerHashMap.remove(location.getProvider());
+                        if (onGetLocationListener != null && activity != null) {
+                            onGetLocationListener.onGetLocation(location);
+                        }
+                    }
                 }
             }
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-                Log.i(TAG, "onStatusChanged: ");
+
             }
 
             @Override
             public void onProviderEnabled(String provider) {
-                Log.i(TAG, "onProviderEnabled: `");
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-                Log.i(TAG, "onProviderDisabled: ");
+                if (onGetLocationListener != null) {
+                    onGetLocationListener.onGetLocationError(ERROR_EREOR_LOCATION_DISABLE, "定位未打开");
+                }
             }
         };
     }
