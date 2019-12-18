@@ -1,4 +1,4 @@
-package com.waterfairy.utils;
+package com.waterfairy.location;
 
 public class GpsTransUtils {
     public static double pi = 3.1415926535897932384626;
