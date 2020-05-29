@@ -1,6 +1,5 @@
 package com.waterfairy.tool3.recyclerview;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;

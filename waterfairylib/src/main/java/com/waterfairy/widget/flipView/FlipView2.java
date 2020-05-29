@@ -9,7 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.support.v4.util.LruCache;
+import androidx.collection.LruCache;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;

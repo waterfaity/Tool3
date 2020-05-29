@@ -15,13 +15,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.support.annotation.RequiresPermission;
+import androidx.annotation.RequiresPermission;
 import android.util.Log;
 
 import java.util.HashMap;
 import java.util.UUID;
-
-import static android.Manifest.permission.BLUETOOTH;
 
 /**
  * Created by water_fairy on 2016/11/14.

@@ -2,14 +2,12 @@ package com.waterfairy.tool3.activity;
 
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.cloud.classroom.audiorecord.lame.RecMicToMp3;
 import com.waterfairy.tool3.R;
-
-import java.util.Date;
 
 public class RecordActivity extends AppCompatActivity {
     private static final String TAG = "RecordActivity";

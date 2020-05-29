@@ -10,7 +10,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;

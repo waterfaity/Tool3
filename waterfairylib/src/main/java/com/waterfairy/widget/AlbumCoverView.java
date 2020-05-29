@@ -19,7 +19,7 @@ import com.waterfairy.widget.utils.CanvasUtils;
  * @date 2019/4/25 09:55
  * @info:
  */
-public class AlbumCoverView extends android.support.v7.widget.AppCompatImageView {
+public class AlbumCoverView extends androidx.appcompat.widget.AppCompatImageView {
     private static final String TAG = "album";
     Runnable runnable;
     Handler handler;//计时

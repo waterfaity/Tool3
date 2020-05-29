@@ -3,7 +3,9 @@ package com.waterfairy.tool3.activity;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
 
 import com.waterfairy.tool3.R;
@@ -36,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.test:
+                startActivity(new Intent(this, TestActivity.class));
+                break;
             case R.id.mp3:
                 startActivity(new Intent(this, Mp3Activity.class));
                 break;
@@ -65,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.location:
                 startActivity(new Intent(this, LocationActivity.class));
+                break;
+            case R.id.matrix:
+                startActivity(new Intent(this, MatrixActivity.class));
                 break;
         }
     }

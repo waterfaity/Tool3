@@ -10,7 +10,7 @@ import android.graphics.Path;
 import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.waterfairy.library.R;

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.waterfairy.tool3.activity.MatrixActivity">
+
+    <LinearLayout
+        android:id="@+id/line1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="scale_x"
+                android:textColor="#000" />
+
+            <EditText
+                android:id="@+id/et_scale_x"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="#44000000"
+                android:inputType="numberDecimal"
+                android:text="1" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="scale_y"
+                android:textColor="#000" />
+
+            <EditText
+                android:id="@+id/et_scale_y"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="#44000000"
+                android:inputType="numberDecimal"
+                android:text="1" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="skew_x"
+                android:textColor="#000" />
+
+            <EditText
+                android:id="@+id/et_skew_x"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="#44000000"
+                android:inputType="numberDecimal"
+                android:text="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="skew_y"
+                android:textColor="#000" />
+
+            <EditText
+                android:id="@+id/et_skew_y"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="#44000000"
+                android:inputType="numberDecimal"
+                android:text="0" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="trans_x"
+                android:textColor="#000" />
+
+            <EditText
+                android:id="@+id/et_trans_x"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="#44000000"
+                android:inputType="numberDecimal"
+                android:text="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="trans_y"
+                android:textColor="#000" />
+
+            <EditText
+                android:id="@+id/et_trans_y"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="#44000000"
+                android:inputType="numberDecimal"
+                android:text="0" />
+
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/cb_scale_x"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:checked="true"
+                android:textColor="#000" />
+
+            <CheckBox
+                android:id="@+id/cb_scale_y"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:checked="true"
+                android:textColor="#000" />
+
+            <CheckBox
+                android:id="@+id/cb_skew_x"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:checked="true"
+                android:textColor="#000" />
+
+            <CheckBox
+                android:id="@+id/cb_skew_y"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:checked="true"
+                android:textColor="#000" />
+
+            <CheckBox
+                android:id="@+id/cb_trans_x"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:checked="true"
+                android:textColor="#000" />
+
+            <CheckBox
+                android:id="@+id/cb_trans_y"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:checked="true"
+                android:textColor="#000" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/line1"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right|end"
+            android:minWidth="100dp"
+            android:paddingRight="10dp"
+            android:text="日志信息"
+            android:textColor="#990000"
+            android:textSize="8dp" />
+    </ScrollView>
+
+    <!--    set-->
+    <Button
+        android:id="@+id/set"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="set"
+        android:text="set"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bt_select_img" />
+
+    <!--    pre-->
+    <Button
+        android:id="@+id/pre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="pre"
+        android:text="pre"
+        app:layout_constraintLeft_toRightOf="@+id/set"
+        app:layout_constraintTop_toBottomOf="@+id/bt_select_img" />
+
+    <!--    post-->
+    <Button
+        android:id="@+id/bt_commit_post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="post"
+        android:text="post"
+        app:layout_constraintLeft_toRightOf="@+id/pre"
+        app:layout_constraintTop_toBottomOf="@+id/bt_select_img" />
+
+
+    <!--    reset-->
+    <Button
+        android:id="@+id/bt_reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="reset"
+        android:text="reset"
+        app:layout_constraintLeft_toRightOf="@+id/bt_select_img"
+        app:layout_constraintTop_toBottomOf="@+id/line1" />
+
+    <!--select img-->
+    <Button
+        android:id="@+id/bt_select_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="selectImg"
+        android:text="selectImg"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line1" />
+
+    <com.waterfairy.imageselect.widget.ZoomImageView
+        android:id="@+id/iv_img"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="80dp"
+        android:src="@mipmap/ic_launcher"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/set" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

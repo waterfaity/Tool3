@@ -4,8 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Environment;
-import android.support.annotation.RequiresPermission;
-import android.support.v4.app.ActivityCompat;
+import androidx.annotation.RequiresPermission;
+import androidx.core.app.ActivityCompat;
 import android.text.TextUtils;
 
 import java.io.File;

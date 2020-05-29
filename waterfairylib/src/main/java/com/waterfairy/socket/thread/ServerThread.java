@@ -1,6 +1,6 @@
 package com.waterfairy.socket.thread;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.waterfairy.socket.listener.SocketServerListener;

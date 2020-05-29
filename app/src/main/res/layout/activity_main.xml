@@ -17,6 +17,13 @@
             android:orientation="vertical">
 
             <Button
+                android:id="@+id/test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="test" />
+
+            <Button
                 android:id="@+id/mp3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,6 +95,12 @@
                 android:text="location" />
 
 
+            <Button
+                android:id="@+id/matrix"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="matrix" />
 
 
         </LinearLayout>
@@ -103,7 +116,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
 
 
         </LinearLayout>

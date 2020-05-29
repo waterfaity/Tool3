@@ -12,7 +12,7 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 

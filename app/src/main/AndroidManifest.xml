@@ -119,20 +119,18 @@
         <activity
             android:name=".activity.WXCacheImgActivity"
             android:label="@string/title_activity_wxcache_img"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="cBtAiwPzIL0AcfGMejEk9LorX6Ys4wA9" />
 
-        //
-
 
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote"></service>
+            android:process=":remote" />
 
     </application>
 

@@ -21,7 +21,7 @@ import java.util.List;
  * @date 2018/7/28 17:28
  * @info:
  */
-public class PullImageView extends android.support.v7.widget.AppCompatImageView implements View.OnTouchListener {
+public class PullImageView extends androidx.appcompat.widget.AppCompatImageView implements View.OnTouchListener {
     private int pullImg;
     private OptionBean[] optionBeans;
     private boolean hasInit;

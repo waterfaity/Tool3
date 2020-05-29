@@ -1,10 +1,9 @@
 package com.waterfairy.tool3.activity;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.waterfairy.tool3.R;
 import com.waterfairy.utils.PermissionUtils;

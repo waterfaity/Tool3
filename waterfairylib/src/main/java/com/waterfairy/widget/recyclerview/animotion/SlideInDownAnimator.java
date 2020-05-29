@@ -16,8 +16,8 @@ package com.waterfairy.widget.recyclerview.animotion;
  * limitations under the License.
  */
 
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
+import androidx.core.view.ViewCompat;
+
 import android.view.animation.Interpolator;
 
 //import jp.wasabeef.recyclerview.animators.BaseItemAnimator;
