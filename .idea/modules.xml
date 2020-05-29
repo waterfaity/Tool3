@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Tool3.iml" filepath="$PROJECT_DIR$/Tool3.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/baidulocation/baidulocation.iml" filepath="$PROJECT_DIR$/baidulocation/baidulocation.iml" />
-      <module fileurl="file://$PROJECT_DIR$/waterfairylib/waterfairylib.iml" filepath="$PROJECT_DIR$/waterfairylib/waterfairylib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Tool3.iml" filepath="$PROJECT_DIR$/Tool3.iml" group="Tool3" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Tool3/app" />
+      <module fileurl="file://$PROJECT_DIR$/baidulocation/baidulocation.iml" filepath="$PROJECT_DIR$/baidulocation/baidulocation.iml" group="Tool3/baidulocation" />
+      <module fileurl="file://$PROJECT_DIR$/waterfairylib/waterfairylib.iml" filepath="$PROJECT_DIR$/waterfairylib/waterfairylib.iml" group="Tool3/waterfairylib" />
     </modules>
   </component>
 </project>
