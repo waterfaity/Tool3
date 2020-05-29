@@ -24,13 +24,11 @@ import java.util.Set;
  * @info:
  */
 public class LocationTool {
-
-
     public static final int ERROR_NO_PERMISSION = 1;//没有权限
     public static final int ERROR_ACTIVITY_IS_EMPTY = 2;//页面已销毁
     public static final int ERROR_NO_PROVIDER_CAN_USE = 3;//没有位置获取途径
     public static final int ERROR_WAITING_FRESH = 4;//等待刷新
-    public static final int ERROR_EREOR_LOCATION_DISABLE = 5;//位置定位未打开
+    public static final int ERROR_LOCATION_DISABLE = 5;//位置定位未打开
     private static final String TAG = "ContentValues";
     private OnGetLocationListener onGetLocationListener;
     private LocationManager locationManager;
@@ -163,7 +161,7 @@ public class LocationTool {
             @Override
             public void onProviderDisabled(String provider) {
                 if (onGetLocationListener != null) {
-                    onGetLocationListener.onGetLocationError(ERROR_EREOR_LOCATION_DISABLE, "定位未打开");
+                    onGetLocationListener.onGetLocationError(ERROR_LOCATION_DISABLE, "定位未打开");
                 }
             }
         };
