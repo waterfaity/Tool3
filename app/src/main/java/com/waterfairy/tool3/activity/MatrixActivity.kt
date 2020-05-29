@@ -125,6 +125,7 @@ class MatrixActivity : AppCompatActivity() {
             getMatrixTemp().postScale(scaleX, scaleY)
         }
 
+
         //倾斜
         var skewX = et_skew_x.text.toString().toFloat()
         var skewY = et_skew_y.text.toString().toFloat()
