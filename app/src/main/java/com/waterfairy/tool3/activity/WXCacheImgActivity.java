@@ -2,9 +2,6 @@ package com.waterfairy.tool3.activity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class WXCacheImgActivity extends AppCompatActivity {
     private GridView gridView;
@@ -65,7 +64,7 @@ public class WXCacheImgActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 File file = imgFiles.get(position);
                 try {
-                    FileUtils.copyFile(file.getAbsolutePath(),"/sdcard/WeixinImg/"+file.getName()+".jpg");
+                    FileUtils.copyFile(file.getAbsolutePath(), "/sdcard/Android/data/com.tencent.mm/MicroMsg/" + file.getName() + ".jpg");
                     ToastUtils.show("保存ok");
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -92,7 +91,7 @@ public class WXCacheImgActivity extends AppCompatActivity {
             }
 
             private void search(AsyncTask<Void, Void, Void> asyncTask) {
-                String path = "/sdcard/Tencent/MicroMsg";
+                String path = "/sdcard/Android/data/com.tencent.mm/MicroMsg";
                 List<File> searchPaths = new ArrayList<>();
 
                 File file = new File(path);
@@ -100,7 +99,7 @@ public class WXCacheImgActivity extends AppCompatActivity {
                 for (int i = 0; i < files.length; i++) {
                     File file1 = files[i];
                     if (file1.isDirectory() && file1.getName().length() > 30) {
-                        searchPaths.add(new File(file1,"image2"));
+                        searchPaths.add(new File(file1, "image2"));
                     }
                 }
 

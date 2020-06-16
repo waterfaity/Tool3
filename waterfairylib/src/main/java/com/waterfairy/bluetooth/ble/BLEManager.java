@@ -14,17 +14,20 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.IBinder;
-import androidx.annotation.RequiresPermission;
 import android.util.Log;
 
 import java.util.HashMap;
 import java.util.UUID;
 
+import androidx.annotation.RequiresApi;
+
 /**
  * Created by water_fairy on 2016/11/14.
  */
 
+@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BLEManager {
     private final static BLEManager BLE_MANAGER = new BLEManager();
     private static final String TAG = "bleManager";

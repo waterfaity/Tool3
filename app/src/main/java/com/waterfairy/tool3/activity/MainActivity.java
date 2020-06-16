@@ -3,9 +3,6 @@ package com.waterfairy.tool3.activity;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.view.View;
 
 import com.waterfairy.tool3.R;
@@ -13,6 +10,8 @@ import com.waterfairy.tool3.recyclerview.RecyclerViewActivity;
 import com.waterfairy.utils.PermissionUtils;
 import com.waterfairy.utils.RingTonUtils;
 import com.waterfairy.utils.ToastUtils;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -73,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.matrix:
                 startActivity(new Intent(this, MatrixActivity.class));
+                break;
+            case R.id.bluetooth:
+                startActivity(new Intent(this, BluetoothActivity.class));
                 break;
         }
     }

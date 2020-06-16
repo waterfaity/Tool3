@@ -102,6 +102,13 @@
                 android:onClick="onClick"
                 android:text="matrix" />
 
+            <Button
+                android:id="@+id/bluetooth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="bluetooth" />
+
 
         </LinearLayout>
     </ScrollView>

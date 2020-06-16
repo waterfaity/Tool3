@@ -11,12 +11,15 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.UUID;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import static android.content.ContentValues.TAG;
 
@@ -24,6 +27,7 @@ import static android.content.ContentValues.TAG;
  * Created by water_fairy on 2016/11/14.
  */
 
+@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BLEService extends Service {
     private String address;
     private BluetoothAdapter bluetoothAdapter;
