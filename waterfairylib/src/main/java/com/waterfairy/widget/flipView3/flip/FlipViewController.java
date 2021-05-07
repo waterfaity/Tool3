@@ -39,7 +39,7 @@ import android.widget.AdapterView;
 import com.waterfairy.library.R;
 import com.waterfairy.widget.flipView3.utils.AphidLog;
 
-import junit.framework.Assert;
+//import junit.framework.Assert;
 
 import java.util.LinkedList;
 
@@ -297,7 +297,7 @@ public class FlipViewController extends AdapterView<Adapter> {
             this.adapter.unregisterDataSetObserver(adapterDataObserver);
         }
 
-        Assert.assertNotNull("adapter should not be null", adapter);
+//        Assert.assertNotNull("adapter should not be null", adapter);
 
         this.adapter = adapter;
         adapterDataCount = adapter.getCount();
@@ -321,7 +321,7 @@ public class FlipViewController extends AdapterView<Adapter> {
             return;
         }
 
-        Assert.assertTrue("Invalid selection position", position >= 0 && position < adapterDataCount);
+//        Assert.assertTrue("Invalid selection position", position >= 0 && position < adapterDataCount);
 
         releaseViews();
 
@@ -471,7 +471,7 @@ public class FlipViewController extends AdapterView<Adapter> {
      * @param view
      */
     private void releaseView(View view) {
-        Assert.assertNotNull(view);
+//        Assert.assertNotNull(view);
         detachViewFromParent(view);
         addReleasedView(view);
     }
@@ -482,7 +482,7 @@ public class FlipViewController extends AdapterView<Adapter> {
      * @param view
      */
     private void addReleasedView(View view) {
-        Assert.assertNotNull(view);
+//        Assert.assertNotNull(view);
         if (releasedViews.size() < MAX_RELEASED_VIEW_SIZE) {
             releasedViews.add(view);
         }
@@ -496,7 +496,7 @@ public class FlipViewController extends AdapterView<Adapter> {
      * @return
      */
     private View viewFromAdapter(int position, boolean addToTop) {
-        Assert.assertNotNull(adapter);
+//        Assert.assertNotNull(adapter);
 
         View releasedView = releasedViews.isEmpty() ? null : releasedViews.removeFirst();
 
@@ -594,7 +594,7 @@ public class FlipViewController extends AdapterView<Adapter> {
                         adapterIndex);
             }
         } else {
-            Assert.fail("Invalid indexInAdapter: " + indexInAdapter);
+//            Assert.fail("Invalid indexInAdapter: " + indexInAdapter);
         }
         //debugBufferedViews();
     }

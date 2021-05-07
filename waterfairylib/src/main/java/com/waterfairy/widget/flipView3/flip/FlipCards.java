@@ -25,7 +25,7 @@ import com.waterfairy.widget.flipView3.utils.AphidLog;
 import com.waterfairy.widget.flipView3.utils.TextureUtils;
 import com.waterfairy.widget.flipView3.utils.UI;
 
-import junit.framework.Assert;
+//import junit.framework.Assert;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -183,7 +183,7 @@ public class FlipCards {
                 accumulatedAngle += delta;
 
                 if (oldAngle < 0) { //bouncing back after flip backward and over the first page
-                    Assert.assertTrue(forward);
+//                    Assert.assertTrue(forward);
                     if (accumulatedAngle >= 0) {
                         accumulatedAngle = 0;
                         setState(STATE_INIT);
@@ -191,16 +191,16 @@ public class FlipCards {
                 } else {
                     if (frontCards.getIndex() == maxIndex - 1 && oldAngle > frontCards.getIndex()
                             * 180) { //bouncing back after flip forward and over the last page
-                        Assert.assertTrue(!forward);
+//                        Assert.assertTrue(!forward);
                         if (accumulatedAngle <= frontCards.getIndex() * 180) {
                             setState(STATE_INIT);
                             accumulatedAngle = frontCards.getIndex() * 180;
                         }
                     } else {
                         if (forward) {
-                            Assert.assertTrue(
-                                    "index of backCards should not be -1 when automatically flipping forward",
-                                    backCards.getIndex() != -1);
+//                            Assert.assertTrue(
+//                                    "index of backCards should not be -1 when automatically flipping forward",
+//                                    backCards.getIndex() != -1);
                             if (accumulatedAngle >= backCards.getIndex() * 180) { //moved to the next page
                                 accumulatedAngle = backCards.getIndex() * 180;
                                 setState(STATE_INIT);

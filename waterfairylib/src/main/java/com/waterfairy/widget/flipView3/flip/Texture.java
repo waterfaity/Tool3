@@ -6,7 +6,7 @@ import android.opengl.GLUtils;
 
 import com.waterfairy.widget.flipView3.utils.AphidLog;
 
-import junit.framework.Assert;
+//import junit.framework.Assert;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -56,9 +56,9 @@ public class Texture {
     public static Texture createTexture(Bitmap bitmap, FlipRenderer renderer, GL10 gl) {
         Texture t = new Texture();
         t.renderer = renderer;
-
-        Assert.assertTrue("bitmap should not be null or recycled",
-                bitmap != null && !bitmap.isRecycled());
+//
+//        Assert.assertTrue("bitmap should not be null or recycled",
+//                bitmap != null && !bitmap.isRecycled());
 
         int potW = Integer.highestOneBit(bitmap.getWidth() - 1) << 1;
         int potH = Integer.highestOneBit(bitmap.getHeight() - 1) << 1;
