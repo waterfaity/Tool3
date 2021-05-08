@@ -48,13 +48,18 @@ public class LocationTool {
         return new LocationTool();
     }
 
+
+    public void location(Activity activity) {
+        location(activity, false);
+    }
+
     /**
      * 定位
      *
      * @param activity
      * @return
      */
-    public void location(Activity activity) {
+    public void location(Activity activity, boolean useLast) {
         if (activity != null) {
             this.activity = activity;
             if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -70,7 +75,25 @@ public class LocationTool {
                     listenerHashMap = new HashMap<>();
                 }
 
+
                 java.util.List<String> allProviders = locationManager.getAllProviders();
+
+                if (useLast) {
+                    Location lastKnownLocation = null;
+                    if (allProviders.contains(LocationManager.GPS_PROVIDER)) {
+                        lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    }
+                    if (lastKnownLocation == null && allProviders.contains(LocationManager.NETWORK_PROVIDER)) {
+                        lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    }
+                    if (lastKnownLocation == null && allProviders.contains(LocationManager.PASSIVE_PROVIDER)) {
+                        lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                    }
+                    if (lastKnownLocation != null && onGetLocationListener != null && activity != null) {
+                        onGetLocationListener.onGetLocation(lastKnownLocation);
+                    }
+                }
+
                 if (allProviders != null && allProviders.size() != 0) {
                     for (String providerTemp : allProviders) {
                         LocationListener updateListener = generateLocationUpdateListener();
@@ -144,5 +167,4 @@ public class LocationTool {
             listenerHashMap.clear();
         }
     }
-
 }
