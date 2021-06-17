@@ -14,7 +14,6 @@ public class ViewTouchRotateTool {
     private OnRotateListener onRotateListener;
     private GestureFlingRotateTool gestureFlingRotateTool;
     private float cx, cy;
-    private float currentAngle;
     private Float lastAngle;
 
     public ViewTouchRotateTool setOnRotateListener(OnRotateListener onRotateListener) {
@@ -115,9 +114,8 @@ public class ViewTouchRotateTool {
     private GestureFlingRotateTool.OnFlingListener generateFlingListener() {
         return new GestureFlingRotateTool.OnFlingListener() {
             @Override
-            public void onFling(float angle, float dAngle) {
-                currentAngle += dAngle;
-                if (onRotateListener != null) onRotateListener.onRotate(angle, dAngle);
+            public void onFling(float dAngle) {
+                if (onRotateListener != null) onRotateListener.onRotate(dAngle);
             }
 
             @Override
@@ -129,13 +127,28 @@ public class ViewTouchRotateTool {
 
 
     private void calcRotate(float touchX, float touchY) {
+        int addAngle;
+        if (touchY > cy) {
+            if (touchX > cx) {
+                addAngle = 0;
+            } else {
+                addAngle = 180;
+            }
+        } else {
+            if (touchX > cx) {
+                addAngle = 360;
+            } else {
+                addAngle = 180;
+            }
+        }
+
         float dx = touchX - cx;
         float dy = touchY - cy;
-        float angle = (float) Math.toDegrees(Math.atan(dy / dx));
+        float angle = (float) Math.toDegrees(Math.atan(dy / dx)) + addAngle;
+
         if (lastAngle != null) {
             float dAngle = angle - lastAngle;
-            currentAngle += dAngle;
-            if (onRotateListener != null) onRotateListener.onRotate(currentAngle, dAngle);
+            if (onRotateListener != null) onRotateListener.onRotate(dAngle);
         }
         lastAngle = angle;
     }
@@ -145,6 +158,6 @@ public class ViewTouchRotateTool {
      */
     public interface OnRotateListener {
         //旋转角度
-        void onRotate(float angle, float dAngle);
+        void onRotate(float dAngle);
     }
 }

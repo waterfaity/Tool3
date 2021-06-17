@@ -62,9 +62,6 @@ public class GestureFlingRotateTool {
         private final MotionEvent endEvent;
         private final float velocityRotate;//起始旋转速度
 
-
-        private float currentAngle;
-
         private OnFlingListener onFlingListener;
         private long currentTime;
 
@@ -131,11 +128,8 @@ public class GestureFlingRotateTool {
 
                     //位移=当前速度*时间差
                     float dAngle = velocityRotate * radio * (dTime / 1000F) / 2;
-
-                    //计算当前坐标
-                    currentAngle += dAngle;
                     if (onFlingListener != null)
-                        onFlingListener.onFling(currentAngle, dAngle);
+                        onFlingListener.onFling(dAngle);
                 }
             });
 
@@ -175,10 +169,9 @@ public class GestureFlingRotateTool {
 
     public interface OnFlingListener {
         /**
-         * @param angle  滚动角度
          * @param dAngle 差异角度
          */
-        void onFling(float angle, float dAngle);
+        void onFling(float dAngle);
 
         void onFlingEnd();
     }
