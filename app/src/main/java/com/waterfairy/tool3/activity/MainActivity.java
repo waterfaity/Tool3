@@ -76,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.bluetooth:
                 startActivity(new Intent(this, BluetoothActivity.class));
                 break;
+            case R.id.view_touch_rotate:
+                startActivity(new Intent(this, ViewTouchRotateActivity.class));
+                break;
         }
     }
 }

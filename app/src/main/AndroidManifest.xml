@@ -23,8 +23,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.BluetoothActivity"></activity>
-        <activity android:name=".activity.LocationActivity"></activity>
+        <activity android:name=".activity.ViewTouchRotateActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.BluetoothActivity" />
+        <activity android:name=".activity.LocationActivity" />
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -112,11 +118,13 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="cBtAiwPzIL0AcfGMejEk9LorX6Ys4wA9" />
-        <receiver android:name="com.waterfairy.tool3.activity.MediaButtonBroadcastReceiver">
+
+        <receiver android:name=".activity.MediaButtonBroadcastReceiver">
             <intent-filter>
                 <action android:name="jj.jj.jj.jj." />
             </intent-filter>
         </receiver>
+
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
