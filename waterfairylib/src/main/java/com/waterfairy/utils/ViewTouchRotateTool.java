@@ -12,8 +12,10 @@ public class ViewTouchRotateTool {
     private boolean enable;
     private GestureDetector gestureDetector;
     private OnRotateListener onRotateListener;
-    GestureFlingRotateTool gestureFlingRotateTool;
-    private int cx, cy;
+    private GestureFlingRotateTool gestureFlingRotateTool;
+    private float cx, cy;
+    private float currentAngle;
+    private Float lastAngle;
 
     public ViewTouchRotateTool setOnRotateListener(OnRotateListener onRotateListener) {
         this.onRotateListener = onRotateListener;
@@ -51,7 +53,19 @@ public class ViewTouchRotateTool {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                return gestureDetector.onTouchEvent(motionEvent);
+                boolean result = false;
+                if (!(result = gestureDetector.onTouchEvent(motionEvent))) {
+                    switch (motionEvent.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            calcRotate(motionEvent.getX(), motionEvent.getY());
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            break;
+                    }
+                }
+                return true;
             }
         });
     }
@@ -65,12 +79,13 @@ public class ViewTouchRotateTool {
         return new GestureDetector.OnGestureListener() {
             @Override
             public boolean onDown(MotionEvent motionEvent) {
+                lastAngle = null;
+                calcRotate(motionEvent.getX(), motionEvent.getY());
                 return true;
             }
 
             @Override
             public void onShowPress(MotionEvent motionEvent) {
-
             }
 
             @Override
@@ -80,19 +95,16 @@ public class ViewTouchRotateTool {
 
             @Override
             public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
-                Log.i(TAG, "onScroll: ");
                 return false;
             }
 
             @Override
             public void onLongPress(MotionEvent motionEvent) {
-                Log.i(TAG, "onLongPress: ");
 
             }
 
             @Override
             public boolean onFling(MotionEvent motionEvent, MotionEvent endEvent, float vx, float vy) {
-                Log.i(TAG, "onFling: ");
                 gestureFlingRotateTool.startFling(endEvent, cx, cy, vx, vy);
                 return false;
             }
@@ -104,7 +116,7 @@ public class ViewTouchRotateTool {
         return new GestureFlingRotateTool.OnFlingListener() {
             @Override
             public void onFling(float angle, float dAngle) {
-                Log.i(TAG, "onFling: " + angle);
+                currentAngle += dAngle;
                 if (onRotateListener != null) onRotateListener.onRotate(angle, dAngle);
             }
 
@@ -116,15 +128,16 @@ public class ViewTouchRotateTool {
     }
 
 
-    private void calcRotate(int touchX, int touchY) {
-        int dx = touchX - cx;
-        int dy = touchY - cy;
-
-    }
-
-
-    private void rotate(int rotate) {
-        view.setRotation(rotate);
+    private void calcRotate(float touchX, float touchY) {
+        float dx = touchX - cx;
+        float dy = touchY - cy;
+        float angle = (float) Math.toDegrees(Math.atan(dy / dx));
+        if (lastAngle != null) {
+            float dAngle = angle - lastAngle;
+            currentAngle += dAngle;
+            if (onRotateListener != null) onRotateListener.onRotate(currentAngle, dAngle);
+        }
+        lastAngle = angle;
     }
 
     /**

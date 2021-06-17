@@ -18,7 +18,7 @@ public class GestureFlingRotateTool {
 
 
     //中心xy
-    private int cx, cy;
+    private float cx, cy;
 
     private OnFlingListener onFlingListener;
 
@@ -35,7 +35,7 @@ public class GestureFlingRotateTool {
      * @param velocityX x速度(per second)
      * @param velocityY y速度
      */
-    public void startFling(final MotionEvent endEvent, int cx, int cy, final float velocityX, final float velocityY) {
+    public void startFling(final MotionEvent endEvent, float cx, float cy, final float velocityX, final float velocityY) {
         this.cx = cx;
         this.cy = cy;
         stop();
@@ -56,7 +56,7 @@ public class GestureFlingRotateTool {
 
 
     public static class MyValueAnimator extends ValueAnimator {
-        private final int cx, cy;
+        private final float cx, cy;
         public boolean work;//是否在工作
 
         private final MotionEvent endEvent;
@@ -73,7 +73,7 @@ public class GestureFlingRotateTool {
             return this;
         }
 
-        MyValueAnimator(MotionEvent endEvent, float velocityX, float velocityY, int cx, int cy) {
+        MyValueAnimator(MotionEvent endEvent, float velocityX, float velocityY, float cx, float cy) {
 
             this.endEvent = endEvent;
             this.cx = cx;
@@ -130,7 +130,7 @@ public class GestureFlingRotateTool {
                     currentTime = tempTime;
 
                     //位移=当前速度*时间差
-                    float dAngle = velocityRotate * radio * (dTime / 1000F) / 5;
+                    float dAngle = velocityRotate * radio * (dTime / 1000F) / 2;
 
                     //计算当前坐标
                     currentAngle += dAngle;
