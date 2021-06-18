@@ -1,6 +1,5 @@
 package com.waterfairy.utils;
 
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +14,7 @@ public class ViewTouchRotateTool {
     private GestureFlingRotateTool gestureFlingRotateTool;
     private float cx, cy;
     private Float lastAngle;
+    private float rotateAngle;
 
     public ViewTouchRotateTool setOnRotateListener(OnRotateListener onRotateListener) {
         this.onRotateListener = onRotateListener;
@@ -115,7 +115,7 @@ public class ViewTouchRotateTool {
         return new GestureFlingRotateTool.OnFlingListener() {
             @Override
             public void onFling(float dAngle) {
-                if (onRotateListener != null) onRotateListener.onRotate(dAngle);
+                onRotate(dAngle);
             }
 
             @Override
@@ -123,6 +123,12 @@ public class ViewTouchRotateTool {
 
             }
         };
+    }
+
+    private void onRotate(float dAngle) {
+        rotateAngle += dAngle;
+        rotateAngle = (rotateAngle % 360 + 360) % 360;
+        if (onRotateListener != null) onRotateListener.onRotate(rotateAngle, dAngle);
     }
 
 
@@ -147,8 +153,7 @@ public class ViewTouchRotateTool {
         float angle = (float) Math.toDegrees(Math.atan(dy / dx)) + addAngle;
 
         if (lastAngle != null) {
-            float dAngle = angle - lastAngle;
-            if (onRotateListener != null) onRotateListener.onRotate(dAngle);
+            onRotate(angle - lastAngle);
         }
         lastAngle = angle;
     }
@@ -158,6 +163,6 @@ public class ViewTouchRotateTool {
      */
     public interface OnRotateListener {
         //旋转角度
-        void onRotate(float dAngle);
+        void onRotate(float rotateAngle, float dAngle);
     }
 }
