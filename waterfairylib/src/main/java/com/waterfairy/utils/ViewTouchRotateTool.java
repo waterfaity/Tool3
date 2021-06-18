@@ -52,8 +52,8 @@ public class ViewTouchRotateTool {
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                boolean result = false;
-                if (!(result = gestureDetector.onTouchEvent(motionEvent))) {
+                if (!enable) return false;
+                if (!gestureDetector.onTouchEvent(motionEvent)) {
                     switch (motionEvent.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             break;
