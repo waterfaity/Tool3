@@ -36,10 +36,19 @@
             android:text="向前" />
     </LinearLayout>
 
-
-    <com.waterfairy.widget.paintboard.PaintBoardView
-        android:id="@+id/paint_board_view"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="400dp" />
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:src="@mipmap/img_select_color" />
+
+        <com.waterfairy.widget.paintboard.PaintBoardView
+            android:id="@+id/paint_board_view"
+            android:layout_width="match_parent"
+            android:layout_height="400dp" />
+    </RelativeLayout>
 
 </LinearLayout>

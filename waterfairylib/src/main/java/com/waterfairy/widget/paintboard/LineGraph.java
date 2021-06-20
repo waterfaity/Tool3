@@ -1,7 +1,6 @@
 package com.waterfairy.widget.paintboard;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.view.MotionEvent;
@@ -18,6 +17,8 @@ public class LineGraph extends Graph {
 
     private final int color;
     private final int strokeWidth;
+
+    private float lastX, lastY;
 
     public LineGraph(int color, int strokeWidth) {
         this.color = color;
@@ -43,12 +44,12 @@ public class LineGraph extends Graph {
 
     @Override
     protected void onDown(MotionEvent event) {
-        path.moveTo(event.getX(), event.getY());
+        path.moveTo(lastX = event.getX(), lastY = event.getY());
     }
 
     @Override
     public void onMove(MotionEvent event) {
-        path.lineTo(event.getX(), event.getY());
+        path.quadTo(lastX, lastY, (lastX + (lastX = event.getX())) / 2, (lastY + (lastY = event.getY())) / 2);
     }
 
     @Override

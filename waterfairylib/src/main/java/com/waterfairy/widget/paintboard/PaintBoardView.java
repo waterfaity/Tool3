@@ -8,7 +8,6 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * @author water_fairy
@@ -31,6 +30,7 @@ public class PaintBoardView extends View {
 
     public PaintBoardView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setLayerType(LAYER_TYPE_SOFTWARE, null);
     }
 
     /**

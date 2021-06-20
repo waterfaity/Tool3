@@ -31,7 +31,8 @@ public class EraserGraph extends Graph {
         paint.setStyle(Paint.Style.STROKE);
         paint.setAlpha(0);
         paint.setStrokeWidth(strokeWidth);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+//        paint.setColor(Color.BLUE);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         //路径
         path = new Path();
     }

@@ -17,11 +17,11 @@ class PaintBoardActivity : AppCompatActivity() {
     }
 
     fun eraser(view: View) {
-        paint_board_view.setGraph(EraserGraph(3))
+        paint_board_view.setGraph(EraserGraph(10))
     }
 
     fun paint(view: View) {
-        paint_board_view.setGraph(LineGraph(Color.RED, 3))
+        paint_board_view.setGraph(LineGraph(Color.RED, 10))
     }
 
     fun back(view: View) {
