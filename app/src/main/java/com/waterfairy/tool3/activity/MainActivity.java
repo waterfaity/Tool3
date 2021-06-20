@@ -79,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.view_touch_rotate:
                 startActivity(new Intent(this, ViewTouchRotateActivity.class));
                 break;
+            case R.id.view_paint_board:
+                startActivity(new Intent(this, PaintBoardActivity.class));
+                break;
         }
     }
 }

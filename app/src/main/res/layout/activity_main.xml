@@ -114,7 +114,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="onClick"
-                android:text="bluetooth" />
+                android:text="touch_rotate" />
+
+
+            <Button
+                android:id="@+id/view_paint_board"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="paint_board" />
 
 
         </LinearLayout>
