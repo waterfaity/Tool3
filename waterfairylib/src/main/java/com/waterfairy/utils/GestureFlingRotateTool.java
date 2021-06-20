@@ -116,7 +116,7 @@ public class GestureFlingRotateTool {
         }
 
         private void initListener() {
-            addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            addUpdateListener(new AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     if (!work) return;
@@ -133,7 +133,7 @@ public class GestureFlingRotateTool {
                 }
             });
 
-            addListener(new Animator.AnimatorListener() {
+            addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
 
