@@ -8,7 +8,7 @@ public class ViewTouchRotateTool {
 
     private static final String TAG = "ViewTouchRotate";
     private View view;
-    private boolean enable;
+    private boolean enable = true;
     private GestureDetector gestureDetector;
     private OnRotateListener onRotateListener;
     private GestureFlingRotateTool gestureFlingRotateTool;
