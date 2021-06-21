@@ -11,7 +11,7 @@ import android.view.MotionEvent;
  * @author water_fairy
  * @email 995637517@qq.com
  * @date 18:20
- * @info:
+ * @info: 橡皮擦
  */
 public class EraserGraph extends Graph {
     private final Paint paint;

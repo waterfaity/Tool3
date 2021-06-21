@@ -9,7 +9,7 @@ import android.view.MotionEvent;
  * @author water_fairy
  * @email 995637517@qq.com
  * @date 17:16
- * @info:
+ * @info: 线条
  */
 public class LineGraph extends Graph {
     private final Paint paint;

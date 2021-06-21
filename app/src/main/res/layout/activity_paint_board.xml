@@ -7,6 +7,23 @@
     android:orientation="vertical"
     tools:context=".activity.PaintBoardActivity">
 
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="400dp">
+
+        <ImageView
+            android:id="@+id/iv_src"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:src="@mipmap/img_select_color" />
+
+        <com.waterfairy.widget.paintboard.PaintBoardView
+            android:id="@+id/paint_board_view"
+            android:layout_width="match_parent"
+            android:layout_height="400dp" />
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -36,19 +53,28 @@
             android:text="向前" />
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="save"
+            android:text="保存" />
+
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:src="@mipmap/img_select_color" />
+            android:id="@+id/iv_paint"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="30dp" />
 
-        <com.waterfairy.widget.paintboard.PaintBoardView
-            android:id="@+id/paint_board_view"
-            android:layout_width="match_parent"
-            android:layout_height="400dp" />
-    </RelativeLayout>
-
+        <ImageView
+            android:id="@+id/iv_merger"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="30dp" />
+    </LinearLayout>
 </LinearLayout>

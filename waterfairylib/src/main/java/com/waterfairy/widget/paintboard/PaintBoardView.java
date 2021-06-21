@@ -13,7 +13,7 @@ import java.util.List;
  * @author water_fairy
  * @email 995637517@qq.com
  * @date 17:03
- * @info:
+ * @info: 画板
  */
 public class PaintBoardView extends View {
 
@@ -48,13 +48,13 @@ public class PaintBoardView extends View {
             case MotionEvent.ACTION_DOWN:
                 if (graph != null) {
                     try {
-
                         //移除后面的历史
                         int removeSize = historyGraphs.size() - graphs.size();
                         for (int i = 0; i < removeSize; i++) {
                             historyGraphs.remove(graphs.size() + i);
                         }
 
+                        //添加绘制
                         graph = (Graph) graph.clone();
                         graph.onDown(event);
                         graphs.add(graph);

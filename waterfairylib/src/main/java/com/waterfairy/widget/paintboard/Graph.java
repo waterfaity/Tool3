@@ -7,7 +7,7 @@ import android.view.MotionEvent;
  * @author water_fairy
  * @email 995637517@qq.com
  * @date 17:15
- * @info:
+ * @info: 绘制基类
  */
 public abstract class Graph implements Cloneable {
 
